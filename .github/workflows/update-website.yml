@@ -2,6 +2,8 @@ name: Update website
 on:
   workflow_run:
     workflows: ["Run RE Report Tests"]
+    branches:
+      - main
     types:
       - completed
 # The action needs permissions to update the branch
