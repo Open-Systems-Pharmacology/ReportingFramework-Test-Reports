@@ -20,7 +20,7 @@ websiteConfig <- c(
   "",
   "navbar:",
   "  structure:",
-  "    left:  [articles, qualification]",
+  "    left:  [articles]",
   "    right: [search]",
   "  components:",
   "    articles:",
@@ -31,15 +31,6 @@ websiteConfig <- c(
     reportMapping$Report[hasReference],
     "\n",
     "        href: articles/", reportMapping$Report[hasReference], ".html"
-  ),
-  "    qualification:",
-  "      text: Qualification Reports",
-  "      menu:",
-  paste0(
-    "      - text: ",
-    reportMapping$Report[!hasReference],
-    "\n",
-    "        href: articles/", reportMapping$Report[!hasReference], ".html"
   ),
   ""
 )
@@ -96,11 +87,6 @@ toInsert <- c(
     "to look up available tested reports obtained from the OSP Suite Reporting Framework."
   ),
   "",
-  paste(
-    "The tested reports were split in the navigation bar above",
-    "between reports obtained from standard tests for __Mean and Population Model Workflows__,",
-    "and reports obtained from __Qualification Workflows__."
-  ),
   "",
   paste(
     "More details on the test results and source R code are available in the",
