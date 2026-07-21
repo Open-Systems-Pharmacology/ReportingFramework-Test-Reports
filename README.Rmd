@@ -88,6 +88,7 @@ testResultsRaw <- testthat::test_local(
 logTestResults(testResultsRaw)
 
 testResultsRaw <- as.data.frame(testResultsRaw)
+testResultsRaw <- testResultsRaw[order(testResultsRaw$context), ]
 testResults <- testResultsRaw %>%
   # Keep only performed tests
   filter(!skipped, nb>0) %>%
