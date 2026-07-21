@@ -7,6 +7,41 @@
 #' Creates the appropriate yaml configuration file for the pkgdown website
 reportMapping <- jsonlite::fromJSON("tests/testthat/report-mapping.json")
 hasReference <- reportMapping$Reference
+
+#' @description
+#' Builds the yaml lines for a navbar dropdown menu component.
+#' Returns NULL when there is no report to list, so that empty menus (and the
+#' malformed placeholder entries they would otherwise produce) are never
+#' written to the configuration. An empty menu item makes pkgdown fail with
+#' "Unknown navbar component with names text and href".
+navbarMenuComponent <- function(name, label, reports) {
+  if (length(reports) == 0) {
+    return(NULL)
+  }
+  c(
+    paste0("    ", name, ":"),
+    paste0("      text: ", label),
+    "      menu:",
+    paste0(
+      "      - text: ", reports, "\n",
+      "        href: articles/", reports, ".html"
+    )
+  )
+}
+
+reportsComponent <- navbarMenuComponent(
+  "reports", "Reports", reportMapping$Report[hasReference]
+)
+qualificationComponent <- navbarMenuComponent(
+  "qualification", "Qualification Reports", reportMapping$Report[!hasReference]
+)
+
+# Only reference the components that actually contain reports
+leftComponents <- c(
+  if (!is.null(reportsComponent)) "reports",
+  if (!is.null(qualificationComponent)) "qualification"
+)
+
 websiteConfig <- c(
   "template:",
   "  bootstrap: 5",
@@ -20,18 +55,11 @@ websiteConfig <- c(
   "",
   "navbar:",
   "  structure:",
-  "    left:  [reports]",
+  paste0("    left:  [", paste(leftComponents, collapse = ", "), "]"),
   "    right: [search]",
   "  components:",
-  "    reports:",
-  "      text: Reports",
-  "      menu:",
-  paste0(
-    "      - text: ",
-    reportMapping$Report[hasReference],
-    "\n",
-    "        href: articles/", reportMapping$Report[hasReference], ".html"
-  ),
+  reportsComponent,
+  qualificationComponent,
   ""
 )
 writeLines(websiteConfig, con = "_pkgdown.yml")
