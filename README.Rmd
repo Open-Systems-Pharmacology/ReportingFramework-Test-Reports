@@ -79,10 +79,19 @@ Turning the list to data.frame and extracting the relevant data will give a grea
 # Remove previous tests
 unlink("./tests/Reports", recursive = TRUE, force = TRUE)
 dir.create("./tests/Reports")
-# Prevent failed tests to stop the workflow
+# Run report scripts in parallel using callr
+reportScripts <- sort(list.files("R", pattern = "^report-.*\\.R$", full.names = TRUE))
+bgProcesses <- lapply(reportScripts, function(script) {
+  callr::r_bg(function(scriptPath) source(scriptPath), args = list(scriptPath = script))
+})
+# Wait for all report scripts to complete
+lapply(bgProcesses, function(p) p$wait())
+
+# Run tests without re-sourcing R/ scripts (already executed above)
 testResultsRaw <- testthat::test_local(
   reporter = testthat::ListReporter,
-  stop_on_failure = FALSE
+  stop_on_failure = FALSE,
+  load_package = "none"
 )
 # Creates a log.json file with the test results
 logTestResults(testResultsRaw)
