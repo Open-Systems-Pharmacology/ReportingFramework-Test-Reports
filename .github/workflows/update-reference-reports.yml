@@ -1,0 +1,55 @@
+name: Update Reference Reports
+
+on:
+  workflow_dispatch:
+    inputs:
+      report:
+        description: 'Report to update'
+        required: true
+        type: choice
+        # TODO options to be called from a script or code
+        options:
+        - Aciclovir-Mean
+        - Aciclovir-Mean-SVG
+        - Aciclovir-Population
+        - Raltegravir-Absorption
+        - Raltegravir-Mass-Balance
+        - Test-NO7
+        - Test-NO8
+        - Test-NO9
+        - Test-NO10
+        - Test-NO11
+        - Test-NO12
+
+permissions: write-all
+  
+jobs:
+  update-reference-reports:
+    runs-on: ubuntu-latest
+    # Allow only authorized collaborators to trigger GA:
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+# All steps in workflow:
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+      - name: Update reference report with test report
+        run: |
+          rm -r Reports/${{ inputs.report }}
+          cp -R tests/Reports/${{ inputs.report }} Reports/${{ inputs.report }}
+      - name: Commit updates
+        run: |
+          git config --local user.email "actions@github.com"
+          git config --local user.name "GitHub Actions"
+          git add ./Reports/${{ inputs.report }} || echo "No changes in Reference Report ${{ inputs.report }}"
+          git commit -m "Update ${{ inputs.report }}" || echo "No changes to commit"
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8.1.1
+        with:
+          branch: 30_update_${{ inputs.report }}
+          title: 'Update ${{ inputs.report }}'
+          body: |
+            Update Reference Report ${{ inputs.report }} #30
+          labels: |
+            update
+
