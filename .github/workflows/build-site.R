@@ -20,10 +20,10 @@ websiteConfig <- c(
   "",
   "navbar:",
   "  structure:",
-  "    left:  [articles]",
+  "    left:  [reports]",
   "    right: [search]",
   "  components:",
-  "    articles:",
+  "    reports:",
   "      text: Reports",
   "      menu:",
   paste0(
