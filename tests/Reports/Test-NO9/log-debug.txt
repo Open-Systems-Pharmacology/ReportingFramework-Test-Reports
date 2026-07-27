@@ -1,160 +1,160 @@
-21/07/2026 - 20:46:06
+27/07/2026 - 02:14:36
 Simulation file 'Models/Adults_SingleIV_Bolus.pkml' successfully loaded
-21/07/2026 - 20:46:08
+27/07/2026 - 02:14:37
 Population file 'Data/test-NO9/Adults_18_100_years-Population.csv' successfully loaded
-21/07/2026 - 20:46:11
+27/07/2026 - 02:14:40
 Simulation run complete
-21/07/2026 - 20:46:13
+27/07/2026 - 02:14:42
 Simulation file 'Models/Adults_SingleIV_Bolus.pkml' successfully loaded
-21/07/2026 - 20:46:14
+27/07/2026 - 02:14:44
 Population file 'Data/test-NO9/Kids_0_3_years-Population.csv' successfully loaded
-21/07/2026 - 20:46:18
+27/07/2026 - 02:14:47
 Simulation run complete
-21/07/2026 - 20:46:20
+27/07/2026 - 02:14:49
 Simulation file 'Models/Adults_SingleIV_Bolus.pkml' successfully loaded
-21/07/2026 - 20:46:21
+27/07/2026 - 02:14:50
 Population file 'Data/test-NO9/Kids_3_6_years-Population.csv' successfully loaded
-21/07/2026 - 20:46:24
+27/07/2026 - 02:14:53
 Simulation run complete
-21/07/2026 - 20:46:27
+27/07/2026 - 02:14:56
 Simulation file 'Models/Adults_SingleIV_Bolus.pkml' successfully loaded
-21/07/2026 - 20:46:28
+27/07/2026 - 02:14:57
 Population file 'Data/test-NO9/Kids_6_9_years-Population.csv' successfully loaded
-21/07/2026 - 20:46:32
+27/07/2026 - 02:15:00
 Simulation run complete
-21/07/2026 - 20:46:33
+27/07/2026 - 02:15:01
 Simulation results 'tests/Reports/Test-NO9/SimulationResults/single IV administration-SimulationResults.csv' successfully loaded
-21/07/2026 - 20:46:33
+27/07/2026 - 02:15:01
 Calculation of PK parameters complete
-21/07/2026 - 20:46:33
+27/07/2026 - 02:15:01
 PK parameters for 'single IV administration' saved in 'tests/Reports/Test-NO9/PKAnalysisResults/single IV administration-PKAnalysisResults.csv
-21/07/2026 - 20:46:35
+27/07/2026 - 02:15:03
 Simulation results 'tests/Reports/Test-NO9/SimulationResults/children_0_3y-SimulationResults.csv' successfully loaded
-21/07/2026 - 20:46:35
+27/07/2026 - 02:15:03
 Calculation of PK parameters complete
-21/07/2026 - 20:46:35
+27/07/2026 - 02:15:03
 PK parameters for 'children_0_3y' saved in 'tests/Reports/Test-NO9/PKAnalysisResults/children_0_3y-PKAnalysisResults.csv
-21/07/2026 - 20:46:36
+27/07/2026 - 02:15:05
 Simulation results 'tests/Reports/Test-NO9/SimulationResults/children_3_6y-SimulationResults.csv' successfully loaded
-21/07/2026 - 20:46:36
+27/07/2026 - 02:15:05
 Calculation of PK parameters complete
-21/07/2026 - 20:46:36
+27/07/2026 - 02:15:05
 PK parameters for 'children_3_6y' saved in 'tests/Reports/Test-NO9/PKAnalysisResults/children_3_6y-PKAnalysisResults.csv
-21/07/2026 - 20:46:38
+27/07/2026 - 02:15:06
 Simulation results 'tests/Reports/Test-NO9/SimulationResults/children_6_9y-SimulationResults.csv' successfully loaded
-21/07/2026 - 20:46:38
+27/07/2026 - 02:15:06
 Calculation of PK parameters complete
-21/07/2026 - 20:46:38
+27/07/2026 - 02:15:06
 PK parameters for 'children_6_9y' saved in 'tests/Reports/Test-NO9/PKAnalysisResults/children_6_9y-PKAnalysisResults.csv
-21/07/2026 - 20:46:54
+27/07/2026 - 02:15:24
 Figure 'tests/Reports/Test-NO9/PKAnalysis/3_pk_parameters_AUC_tEnd_log.png' was successfully saved.
-21/07/2026 - 20:46:55
+27/07/2026 - 02:15:24
 Figure 'tests/Reports/Test-NO9/PKAnalysis/4_pk_parameters_AUC_tEnd.png' was successfully saved.
-21/07/2026 - 20:46:55
+27/07/2026 - 02:15:24
 Table 'tests/Reports/Test-NO9/PKAnalysis/4_pk_parameters_AUC_tEnd.csv' was successfully saved.
-21/07/2026 - 20:46:55
+27/07/2026 - 02:15:25
 Figure 'tests/Reports/Test-NO9/PKAnalysis/6_pk_parameters_C_max_log.png' was successfully saved.
-21/07/2026 - 20:46:56
+27/07/2026 - 02:15:26
 Figure 'tests/Reports/Test-NO9/PKAnalysis/7_pk_parameters_C_max.png' was successfully saved.
-21/07/2026 - 20:46:56
+27/07/2026 - 02:15:26
 Table 'tests/Reports/Test-NO9/PKAnalysis/7_pk_parameters_C_max.csv' was successfully saved.
-21/07/2026 - 20:46:56
+27/07/2026 - 02:15:26
 Figure 'tests/Reports/Test-NO9/PKAnalysis/9_pk_parameters_C_tEnd_log.png' was successfully saved.
-21/07/2026 - 20:46:57
+27/07/2026 - 02:15:27
 Figure 'tests/Reports/Test-NO9/PKAnalysis/10_pk_parameters_C_tEnd.png' was successfully saved.
-21/07/2026 - 20:46:57
+27/07/2026 - 02:15:27
 Table 'tests/Reports/Test-NO9/PKAnalysis/10_pk_parameters_C_tEnd.csv' was successfully saved.
-21/07/2026 - 20:46:58
+27/07/2026 - 02:15:28
 Figure 'tests/Reports/Test-NO9/PKAnalysis/12_pk_parameters_t_max_log.png' was successfully saved.
-21/07/2026 - 20:46:58
+27/07/2026 - 02:15:29
 Figure 'tests/Reports/Test-NO9/PKAnalysis/13_pk_parameters_t_max.png' was successfully saved.
-21/07/2026 - 20:46:58
+27/07/2026 - 02:15:29
 Table 'tests/Reports/Test-NO9/PKAnalysis/13_pk_parameters_t_max.csv' was successfully saved.
-21/07/2026 - 20:46:59
+27/07/2026 - 02:15:29
 Figure 'tests/Reports/Test-NO9/PKAnalysis/15_pk_parameters_CL_log.png' was successfully saved.
-21/07/2026 - 20:46:59
+27/07/2026 - 02:15:30
 Figure 'tests/Reports/Test-NO9/PKAnalysis/16_pk_parameters_CL.png' was successfully saved.
-21/07/2026 - 20:46:59
+27/07/2026 - 02:15:30
 Table 'tests/Reports/Test-NO9/PKAnalysis/16_pk_parameters_CL.csv' was successfully saved.
-21/07/2026 - 20:47:00
+27/07/2026 - 02:15:31
 Figure 'tests/Reports/Test-NO9/PKAnalysis/18_pk_parameters_Vss_log.png' was successfully saved.
-21/07/2026 - 20:47:01
+27/07/2026 - 02:15:31
 Figure 'tests/Reports/Test-NO9/PKAnalysis/19_pk_parameters_Vss.png' was successfully saved.
-21/07/2026 - 20:47:01
+27/07/2026 - 02:15:31
 Table 'tests/Reports/Test-NO9/PKAnalysis/19_pk_parameters_Vss.csv' was successfully saved.
-21/07/2026 - 20:47:01
+27/07/2026 - 02:15:31
 '1' applications identified for path 'Organism|PeripheralVenousBlood|C1|Plasma (Peripheral Venous Blood)' in simulation 'Adults_SingleIV_Bolus'
-21/07/2026 - 20:47:01
+27/07/2026 - 02:15:31
 Time ranges for 'Adults_SingleIV_Bolus' timeRanges
-21/07/2026 - 20:47:01
+27/07/2026 - 02:15:31
 129 simulated data were included in the analysis between 0 and 24 h.
-21/07/2026 - 20:47:01
+27/07/2026 - 02:15:31
 0 observed data were included in the analysis between 0 and 24 h.
-21/07/2026 - 20:47:02
+27/07/2026 - 02:15:33
 1 values from variable 'Concentration' were negative and removed from the analysis
-21/07/2026 - 20:47:03
+27/07/2026 - 02:15:34
 Table 'tests/Reports/Test-NO9/TimeProfiles/single_IV_administration-1_time_profile_simulated_data.csv' was successfully saved.
-21/07/2026 - 20:47:04
+27/07/2026 - 02:15:34
 Figure 'tests/Reports/Test-NO9/TimeProfiles/single_IV_administration-3_timeProfile_1_total.png' was successfully saved.
-21/07/2026 - 20:47:04
+27/07/2026 - 02:15:35
 Figure 'tests/Reports/Test-NO9/TimeProfiles/single_IV_administration-4_timeProfileLog_2_total.png' was successfully saved.
-21/07/2026 - 20:47:04
+27/07/2026 - 02:15:35
 '1' applications identified for path 'Organism|PeripheralVenousBlood|C1|Plasma (Peripheral Venous Blood)' in simulation 'Adults_SingleIV_Bolus'
-21/07/2026 - 20:47:04
+27/07/2026 - 02:15:35
 Time ranges for 'Adults_SingleIV_Bolus' timeRanges
-21/07/2026 - 20:47:04
+27/07/2026 - 02:15:35
 129 simulated data were included in the analysis between 0 and 24 h.
-21/07/2026 - 20:47:04
+27/07/2026 - 02:15:35
 0 observed data were included in the analysis between 0 and 24 h.
-21/07/2026 - 20:47:05
+27/07/2026 - 02:15:36
 1 values from variable 'Concentration' were negative and removed from the analysis
-21/07/2026 - 20:47:06
+27/07/2026 - 02:15:37
 Table 'tests/Reports/Test-NO9/TimeProfiles/children_0_3y-1_time_profile_simulated_data.csv' was successfully saved.
-21/07/2026 - 20:47:07
+27/07/2026 - 02:15:38
 Figure 'tests/Reports/Test-NO9/TimeProfiles/children_0_3y-3_timeProfile_1_total.png' was successfully saved.
-21/07/2026 - 20:47:08
+27/07/2026 - 02:15:39
 Figure 'tests/Reports/Test-NO9/TimeProfiles/children_0_3y-4_timeProfileLog_2_total.png' was successfully saved.
-21/07/2026 - 20:47:08
+27/07/2026 - 02:15:39
 '1' applications identified for path 'Organism|PeripheralVenousBlood|C1|Plasma (Peripheral Venous Blood)' in simulation 'Adults_SingleIV_Bolus'
-21/07/2026 - 20:47:08
+27/07/2026 - 02:15:39
 Time ranges for 'Adults_SingleIV_Bolus' timeRanges
-21/07/2026 - 20:47:08
+27/07/2026 - 02:15:39
 129 simulated data were included in the analysis between 0 and 24 h.
-21/07/2026 - 20:47:08
+27/07/2026 - 02:15:39
 0 observed data were included in the analysis between 0 and 24 h.
-21/07/2026 - 20:47:09
+27/07/2026 - 02:15:40
 1 values from variable 'Concentration' were negative and removed from the analysis
-21/07/2026 - 20:47:10
+27/07/2026 - 02:15:41
 Table 'tests/Reports/Test-NO9/TimeProfiles/children_3_6y-1_time_profile_simulated_data.csv' was successfully saved.
-21/07/2026 - 20:47:10
+27/07/2026 - 02:15:42
 Figure 'tests/Reports/Test-NO9/TimeProfiles/children_3_6y-3_timeProfile_1_total.png' was successfully saved.
-21/07/2026 - 20:47:11
+27/07/2026 - 02:15:43
 Figure 'tests/Reports/Test-NO9/TimeProfiles/children_3_6y-4_timeProfileLog_2_total.png' was successfully saved.
-21/07/2026 - 20:47:11
+27/07/2026 - 02:15:43
 '1' applications identified for path 'Organism|PeripheralVenousBlood|C1|Plasma (Peripheral Venous Blood)' in simulation 'Adults_SingleIV_Bolus'
-21/07/2026 - 20:47:11
+27/07/2026 - 02:15:43
 Time ranges for 'Adults_SingleIV_Bolus' timeRanges
-21/07/2026 - 20:47:11
+27/07/2026 - 02:15:43
 129 simulated data were included in the analysis between 0 and 24 h.
-21/07/2026 - 20:47:11
+27/07/2026 - 02:15:43
 0 observed data were included in the analysis between 0 and 24 h.
-21/07/2026 - 20:47:12
+27/07/2026 - 02:15:44
 1 values from variable 'Concentration' were negative and removed from the analysis
-21/07/2026 - 20:47:13
+27/07/2026 - 02:15:45
 Table 'tests/Reports/Test-NO9/TimeProfiles/children_6_9y-1_time_profile_simulated_data.csv' was successfully saved.
-21/07/2026 - 20:47:14
+27/07/2026 - 02:15:46
 Figure 'tests/Reports/Test-NO9/TimeProfiles/children_6_9y-3_timeProfile_1_total.png' was successfully saved.
-21/07/2026 - 20:47:15
+27/07/2026 - 02:15:47
 Figure 'tests/Reports/Test-NO9/TimeProfiles/children_6_9y-4_timeProfileLog_2_total.png' was successfully saved.
-21/07/2026 - 20:47:15
+27/07/2026 - 02:15:47
 Reports 'tests/Reports/Test-NO9/appendix-pk-parameters.md', 'tests/Reports/Test-NO9/appendix-time-profile.md' were successfully merged into 'tests/Reports/Test-NO9/Report.md'
-21/07/2026 - 20:47:15
+27/07/2026 - 02:15:47
 In 'tests/Reports/Test-NO9/Report.md', 4 tables and 20 figures were referenced.
-21/07/2026 - 20:47:15
+27/07/2026 - 02:15:47
 In 'tests/Reports/Test-NO9/Report.md', 5 sections were numbered
-21/07/2026 - 20:47:15
+27/07/2026 - 02:15:47
 In 'tests/Reports/Test-NO9/Report.md', table of content of 13 lines was included.
-21/07/2026 - 20:47:15
+27/07/2026 - 02:15:47
 'tests/Reports/Test-NO9/Report.md' already exists. Overwriting 'tests/Reports/Test-NO9/Report.md'.
-21/07/2026 - 20:47:15
+27/07/2026 - 02:15:47
 Reports 'temp-report-title.md', 'tests/Reports/Test-NO9/Report.md' were successfully merged into 'tests/Reports/Test-NO9/Report.md'
