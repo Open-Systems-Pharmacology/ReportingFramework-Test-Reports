@@ -15,7 +15,7 @@ file, context, test, nb, failed, skipped, error, warning, user, system, real, pa
 
 | 📚 Total Reports | 🕵 Total Tests | ⚠ Failed Tests | 📊 Global Success Rate |
 |------------------|---------------|----------------|------------------------|
-| 16               | 652           | 0              | 100 %                  |
+| 17               | 654           | 0              | 100 %                  |
 
 ## Test Infrastructure
 
@@ -125,6 +125,7 @@ currently available in this repository:
 | [UC-03-Scenario-Results-RoundTrip](./Reports/UC-03-Scenario-Results-RoundTrip) | [UC-03-Scenario-Results-RoundTrip](./tests/Reports/UC-03-Scenario-Results-RoundTrip/Report.md) | [report-uc-03-scenario-results-roundtrip.R](./R/report-uc-03-scenario-results-roundtrip.R) | NA |
 | [UC-04-PK-Parameter-Loading](./Reports/UC-04-PK-Parameter-Loading) | [UC-04-PK-Parameter-Loading](./tests/Reports/UC-04-PK-Parameter-Loading/Report.md) | [report-uc-04-pk-parameter-loading.R](./R/report-uc-04-pk-parameter-loading.R) | NA |
 | [UC-05-Population-Export](./Reports/UC-05-Population-Export) | [UC-05-Population-Export](./tests/Reports/UC-05-Population-Export/Report.md) | [report-uc-05-population-export.R](./R/report-uc-05-population-export.R) | NA |
+| [UC-06-Utilities-Data-Integration](./Reports/UC-06-Utilities-Data-Integration) | [UC-06-Utilities-Data-Integration](./tests/Reports/UC-06-Utilities-Data-Integration/Report.md) | [report-uc-06-utilities-data-integration.R](./R/report-uc-06-utilities-data-integration.R) | NA |
 
 ## Detailed Test Results
 
@@ -216,3 +217,5 @@ currently available in this repository:
 | [UC-04-PK-Parameter-Loading](./tests/Reports/UC-04-PK-Parameter-Loading) | Content of<br>Report | ![](https://img.shields.io/badge/%E2%9C%93-Passed%20tests-success) | 1 | 0 |
 | [UC-05-Population-Export](./tests/Reports/UC-05-Population-Export) | Expected Files | ![](https://img.shields.io/badge/%E2%9C%93-Passed%20tests-success) | 1 | 0 |
 | [UC-05-Population-Export](./tests/Reports/UC-05-Population-Export) | Content of<br>Report | ![](https://img.shields.io/badge/%E2%9C%93-Passed%20tests-success) | 1 | 0 |
+| [UC-06-Utilities-Data-Integration](./tests/Reports/UC-06-Utilities-Data-Integration) | Expected Files | ![](https://img.shields.io/badge/%E2%9C%93-Passed%20tests-success) | 1 | 0 |
+| [UC-06-Utilities-Data-Integration](./tests/Reports/UC-06-Utilities-Data-Integration) | Content of<br>Report | ![](https://img.shields.io/badge/%E2%9C%93-Passed%20tests-success) | 1 | 0 |
