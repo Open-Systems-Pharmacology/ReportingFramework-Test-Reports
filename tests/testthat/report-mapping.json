@@ -63,5 +63,10 @@
     "Script": "report-uc-02-scenario-creation",
     "Report": "UC-02-Scenario-Creation",
     "Reference": true
+  },
+  {
+    "Script": "report-uc-03-scenario-results-roundtrip",
+    "Report": "UC-03-Scenario-Results-RoundTrip",
+    "Reference": true
   }
 ]
