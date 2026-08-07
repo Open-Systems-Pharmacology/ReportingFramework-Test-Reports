@@ -15,7 +15,7 @@ file, context, test, nb, failed, skipped, error, warning, user, system, real, pa
 
 | 📚 Total Reports | 🕵 Total Tests | ⚠ Failed Tests | 📊 Global Success Rate |
 |------------------|---------------|----------------|------------------------|
-| 11               | 642           | 0              | 100 %                  |
+| 12               | 642           | 0              | 100 %                  |
 
 ## Test Infrastructure
 
@@ -120,6 +120,7 @@ currently available in this repository:
 | [Test-NO10](./Reports/Test-NO10) | [Test-NO10](./tests/Reports/Test-NO10/Report.md) | [report-NO10.R](./R/report-NO10.R) | 6.6 min |
 | [Test-NO11](./Reports/Test-NO11) | [Test-NO11](./tests/Reports/Test-NO11/Report.md) | [report-NO11.R](./R/report-NO11.R) | 0.3 min |
 | [Test-NO12](./Reports/Test-NO12) | [Test-NO12](./tests/Reports/Test-NO12/Report.md) | [report-NO12.R](./R/report-NO12.R) | 0.8 min |
+| [UC-01-Project-Initialization](./Reports/UC-01-Project-Initialization) | [UC-01-Project-Initialization](./tests/Reports/UC-01-Project-Initialization/Report.md) | [report-uc-01-project-init.R](./R/report-uc-01-project-init.R) | NA |
 
 ## Detailed Test Results
 

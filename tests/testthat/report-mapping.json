@@ -53,5 +53,10 @@
     "Script": "report-NO12",
     "Report": "Test-NO12",
     "Reference": true
+  },
+  {
+    "Script": "report-uc-01-project-init",
+    "Report": "UC-01-Project-Initialization",
+    "Reference": true
   }
 ]
