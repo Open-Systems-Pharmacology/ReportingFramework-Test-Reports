@@ -73,5 +73,10 @@
     "Script": "report-uc-04-pk-parameter-loading",
     "Report": "UC-04-PK-Parameter-Loading",
     "Reference": true
+  },
+  {
+    "Script": "report-uc-05-population-export",
+    "Report": "UC-05-Population-Export",
+    "Reference": true
   }
 ]
