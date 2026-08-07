@@ -58,5 +58,10 @@
     "Script": "report-uc-01-project-init",
     "Report": "UC-01-Project-Initialization",
     "Reference": true
+  },
+  {
+    "Script": "report-uc-02-scenario-creation",
+    "Report": "UC-02-Scenario-Creation",
+    "Reference": true
   }
 ]

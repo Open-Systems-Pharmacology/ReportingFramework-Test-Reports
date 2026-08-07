@@ -15,7 +15,7 @@ file, context, test, nb, failed, skipped, error, warning, user, system, real, pa
 
 | 📚 Total Reports | 🕵 Total Tests | ⚠ Failed Tests | 📊 Global Success Rate |
 |------------------|---------------|----------------|------------------------|
-| 12               | 642           | 0              | 100 %                  |
+| 13               | 646           | 0              | 100 %                  |
 
 ## Test Infrastructure
 
@@ -121,6 +121,7 @@ currently available in this repository:
 | [Test-NO11](./Reports/Test-NO11) | [Test-NO11](./tests/Reports/Test-NO11/Report.md) | [report-NO11.R](./R/report-NO11.R) | 0.3 min |
 | [Test-NO12](./Reports/Test-NO12) | [Test-NO12](./tests/Reports/Test-NO12/Report.md) | [report-NO12.R](./R/report-NO12.R) | 0.8 min |
 | [UC-01-Project-Initialization](./Reports/UC-01-Project-Initialization) | [UC-01-Project-Initialization](./tests/Reports/UC-01-Project-Initialization/Report.md) | [report-uc-01-project-init.R](./R/report-uc-01-project-init.R) | NA |
+| [UC-02-Scenario-Creation](./Reports/UC-02-Scenario-Creation) | [UC-02-Scenario-Creation](./tests/Reports/UC-02-Scenario-Creation/Report.md) | [report-uc-02-scenario-creation.R](./R/report-uc-02-scenario-creation.R) | NA |
 
 ## Detailed Test Results
 
@@ -204,3 +205,5 @@ currently available in this repository:
 | [Test-NO12](./tests/Reports/Test-NO12) | Expected<br>Absorption<br>Results | ![](https://img.shields.io/badge/%E2%9C%93-Passed%20tests-success) | 1 | 0 |
 | [UC-01-Project-Initialization](./tests/Reports/UC-01-Project-Initialization) | Expected Files | ![](https://img.shields.io/badge/%E2%9C%93-Passed%20tests-success) | 1 | 0 |
 | [UC-01-Project-Initialization](./tests/Reports/UC-01-Project-Initialization) | Content of<br>Report | ![](https://img.shields.io/badge/%E2%9C%93-Passed%20tests-success) | 1 | 0 |
+| [UC-02-Scenario-Creation](./tests/Reports/UC-02-Scenario-Creation) | Expected Files | ![](https://img.shields.io/badge/%E2%9C%93-Passed%20tests-success) | 1 | 0 |
+| [UC-02-Scenario-Creation](./tests/Reports/UC-02-Scenario-Creation) | Content of<br>Report | ![](https://img.shields.io/badge/%E2%9C%93-Passed%20tests-success) | 1 | 0 |
