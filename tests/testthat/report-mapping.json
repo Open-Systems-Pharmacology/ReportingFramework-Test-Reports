@@ -68,5 +68,10 @@
     "Script": "report-uc-03-scenario-results-roundtrip",
     "Report": "UC-03-Scenario-Results-RoundTrip",
     "Reference": true
+  },
+  {
+    "Script": "report-uc-04-pk-parameter-loading",
+    "Report": "UC-04-PK-Parameter-Loading",
+    "Reference": true
   }
 ]

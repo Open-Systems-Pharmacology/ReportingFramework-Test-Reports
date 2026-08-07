@@ -1,0 +1,1615 @@
+{
+  "projectConfiguration": {
+    "column_names": ["Property", "Value", "Description"],
+    "rows": [
+      {
+        "Property": "modelFolder",
+        "Value": "../../Models",
+        "Description": "Path to the folder with pkml simulation files; relative to the location of this file"
+      },
+      {
+        "Property": "configurationsFolder",
+        "Value": ".",
+        "Description": "Path to the folder with excel files with parametrization; relative to the location of this file"
+      },
+      {
+        "Property": "modelParamsFile",
+        "Value": "ModelParameters.xlsx",
+        "Description": "Name of the excel file with global model parametrization. Must be located in the \"configurationsFolder\""
+      },
+      {
+        "Property": "individualsFile",
+        "Value": "Individuals.xlsx",
+        "Description": "Name of the excel file with individual-specific model parametrization. Must be located in the \"configurationsFolder\""
+      },
+      {
+        "Property": "populationsFile",
+        "Value": "Populations.xlsx",
+        "Description": "Name of the excel file with population information. Must be located in the \"configurationsFolder\""
+      },
+      {
+        "Property": "populationsFolder",
+        "Value": "../../Models/Populations",
+        "Description": "Name of the folder containing population defined in files"
+      },
+      {
+        "Property": "scenariosFile",
+        "Value": "Scenarios.xlsx",
+        "Description": "Name of the excel file with scenario definitions. Must be located in the \"configurationsFolder\""
+      },
+      {
+        "Property": "applicationsFile",
+        "Value": "Applications.xlsx",
+        "Description": "Name of the excel file scenario-specific parameters such as application protocol parameters. Must be located in the \"configurationsFolder\""
+      },
+      {
+        "Property": "plotsFile",
+        "Value": "Plots.xlsx",
+        "Description": "Name of the excel file with plot definitions. Must be located in the \"configurationsFolder\""
+      },
+      {
+        "Property": "parameterIdentificationFile",
+        "Value": "ParameterIdentification.xlsx",
+        "Description": "Name of the excel file with parameter identification task definitions. Must be located in the configurationsFolder"
+      },
+      {
+        "Property": "dataFolder",
+        "Value": ".",
+        "Description": "Path to the folder where dataconfiguration file is saved"
+      },
+      {
+        "Property": "dataFile",
+        "Value": null,
+        "Description": "Name of the excel file with experimental data. Must be located in the dataFolder"
+      },
+      {
+        "Property": "dataImporterConfigurationFile",
+        "Value": "DataImportConfiguration.xlsx",
+        "Description": "Name of data importer configuration file in xml format used to load the data. Must be located in the \"dataFolder\""
+      },
+      {
+        "Property": "outputFolder",
+        "Value": "../../Outputs/ReportingFramework",
+        "Description": "Path to the folder where the results should be saved to; relative to the location of this file"
+      },
+      {
+        "Property": "esqlabsRVersion",
+        "Value": "5.7.0.9007",
+        "Description": "Version of the esqlabsR package used to create this configuration"
+      }
+    ]
+  },
+  "modelParameterSets": {
+    "Global": {
+      "column_names": ["Container Path", "Parameter Name", "Value", "Units"],
+      "rows": [
+        {
+          "Container Path": "Organism|Liver",
+          "Parameter Name": "EHC continuous fraction",
+          "Value": "1",
+          "Units": null
+        }
+      ]
+    },
+    "Sheet, with comma": {
+      "column_names": ["Container Path", "Parameter Name", "Value", "Units"],
+      "rows": [
+        {
+          "Container Path": "Organism|Liver",
+          "Parameter Name": "EHC continuous fraction",
+          "Value": "1",
+          "Units": null
+        }
+      ]
+    },
+    "MissingParam": {
+      "column_names": ["Container Path", "Parameter Name", "Value", "Units"],
+      "rows": [
+        {
+          "Container Path": "foo",
+          "Parameter Name": "bar",
+          "Value": "2",
+          "Units": null
+        }
+      ]
+    },
+    "Aciclovir": {
+      "column_names": ["Container Path", "Parameter Name", "Value", "Units"],
+      "rows": [
+        {
+          "Container Path": "Aciclovir",
+          "Parameter Name": "Lipophilicity",
+          "Value": "-0.1",
+          "Units": "Log Units"
+        }
+      ]
+    }
+  },
+  "Individuals": {
+    "IndividualBiometrics": {
+      "column_names": ["IndividualId", "Species", "Population", "Gender", "Weight [kg]", "Height [cm]", "Age [year(s)]", "Protein Ontogenies"],
+      "rows": [
+        {
+          "IndividualId": "Indiv1",
+          "Species": "Human",
+          "Population": "European_ICRP_2002",
+          "Gender": "MALE",
+          "Weight [kg]": "73",
+          "Height [cm]": "176",
+          "Age [year(s)]": "30",
+          "Protein Ontogenies": "CYP3A4:CYP3A4,CYP2D6:CYP2C8"
+        }
+      ]
+    },
+    "Indiv1": {
+      "column_names": ["Container Path", "Parameter Name", "Value", "Units"],
+      "rows": [
+        {
+          "Container Path": "Organism|Kidney",
+          "Parameter Name": "GFR",
+          "Value": "90",
+          "Units": "ml/min"
+        }
+      ]
+    }
+  },
+  "Populations": {
+    "Demographics": {
+      "column_names": ["PopulationName", "species", "population", "numberOfIndividuals", "proportionOfFemales", "weightMin", "weightMax", "weightUnit", "heightMin", "heightMax", "heightUnit", "ageMin", "ageMax", "BMIMin", "BMIMax", "BMIUnit", "Protein Ontogenies"],
+      "rows": [
+        {
+          "PopulationName": "TestPopulation",
+          "species": "Human",
+          "population": "European_ICRP_2002",
+          "numberOfIndividuals": "2",
+          "proportionOfFemales": "0",
+          "weightMin": null,
+          "weightMax": null,
+          "weightUnit": "kg",
+          "heightMin": null,
+          "heightMax": null,
+          "heightUnit": "cm",
+          "ageMin": "22",
+          "ageMax": "41",
+          "BMIMin": null,
+          "BMIMax": null,
+          "BMIUnit": "kg/m²",
+          "Protein Ontogenies": "CYP3A4:CYP3A4,CYP2D6:CYP2C8"
+        },
+        {
+          "PopulationName": "TestPopulation_noOnto",
+          "species": "Human",
+          "population": "European_ICRP_2002",
+          "numberOfIndividuals": "2",
+          "proportionOfFemales": "0",
+          "weightMin": null,
+          "weightMax": null,
+          "weightUnit": "kg",
+          "heightMin": null,
+          "heightMax": null,
+          "heightUnit": "cm",
+          "ageMin": "22",
+          "ageMax": "41",
+          "BMIMin": null,
+          "BMIMax": null,
+          "BMIUnit": "kg/m²",
+          "Protein Ontogenies": null
+        }
+      ]
+    },
+    "UserDefinedVariability": {
+      "column_names": ["Container Path", "Parameter Name", "Mean", "SD", "Distribution"],
+      "rows": []
+    }
+  },
+  "Scenarios": {
+    "Scenarios": {
+      "column_names": ["Scenario_name", "IndividualId", "PopulationId", "ReadPopulationFromCSV", "ModelParameterSheets", "ApplicationProtocol", "SimulationTime", "SimulationTimeUnit", "SteadyState", "SteadyStateTime", "SteadyStateTimeUnit", "ModelFile", "OutputPathsIds"],
+      "rows": [
+        {
+          "Scenario_name": "TestScenario",
+          "IndividualId": "Indiv1",
+          "PopulationId": null,
+          "ReadPopulationFromCSV": null,
+          "ModelParameterSheets": "Global",
+          "ApplicationProtocol": "Aciclovir_iv_250mg",
+          "SimulationTime": "0, 24, 60",
+          "SimulationTimeUnit": "h",
+          "SteadyState": null,
+          "SteadyStateTime": null,
+          "SteadyStateTimeUnit": null,
+          "ModelFile": "Aciclovir.pkml",
+          "OutputPathsIds": "Aciclovir_PVB"
+        },
+        {
+          "Scenario_name": "TestScenario2",
+          "IndividualId": "Indiv1",
+          "PopulationId": null,
+          "ReadPopulationFromCSV": null,
+          "ModelParameterSheets": "\"Global\", \"Aciclovir\", \"Sheet, with comma\"",
+          "ApplicationProtocol": "Aciclovir_iv_250mg",
+          "SimulationTime": "0, 1, 60; 1, 12, 20",
+          "SimulationTimeUnit": "h",
+          "SteadyState": "TRUE",
+          "SteadyStateTime": "500",
+          "SteadyStateTimeUnit": "min",
+          "ModelFile": "Aciclovir.pkml",
+          "OutputPathsIds": "Aciclovir_PVB, Aciclovir_fat_cell"
+        },
+        {
+          "Scenario_name": "PopulationScenario",
+          "IndividualId": "Indiv1",
+          "PopulationId": "TestPopulation",
+          "ReadPopulationFromCSV": "FALSE",
+          "ModelParameterSheets": "Global",
+          "ApplicationProtocol": "Aciclovir_iv_250mg",
+          "SimulationTime": "0, 12, 20",
+          "SimulationTimeUnit": "h",
+          "SteadyState": "FALSE",
+          "SteadyStateTime": null,
+          "SteadyStateTimeUnit": null,
+          "ModelFile": "Aciclovir.pkml",
+          "OutputPathsIds": null
+        },
+        {
+          "Scenario_name": "PopulationScenarioFromCSV",
+          "IndividualId": "Indiv1",
+          "PopulationId": "TestPopulation",
+          "ReadPopulationFromCSV": "TRUE",
+          "ModelParameterSheets": "Global",
+          "ApplicationProtocol": "Aciclovir_iv_250mg",
+          "SimulationTime": "0, 12, 20",
+          "SimulationTimeUnit": "h",
+          "SteadyState": "FALSE",
+          "SteadyStateTime": null,
+          "SteadyStateTimeUnit": null,
+          "ModelFile": "Aciclovir.pkml",
+          "OutputPathsIds": null
+        },
+        {
+          "Scenario_name": "TestScenario_missingParam",
+          "IndividualId": "Indiv1",
+          "PopulationId": null,
+          "ReadPopulationFromCSV": null,
+          "ModelParameterSheets": "Global, MissingParam",
+          "ApplicationProtocol": "Aciclovir_iv_250mg",
+          "SimulationTime": "0, 24, 60",
+          "SimulationTimeUnit": "h",
+          "SteadyState": null,
+          "SteadyStateTime": null,
+          "SteadyStateTimeUnit": null,
+          "ModelFile": "Aciclovir.pkml",
+          "OutputPathsIds": null
+        },
+        {
+          "Scenario_name": "PITestScenario",
+          "IndividualId": null,
+          "PopulationId": null,
+          "ReadPopulationFromCSV": null,
+          "ModelParameterSheets": null,
+          "ApplicationProtocol": null,
+          "SimulationTime": null,
+          "SimulationTimeUnit": null,
+          "SteadyState": null,
+          "SteadyStateTime": null,
+          "SteadyStateTimeUnit": null,
+          "ModelFile": "Aciclovir.pkml",
+          "OutputPathsIds": null
+        },
+        {
+          "Scenario_name": "PIScenario_250mg",
+          "IndividualId": null,
+          "PopulationId": null,
+          "ReadPopulationFromCSV": null,
+          "ModelParameterSheets": "Aciclovir",
+          "ApplicationProtocol": "Protocol_250mg",
+          "SimulationTime": "0,120,1",
+          "SimulationTimeUnit": "h",
+          "SteadyState": "FALSE",
+          "SteadyStateTime": null,
+          "SteadyStateTimeUnit": null,
+          "ModelFile": "Aciclovir.pkml",
+          "OutputPathsIds": null
+        },
+        {
+          "Scenario_name": "PIScenario_500mg",
+          "IndividualId": null,
+          "PopulationId": null,
+          "ReadPopulationFromCSV": null,
+          "ModelParameterSheets": "Aciclovir",
+          "ApplicationProtocol": "Protocol_500mg",
+          "SimulationTime": "0,120,1",
+          "SimulationTimeUnit": "h",
+          "SteadyState": "FALSE",
+          "SteadyStateTime": null,
+          "SteadyStateTimeUnit": null,
+          "ModelFile": "Aciclovir.pkml",
+          "OutputPathsIds": null
+        }
+      ]
+    },
+    "OutputPaths": {
+      "column_names": ["OutputPathId", "OutputPath"],
+      "rows": [
+        {
+          "OutputPathId": "Aciclovir_PVB",
+          "OutputPath": "Organism|PeripheralVenousBlood|Aciclovir|Plasma (Peripheral Venous Blood)"
+        },
+        {
+          "OutputPathId": "Aciclovir_fat_cell",
+          "OutputPath": "Organism|Fat|Intracellular|Aciclovir|Concentration in container"
+        }
+      ]
+    },
+    "PKParameter": {
+      "column_names": ["Scenario_name", "PKParameter"],
+      "rows": []
+    }
+  },
+  "Applications": {
+    "Aciclovir_iv_250mg": {
+      "column_names": ["Container Path", "Parameter Name", "Value", "Units"],
+      "rows": [
+        {
+          "Container Path": "Events|IV 250mg 10min|Application_1|ProtocolSchemaItem",
+          "Parameter Name": "Dose",
+          "Value": "250",
+          "Units": "mg"
+        }
+      ]
+    },
+    "Protocol_250mg": {
+      "column_names": ["Container Path", "Parameter Name", "Value", "Units"],
+      "rows": [
+        {
+          "Container Path": "Events|IV 250mg 10min|Application_1|ProtocolSchemaItem",
+          "Parameter Name": "Dose",
+          "Value": "250",
+          "Units": "mg"
+        }
+      ]
+    },
+    "Protocol_500mg": {
+      "column_names": ["Container Path", "Parameter Name", "Value", "Units"],
+      "rows": [
+        {
+          "Container Path": "Events|IV 250mg 10min|Application_1|ProtocolSchemaItem",
+          "Parameter Name": "Dose",
+          "Value": "500",
+          "Units": "mg"
+        }
+      ]
+    }
+  },
+  "Plots": {
+    "DataCombined": {
+      "column_names": ["DataCombinedName", "dataType", "label", "scenario", "path", "dataSet", "group", "xOffsets", "xOffsetsUnits", "yOffsets", "yOffsetsUnits", "xScaleFactors", "yScaleFactors"],
+      "rows": [
+        {
+          "DataCombinedName": "AciclovirPVB",
+          "dataType": "simulated",
+          "label": "Aciclovir simulated",
+          "scenario": "TestScenario",
+          "path": "Organism|PeripheralVenousBlood|Aciclovir|Plasma (Peripheral Venous Blood)",
+          "dataSet": null,
+          "group": "Aciclovir PVB",
+          "xOffsets": "1",
+          "xOffsetsUnits": "h",
+          "yOffsets": null,
+          "yOffsetsUnits": null,
+          "xScaleFactors": null,
+          "yScaleFactors": null
+        },
+        {
+          "DataCombinedName": "AciclovirPVB",
+          "dataType": "observed",
+          "label": "Aciclovri observed",
+          "scenario": null,
+          "path": null,
+          "dataSet": "Laskin 1982.Group A_Aciclovir_1_Human_MALE_PeripheralVenousBlood_Plasma_2.5 mg/kg_iv_",
+          "group": "Aciclovir PVB",
+          "xOffsets": "1",
+          "xOffsetsUnits": "min",
+          "yOffsets": null,
+          "yOffsetsUnits": null,
+          "xScaleFactors": null,
+          "yScaleFactors": null
+        },
+        {
+          "DataCombinedName": "AciclovirPop",
+          "dataType": "simulated",
+          "label": "Aciclovir simulated",
+          "scenario": "PopulationScenario",
+          "path": "Organism|PeripheralVenousBlood|Aciclovir|Plasma (Peripheral Venous Blood)",
+          "dataSet": null,
+          "group": "AciclovirPop",
+          "xOffsets": "1",
+          "xOffsetsUnits": "h",
+          "yOffsets": null,
+          "yOffsetsUnits": null,
+          "xScaleFactors": null,
+          "yScaleFactors": null
+        },
+        {
+          "DataCombinedName": "AciclovirPop",
+          "dataType": "observed",
+          "label": "Aciclovri observed",
+          "scenario": null,
+          "path": null,
+          "dataSet": "Laskin 1982.Group A_Aciclovir_1_Human_MALE_PeripheralVenousBlood_Plasma_2.5 mg/kg_iv_",
+          "group": "AciclovirPop",
+          "xOffsets": "1",
+          "xOffsetsUnits": "min",
+          "yOffsets": null,
+          "yOffsetsUnits": null,
+          "xScaleFactors": null,
+          "yScaleFactors": null
+        }
+      ]
+    },
+    "plotConfiguration": {
+      "column_names": ["plotID", "DataCombinedName", "plotType", "title", "xUnit", "yUnit", "xAxisScale", "yAxisScale", "xValuesLimits", "yValuesLimits", "aggregation", "quantiles", "nsd", "foldDistance", "subtitle"],
+      "rows": [
+        {
+          "plotID": "P1",
+          "DataCombinedName": "AciclovirPVB",
+          "plotType": "individual",
+          "title": "PlotTitle",
+          "xUnit": "h",
+          "yUnit": null,
+          "xAxisScale": null,
+          "yAxisScale": null,
+          "xValuesLimits": "0, 24",
+          "yValuesLimits": null,
+          "aggregation": null,
+          "quantiles": null,
+          "nsd": null,
+          "foldDistance": null,
+          "subtitle": "PlotSubtitle"
+        },
+        {
+          "plotID": "P2",
+          "DataCombinedName": "AciclovirPVB",
+          "plotType": "observedVsSimulated",
+          "title": null,
+          "xUnit": null,
+          "yUnit": null,
+          "xAxisScale": null,
+          "yAxisScale": null,
+          "xValuesLimits": null,
+          "yValuesLimits": null,
+          "aggregation": null,
+          "quantiles": null,
+          "nsd": null,
+          "foldDistance": "2, 3",
+          "subtitle": null
+        },
+        {
+          "plotID": "P3",
+          "DataCombinedName": "AciclovirPVB",
+          "plotType": "residualsVsSimulated",
+          "title": null,
+          "xUnit": null,
+          "yUnit": null,
+          "xAxisScale": null,
+          "yAxisScale": null,
+          "xValuesLimits": null,
+          "yValuesLimits": null,
+          "aggregation": null,
+          "quantiles": null,
+          "nsd": null,
+          "foldDistance": null,
+          "subtitle": null
+        },
+        {
+          "plotID": "P4",
+          "DataCombinedName": "AciclovirPop",
+          "plotType": "population",
+          "title": null,
+          "xUnit": "h",
+          "yUnit": null,
+          "xAxisScale": null,
+          "yAxisScale": null,
+          "xValuesLimits": "0, 24",
+          "yValuesLimits": null,
+          "aggregation": "arithmetic",
+          "quantiles": null,
+          "nsd": "1.96",
+          "foldDistance": null,
+          "subtitle": null
+        }
+      ]
+    },
+    "plotGrids": {
+      "column_names": ["name", "plotIDs", "title", "subtitle"],
+      "rows": [
+        {
+          "name": "Aciclovir",
+          "plotIDs": "P1, P2, P3",
+          "title": "GridTitle",
+          "subtitle": "GridSubtitle"
+        },
+        {
+          "name": "Aciclovir2",
+          "plotIDs": "P2",
+          "title": null,
+          "subtitle": null
+        },
+        {
+          "name": "Aciclovir3",
+          "plotIDs": "P4",
+          "title": null,
+          "subtitle": null
+        }
+      ]
+    },
+    "exportConfiguration": {
+      "column_names": ["plotGridName", "outputName", "width"],
+      "rows": []
+    },
+    "dataTypes": {
+      "column_names": "dataType",
+      "rows": [
+        {
+          "dataType": "observed"
+        },
+        {
+          "dataType": "simulated"
+        }
+      ]
+    },
+    "plotTypes": {
+      "column_names": "plotType",
+      "rows": [
+        {
+          "plotType": "individual"
+        },
+        {
+          "plotType": "population"
+        },
+        {
+          "plotType": "observedVsSimulated"
+        },
+        {
+          "plotType": "residualsVsSimulated"
+        },
+        {
+          "plotType": "residualsVsTime"
+        }
+      ]
+    },
+    "ObservedDataNames": {
+      "column_names": [],
+      "rows": []
+    }
+  },
+  "ParameterIdentification": {
+    "PIOutputMappings": {
+      "column_names": ["PITaskName", "Scenarios", "OutputPath", "ObservedDataSheet", "DataSet", "Scaling", "xOffset", "yOffset", "xFactor", "yFactor", "Weight"],
+      "rows": [
+        {
+          "PITaskName": "AciclovirSimple",
+          "Scenarios": "PITestScenario",
+          "OutputPath": "Organism|PeripheralVenousBlood|Aciclovir|Plasma (Peripheral Venous Blood)",
+          "ObservedDataSheet": "Laskin 1982.Group A",
+          "DataSet": "Laskin 1982.Group A_Aciclovir_1_Human_MALE_PeripheralVenousBlood_Plasma_2.5 mg/kg_iv_",
+          "Scaling": "lin",
+          "xOffset": null,
+          "yOffset": null,
+          "xFactor": null,
+          "yFactor": null,
+          "Weight": null
+        },
+        {
+          "PITaskName": "AciclovirSimplePathId",
+          "Scenarios": "PITestScenario",
+          "OutputPath": "Aciclovir_PVB",
+          "ObservedDataSheet": "Laskin 1982.Group A",
+          "DataSet": "Laskin 1982.Group A_Aciclovir_1_Human_MALE_PeripheralVenousBlood_Plasma_2.5 mg/kg_iv_",
+          "Scaling": "lin",
+          "xOffset": null,
+          "yOffset": null,
+          "xFactor": null,
+          "yFactor": null,
+          "Weight": null
+        },
+        {
+          "PITaskName": "AciclovirMultiScenario",
+          "Scenarios": "PIScenario_250mg",
+          "OutputPath": "Organism|PeripheralVenousBlood|Aciclovir|Plasma (Peripheral Venous Blood)",
+          "ObservedDataSheet": "Laskin 1982.Group A",
+          "DataSet": "Laskin 1982.Group A_Aciclovir_1_Human_MALE_PeripheralVenousBlood_Plasma_2.5 mg/kg_iv_",
+          "Scaling": "log",
+          "xOffset": null,
+          "yOffset": null,
+          "xFactor": null,
+          "yFactor": null,
+          "Weight": null
+        },
+        {
+          "PITaskName": "AciclovirMultiScenario",
+          "Scenarios": "PIScenario_500mg",
+          "OutputPath": "Organism|PeripheralVenousBlood|Aciclovir|Plasma (Peripheral Venous Blood)",
+          "ObservedDataSheet": "Laskin 1982.Group A",
+          "DataSet": "Laskin 1982.Group A_Aciclovir_1_Human_MALE_PeripheralVenousBlood_Plasma_5.0 mg/kg_iv_",
+          "Scaling": "log",
+          "xOffset": null,
+          "yOffset": null,
+          "xFactor": null,
+          "yFactor": null,
+          "Weight": null
+        }
+      ]
+    },
+    "PIParameters": {
+      "column_names": ["PITaskName", "Scenarios", "Container Path", "Parameter Name", "Units", "MinValue", "MaxValue", "StartValue", "Group"],
+      "rows": [
+        {
+          "PITaskName": "AciclovirSimple",
+          "Scenarios": "PITestScenario",
+          "Container Path": "Aciclovir",
+          "Parameter Name": "Lipophilicity",
+          "Units": "Log Units",
+          "MinValue": "-10",
+          "MaxValue": "10",
+          "StartValue": "1",
+          "Group": "1"
+        },
+        {
+          "PITaskName": "AciclovirSimplePathId",
+          "Scenarios": "PITestScenario",
+          "Container Path": "Aciclovir",
+          "Parameter Name": "Lipophilicity",
+          "Units": "Log Units",
+          "MinValue": "-10",
+          "MaxValue": "10",
+          "StartValue": "1",
+          "Group": "1"
+        },
+        {
+          "PITaskName": "AciclovirMultiScenario",
+          "Scenarios": "PIScenario_250mg",
+          "Container Path": "Aciclovir",
+          "Parameter Name": "Lipophilicity",
+          "Units": "Log Units",
+          "MinValue": "-10",
+          "MaxValue": "10",
+          "StartValue": "1",
+          "Group": "1"
+        },
+        {
+          "PITaskName": "AciclovirMultiScenario",
+          "Scenarios": "PIScenario_500mg",
+          "Container Path": "Aciclovir",
+          "Parameter Name": "Lipophilicity",
+          "Units": "Log Units",
+          "MinValue": "-10",
+          "MaxValue": "10",
+          "StartValue": "1",
+          "Group": "1"
+        },
+        {
+          "PITaskName": "AciclovirMultiScenario",
+          "Scenarios": "PIScenario_250mg",
+          "Container Path": "Neighborhoods|Kidney_pls_Kidney_ur|Aciclovir|Renal Clearances-TS-Aciclovir",
+          "Parameter Name": "TSspec",
+          "Units": null,
+          "MinValue": "0",
+          "MaxValue": "10",
+          "StartValue": "0.5",
+          "Group": "2"
+        },
+        {
+          "PITaskName": "AciclovirMultiScenario",
+          "Scenarios": "PIScenario_500mg",
+          "Container Path": "Neighborhoods|Kidney_pls_Kidney_ur|Aciclovir|Renal Clearances-TS-Aciclovir",
+          "Parameter Name": "TSspec",
+          "Units": null,
+          "MinValue": "0",
+          "MaxValue": "10",
+          "StartValue": "0.5",
+          "Group": "3"
+        }
+      ]
+    },
+    "PIConfiguration": {
+      "column_names": ["PITaskName", "Algorithm", "CIMethod", "PrintEvaluationFeedback", "AutoEstimateCI", "numberOfCores", "checkForNegativeValues", "ObjectiveFunctionType", "ResidualWeightingMethod", "RobustMethod", "ScaleVar", "LinScaleCV", "LogScaleSD"],
+      "rows": [
+        {
+          "PITaskName": "AciclovirSimple",
+          "Algorithm": "BOBYQA",
+          "CIMethod": "hessian",
+          "PrintEvaluationFeedback": "TRUE",
+          "AutoEstimateCI": "FALSE",
+          "numberOfCores": null,
+          "checkForNegativeValues": null,
+          "ObjectiveFunctionType": null,
+          "ResidualWeightingMethod": null,
+          "RobustMethod": null,
+          "ScaleVar": null,
+          "LinScaleCV": null,
+          "LogScaleSD": null
+        }
+      ]
+    },
+    "AlgorithmOptions": {
+      "column_names": ["PITaskName", "OptionName", "OptionValue"],
+      "rows": [
+        {
+          "PITaskName": "AciclovirSimple",
+          "OptionName": "maxeval",
+          "OptionValue": "100"
+        },
+        {
+          "PITaskName": "AciclovirSimple",
+          "OptionName": "ftol_rel",
+          "OptionValue": "0"
+        }
+      ]
+    },
+    "CIOptions": {
+      "column_names": ["PITaskName", "OptionName", "OptionValue"],
+      "rows": [
+        {
+          "PITaskName": "AciclovirSimple",
+          "OptionName": "confLevel",
+          "OptionValue": "0.95"
+        }
+      ]
+    }
+  },
+  "projectConfigurationAddons": {
+    "column_names": ["Property", "Value", "Description"],
+    "rows": [
+      {
+        "Property": "ospsuiteReportingFrameworkVersion",
+        "Value": "1.0.1.9003",
+        "Description": "Version of the ospsuite.reportingframework package used to create this configuration"
+      },
+      {
+        "Property": "pKParameterFile",
+        "Value": "PKParameter.xlsx",
+        "Description": "Name of the excel file with pk-Parameter information. Must be located in the \"configurationsFolder\""
+      },
+      {
+        "Property": "reportsFile",
+        "Value": "Reports.xlsx",
+        "Description": "Name of the excel file with plot configurations. Must be located in the \"configurationsFolder\""
+      },
+      {
+        "Property": "electronicPackageFolder",
+        "Value": "../../Outputs/ePackage/AnalysisProgram",
+        "Description": "Path to the folder where electronic Package is saved"
+      }
+    ]
+  },
+  "pKParameterFile": {
+    "Template": {
+      "column_names": ["Name", "DisplayName", "DisplayUnit", "OutputPathIds", "Descriptions"],
+      "rows": [
+        {
+          "Name": "identifier, do not change",
+          "DisplayName": "used in plots and tables",
+          "DisplayUnit": "used in plots and tables",
+          "OutputPathIds": "if empty parameter is calculated for all simulated outputs, otherwise specify comma separated",
+          "Descriptions": ""
+        },
+        {
+          "Name": "C_max",
+          "DisplayName": "C max",
+          "DisplayUnit": "µg/l",
+          "OutputPathIds": "",
+          "Descriptions": "Use for single dose simulations"
+        },
+        {
+          "Name": "C_max_norm",
+          "DisplayName": "C max norm",
+          "DisplayUnit": "kg/l",
+          "OutputPathIds": "",
+          "Descriptions": "Use for single dose simulations"
+        },
+        {
+          "Name": "t_max",
+          "DisplayName": "T max",
+          "DisplayUnit": "h",
+          "OutputPathIds": "",
+          "Descriptions": "Use for single dose simulations"
+        },
+        {
+          "Name": "C_tEnd",
+          "DisplayName": "C End",
+          "DisplayUnit": "µg/l",
+          "OutputPathIds": "",
+          "Descriptions": "Use for single dose simulations"
+        },
+        {
+          "Name": "AUC_tEnd",
+          "DisplayName": "AUC",
+          "DisplayUnit": "µg*h/l",
+          "OutputPathIds": "",
+          "Descriptions": "Use for single dose simulations"
+        },
+        {
+          "Name": "AUC_tEnd_norm",
+          "DisplayName": "AUC norm",
+          "DisplayUnit": "kg*h/l",
+          "OutputPathIds": "",
+          "Descriptions": "Use for single dose simulations"
+        },
+        {
+          "Name": "AUC_inf",
+          "DisplayName": "AUC inf",
+          "DisplayUnit": "µg*h/l",
+          "OutputPathIds": "",
+          "Descriptions": "Use for single dose simulations"
+        },
+        {
+          "Name": "AUC_inf_norm",
+          "DisplayName": "AUC inf norm",
+          "DisplayUnit": "kg*h/l",
+          "OutputPathIds": "",
+          "Descriptions": "Use for single dose simulations"
+        },
+        {
+          "Name": "MRT",
+          "DisplayName": "MRT",
+          "DisplayUnit": "h",
+          "OutputPathIds": "",
+          "Descriptions": "Use for single dose simulations"
+        },
+        {
+          "Name": "Thalf",
+          "DisplayName": "Thalf",
+          "DisplayUnit": "h",
+          "OutputPathIds": "",
+          "Descriptions": "Use for single dose simulations"
+        },
+        {
+          "Name": "CL",
+          "DisplayName": "CL",
+          "DisplayUnit": "ml/min/kg",
+          "OutputPathIds": "",
+          "Descriptions": "Use for single dose simulations"
+        },
+        {
+          "Name": "Vss",
+          "DisplayName": "Vss",
+          "DisplayUnit": "ml/kg",
+          "OutputPathIds": "",
+          "Descriptions": "Use for single dose simulations"
+        },
+        {
+          "Name": "Vd",
+          "DisplayName": "Vd",
+          "DisplayUnit": "ml/kg",
+          "OutputPathIds": "",
+          "Descriptions": "Use for single dose simulations"
+        },
+        {
+          "Name": "C_max_tD1_tD2",
+          "DisplayName": "C_max_t1_t2",
+          "DisplayUnit": "µg/l",
+          "OutputPathIds": "",
+          "Descriptions": "Use for multi dose simulations"
+        },
+        {
+          "Name": "C_max_tD1_tD2_norm",
+          "DisplayName": "C_max_t1_t2_norm",
+          "DisplayUnit": "kg/l",
+          "OutputPathIds": "",
+          "Descriptions": "Use for multi dose simulations"
+        },
+        {
+          "Name": "C_max_tDLast_tEnd",
+          "DisplayName": "C_max_tLast_tEnd",
+          "DisplayUnit": "µg/l",
+          "OutputPathIds": "",
+          "Descriptions": "Use for multi dose simulations"
+        },
+        {
+          "Name": "C_max_tDLast_tEnd_norm",
+          "DisplayName": "C_max_tLast_tEnd_norm",
+          "DisplayUnit": "kg/l",
+          "OutputPathIds": "",
+          "Descriptions": "Use for multi dose simulations"
+        },
+        {
+          "Name": "t_max_tD1_tD2",
+          "DisplayName": "t_max_t1_t2",
+          "DisplayUnit": "h",
+          "OutputPathIds": "",
+          "Descriptions": "Use for multi dose simulations"
+        },
+        {
+          "Name": "t_max_tDLast_tEnd",
+          "DisplayName": "t_max_tLast_tEnd",
+          "DisplayUnit": "h",
+          "OutputPathIds": "",
+          "Descriptions": "Use for multi dose simulations"
+        },
+        {
+          "Name": "C_trough_tD2",
+          "DisplayName": "C_trough_t2",
+          "DisplayUnit": "µg/l",
+          "OutputPathIds": "",
+          "Descriptions": "Use for multi dose simulations"
+        },
+        {
+          "Name": "C_trough_tDLast",
+          "DisplayName": "C_trough_tLast",
+          "DisplayUnit": "µg/l",
+          "OutputPathIds": "",
+          "Descriptions": "Use for multi dose simulations"
+        },
+        {
+          "Name": "AUC_tD1_tD2",
+          "DisplayName": "AUC_t1_t2",
+          "DisplayUnit": "µg*h/l",
+          "OutputPathIds": "",
+          "Descriptions": "Use for multi dose simulations"
+        },
+        {
+          "Name": "AUC_tD1_tD2_norm",
+          "DisplayName": "AUC_t1_t2_norm",
+          "DisplayUnit": "kg*h/l",
+          "OutputPathIds": "",
+          "Descriptions": "Use for multi dose simulations"
+        },
+        {
+          "Name": "AUC_tDLast_minus_1_tDLast",
+          "DisplayName": "AUC_tLast_minus_1_tLast",
+          "DisplayUnit": "µg*h/l",
+          "OutputPathIds": "",
+          "Descriptions": "Use for multi dose simulations"
+        },
+        {
+          "Name": "AUC_tDLast_minus_1_tDLast_norm",
+          "DisplayName": "AUC_tLast_minus_1_tLast_norm",
+          "DisplayUnit": "kg*h/l",
+          "OutputPathIds": "",
+          "Descriptions": "Use for multi dose simulations"
+        },
+        {
+          "Name": "AUC_inf_tD1",
+          "DisplayName": "AUC_inf_t1",
+          "DisplayUnit": "µg*h/l",
+          "OutputPathIds": "",
+          "Descriptions": "Use for multi dose simulations"
+        },
+        {
+          "Name": "AUC_inf_tD1_norm",
+          "DisplayName": "AUC_inf_t1_norm",
+          "DisplayUnit": "kg*h/l",
+          "OutputPathIds": "",
+          "Descriptions": "Use for multi dose simulations"
+        },
+        {
+          "Name": "AUC_inf_tDLast",
+          "DisplayName": "AUC_inf_tLast",
+          "DisplayUnit": "µg*h/l",
+          "OutputPathIds": "",
+          "Descriptions": "Use for multi dose simulations"
+        },
+        {
+          "Name": "AUC_inf_tDLast_norm",
+          "DisplayName": "AUC_inf_tLast_norm",
+          "DisplayUnit": "kg*h/l",
+          "OutputPathIds": "",
+          "Descriptions": "Use for multi dose simulations"
+        },
+        {
+          "Name": "Thalf_tDLast_tEnd",
+          "DisplayName": "Thalf_tLast_tEnd",
+          "DisplayUnit": "h",
+          "OutputPathIds": "",
+          "Descriptions": "Use for multi dose simulations"
+        },
+        {
+          "Name": "F_tEnd",
+          "DisplayName": "F_tEnd",
+          "DisplayUnit": "%",
+          "OutputPathIds": "",
+          "Descriptions": "use for fractions"
+        },
+        {
+          "Name": "F_max",
+          "DisplayName": "F_max",
+          "DisplayUnit": "%",
+          "OutputPathIds": "",
+          "Descriptions": "use for fractions"
+        }
+      ]
+    },
+    "Userdef PK Parameter": {
+      "column_names": ["Name", "Standard PK parameter", "Display Unit", "StartTime [min]", "StartApplicationIndex", "StartTimeOffset [min]", "EndTime [min]", "EndApplicationIndex", "EndTimeOffset [min]", "NormalizationFactor", "ConcentrationThreshold [µmol/l]"],
+      "rows": [
+        {
+          "Name": "identifier",
+          "Standard PK parameter": "",
+          "Display Unit": "used to define dimension",
+          "StartTime [min]": null,
+          "StartApplicationIndex": null,
+          "StartTimeOffset [min]": null,
+          "EndTime [min]": null,
+          "EndApplicationIndex": null,
+          "EndTimeOffset [min]": null,
+          "NormalizationFactor": null,
+          "ConcentrationThreshold [µmol/l]": null
+        },
+        {
+          "Name": "F_tEnd",
+          "Standard PK parameter": "C_trough",
+          "Display Unit": "%",
+          "StartTime [min]": null,
+          "StartApplicationIndex": null,
+          "StartTimeOffset [min]": null,
+          "EndTime [min]": null,
+          "EndApplicationIndex": null,
+          "EndTimeOffset [min]": null,
+          "NormalizationFactor": null,
+          "ConcentrationThreshold [µmol/l]": null
+        },
+        {
+          "Name": "F_max",
+          "Standard PK parameter": "C_max",
+          "Display Unit": "%",
+          "StartTime [min]": null,
+          "StartApplicationIndex": null,
+          "StartTimeOffset [min]": null,
+          "EndTime [min]": null,
+          "EndApplicationIndex": null,
+          "EndTimeOffset [min]": null,
+          "NormalizationFactor": null,
+          "ConcentrationThreshold [µmol/l]": null
+        }
+      ]
+    },
+    "Dictionary": {
+      "column_names": ["Unit_Conc", "Unit Time", "Unit AUC", "Unit CL", "Unit_VSS", "StandardPK"],
+      "rows": [
+        {
+          "Unit_Conc": "mg/l",
+          "Unit Time": "s",
+          "Unit AUC": "mg*h/ml",
+          "Unit CL": "l/min/kg",
+          "Unit_VSS": "l/kg",
+          "StandardPK": "C_max"
+        },
+        {
+          "Unit_Conc": "µg/l",
+          "Unit Time": "min",
+          "Unit AUC": "µg*h/ml",
+          "Unit CL": "l/h/kg",
+          "Unit_VSS": "ml/kg",
+          "StandardPK": "C_max_norm"
+        },
+        {
+          "Unit_Conc": "ng/l",
+          "Unit Time": "h",
+          "Unit AUC": "ng*h/ml",
+          "Unit CL": "ml/min/kg",
+          "Unit_VSS": "",
+          "StandardPK": "C_min"
+        },
+        {
+          "Unit_Conc": "pg/l",
+          "Unit Time": "day(s)",
+          "Unit AUC": "pg*h/ml",
+          "Unit CL": "ml/h/kg",
+          "Unit_VSS": "",
+          "StandardPK": "C_min_norm"
+        },
+        {
+          "Unit_Conc": "mg/dl",
+          "Unit Time": "week(s)",
+          "Unit AUC": "mg*h/l",
+          "Unit CL": "",
+          "Unit_VSS": "",
+          "StandardPK": "t_max"
+        },
+        {
+          "Unit_Conc": "mg/ml",
+          "Unit Time": "month(s)",
+          "Unit AUC": "µg*h/l",
+          "Unit CL": "",
+          "Unit_VSS": "",
+          "StandardPK": "t_min"
+        },
+        {
+          "Unit_Conc": "µg/ml",
+          "Unit Time": "year(s)",
+          "Unit AUC": "ng*h/l",
+          "Unit CL": "",
+          "Unit_VSS": "",
+          "StandardPK": "C_trough"
+        },
+        {
+          "Unit_Conc": "ng/ml",
+          "Unit Time": "ks",
+          "Unit AUC": "pg*h/l",
+          "Unit CL": "",
+          "Unit_VSS": "",
+          "StandardPK": "C_trough_norm"
+        },
+        {
+          "Unit_Conc": "pg/ml",
+          "Unit Time": "",
+          "Unit AUC": "mg*min/ml",
+          "Unit CL": "",
+          "Unit_VSS": "",
+          "StandardPK": "AUC_tEnd"
+        },
+        {
+          "Unit_Conc": "kg/l",
+          "Unit Time": "",
+          "Unit AUC": "µg*min/ml",
+          "Unit CL": "",
+          "Unit_VSS": "",
+          "StandardPK": "AUC_tEnd_norm"
+        },
+        {
+          "Unit_Conc": "mol/l",
+          "Unit Time": "",
+          "Unit AUC": "ng*min/ml",
+          "Unit CL": "",
+          "Unit_VSS": "",
+          "StandardPK": "AUCM_tEnd"
+        },
+        {
+          "Unit_Conc": "mmol/l",
+          "Unit Time": "",
+          "Unit AUC": "pg*min/ml",
+          "Unit CL": "",
+          "Unit_VSS": "",
+          "StandardPK": "AUC_inf"
+        },
+        {
+          "Unit_Conc": "µmol/l",
+          "Unit Time": "",
+          "Unit AUC": "mg*min/l",
+          "Unit CL": "",
+          "Unit_VSS": "",
+          "StandardPK": "AUC_inf_norm"
+        },
+        {
+          "Unit_Conc": "nmol/l",
+          "Unit Time": "",
+          "Unit AUC": "µg*min/l",
+          "Unit CL": "",
+          "Unit_VSS": "",
+          "StandardPK": "AUC_tEnd_inf"
+        },
+        {
+          "Unit_Conc": "pmol/l",
+          "Unit Time": "",
+          "Unit AUC": "ng*min/l",
+          "Unit CL": "",
+          "Unit_VSS": "",
+          "StandardPK": "AUC_tEnd_inf_norm"
+        },
+        {
+          "Unit_Conc": "fmol/l",
+          "Unit Time": "",
+          "Unit AUC": "pg*min/l",
+          "Unit CL": "",
+          "Unit_VSS": "",
+          "StandardPK": "MRT"
+        },
+        {
+          "Unit_Conc": "M",
+          "Unit Time": "",
+          "Unit AUC": "kg*min/l",
+          "Unit CL": "",
+          "Unit_VSS": "",
+          "StandardPK": "FractionAucEndToInf"
+        },
+        {
+          "Unit_Conc": "mM",
+          "Unit Time": "",
+          "Unit AUC": "kg*h/l",
+          "Unit CL": "",
+          "Unit_VSS": "",
+          "StandardPK": "Thalf"
+        },
+        {
+          "Unit_Conc": "µM",
+          "Unit Time": "",
+          "Unit AUC": "kg*h/ml",
+          "Unit CL": "",
+          "Unit_VSS": "",
+          "StandardPK": "Vss"
+        },
+        {
+          "Unit_Conc": "nM",
+          "Unit Time": "",
+          "Unit AUC": "kg*min/ml",
+          "Unit CL": "",
+          "Unit_VSS": "",
+          "StandardPK": "Vd"
+        },
+        {
+          "Unit_Conc": "pM",
+          "Unit Time": "",
+          "Unit AUC": "mmol*h/ml",
+          "Unit CL": "",
+          "Unit_VSS": "",
+          "StandardPK": "Tthreshold"
+        },
+        {
+          "Unit_Conc": "fM",
+          "Unit Time": "",
+          "Unit AUC": "µmol*h/ml",
+          "Unit CL": "",
+          "Unit_VSS": "",
+          "StandardPK": ""
+        },
+        {
+          "Unit_Conc": "mol/ml",
+          "Unit Time": "",
+          "Unit AUC": "nmol*h/ml",
+          "Unit CL": "",
+          "Unit_VSS": "",
+          "StandardPK": ""
+        },
+        {
+          "Unit_Conc": "mmol/ml",
+          "Unit Time": "",
+          "Unit AUC": "pmol*h/ml",
+          "Unit CL": "",
+          "Unit_VSS": "",
+          "StandardPK": ""
+        },
+        {
+          "Unit_Conc": "µmol/ml",
+          "Unit Time": "",
+          "Unit AUC": "mmol*h/l",
+          "Unit CL": "",
+          "Unit_VSS": "",
+          "StandardPK": ""
+        },
+        {
+          "Unit_Conc": "nmol/ml",
+          "Unit Time": "",
+          "Unit AUC": "µmol*h/l",
+          "Unit CL": "",
+          "Unit_VSS": "",
+          "StandardPK": ""
+        },
+        {
+          "Unit_Conc": "pmol/ml",
+          "Unit Time": "",
+          "Unit AUC": "nmol*h/l",
+          "Unit CL": "",
+          "Unit_VSS": "",
+          "StandardPK": ""
+        },
+        {
+          "Unit_Conc": "fmol/ml",
+          "Unit Time": "",
+          "Unit AUC": "pmol*h/l",
+          "Unit CL": "",
+          "Unit_VSS": "",
+          "StandardPK": ""
+        },
+        {
+          "Unit_Conc": "",
+          "Unit Time": "",
+          "Unit AUC": "mmol*min/ml",
+          "Unit CL": "",
+          "Unit_VSS": "",
+          "StandardPK": ""
+        },
+        {
+          "Unit_Conc": "",
+          "Unit Time": "",
+          "Unit AUC": "µmol*min/ml",
+          "Unit CL": "",
+          "Unit_VSS": "",
+          "StandardPK": ""
+        },
+        {
+          "Unit_Conc": "",
+          "Unit Time": "",
+          "Unit AUC": "nmol*min/ml",
+          "Unit CL": "",
+          "Unit_VSS": "",
+          "StandardPK": ""
+        },
+        {
+          "Unit_Conc": "",
+          "Unit Time": "",
+          "Unit AUC": "pmol*min/ml",
+          "Unit CL": "",
+          "Unit_VSS": "",
+          "StandardPK": ""
+        },
+        {
+          "Unit_Conc": "",
+          "Unit Time": "",
+          "Unit AUC": "µmol*min/l",
+          "Unit CL": "",
+          "Unit_VSS": "",
+          "StandardPK": ""
+        },
+        {
+          "Unit_Conc": "",
+          "Unit Time": "",
+          "Unit AUC": "mmol*min/l",
+          "Unit CL": "",
+          "Unit_VSS": "",
+          "StandardPK": ""
+        },
+        {
+          "Unit_Conc": "",
+          "Unit Time": "",
+          "Unit AUC": "nmol*min/l",
+          "Unit CL": "",
+          "Unit_VSS": "",
+          "StandardPK": ""
+        },
+        {
+          "Unit_Conc": "",
+          "Unit Time": "",
+          "Unit AUC": "pmol*min/l",
+          "Unit CL": "",
+          "Unit_VSS": "",
+          "StandardPK": ""
+        }
+      ]
+    }
+  },
+  "reportsFile": {
+    "Scenarios": {
+      "column_names": ["Scenario", "LongName", "ShortName"],
+      "rows": [
+        {
+          "Scenario": "corresponds to Scenario_name in Scenario.xlsx",
+          "LongName": "long name used in figure caption or as \"Report name\"  in electronic package tables",
+          "ShortName": "shortName used as label in figures such as boxwhisker plost or forest plots"
+        }
+      ]
+    },
+    "DataGroups": {
+      "column_names": ["Group", "StudyId", "StudyArm", "DisplayName", "Reference", "DefaultScenario", "Shape"],
+      "rows": [
+        {
+          "Group": "group identifier used in observed, typcially a study arm",
+          "StudyId": "meta data, just for information",
+          "StudyArm": "meta data, just for information",
+          "DisplayName": "name used in report",
+          "Reference": "reference used in figure footnotes in report for timeprofiles",
+          "DefaultScenario": "used as suggestion for plots",
+          "Shape": "shape used in plots, if empty default colors are used, please fill all or none"
+        }
+      ]
+    },
+    "Outputs": {
+      "column_names": ["OutputPathId", "OutputPath", "DisplayName", "DisplayUnit", "Color", "Fill"],
+      "rows": [
+        {
+          "OutputPathId": "identifier of observed data",
+          "OutputPath": "model path",
+          "DisplayName": "name used for legend and captions",
+          "DisplayUnit": "unit to display",
+          "Color": "color used in plots, if empty default colors are used, please fill all or none",
+          "Fill": "fill color used in plots, if empty default colors are used, please fill all or none"
+        }
+      ]
+    },
+    "ModelParameter": {
+      "column_names": ["ParameterId", "ModelPath", "DisplayName", "DisplayUnit"],
+      "rows": [
+        {
+          "ParameterId": "identifier of parameter",
+          "ModelPath": "model path",
+          "DisplayName": "name used for legend and captions",
+          "DisplayUnit": "unit to display"
+        },
+        {
+          "ParameterId": "age",
+          "ModelPath": "Organism|Age",
+          "DisplayName": "age",
+          "DisplayUnit": "year(s)"
+        },
+        {
+          "ParameterId": "weight",
+          "ModelPath": "Organism|Weight",
+          "DisplayName": "body weight",
+          "DisplayUnit": "kg"
+        },
+        {
+          "ParameterId": "height",
+          "ModelPath": "Organism|Height",
+          "DisplayName": "height",
+          "DisplayUnit": "cm"
+        },
+        {
+          "ParameterId": "gender",
+          "ModelPath": "Gender",
+          "DisplayName": "gender",
+          "DisplayUnit": ""
+        },
+        {
+          "ParameterId": "BMI",
+          "ModelPath": "Organism|BMI",
+          "DisplayName": "BMI",
+          "DisplayUnit": "kg/m²"
+        },
+        {
+          "ParameterId": "BSA",
+          "ModelPath": "Organism|BSA",
+          "DisplayName": "body surface area",
+          "DisplayUnit": "m²"
+        }
+      ]
+    },
+    "TimeProfiles": {
+      "column_names": ["Level", "Header", "PlotName", "Scenario", "DataGroupIds", "OutputPathIds", "IndividualIds", "ScenarioName", "plotCaptionAddon", "TimeUnit", "TimeOffset", "ReferenceScenario", "TimeOffset_Reference", "ColorLegend", "TimeRange_total", "TimeRange_firstApplication", "TimeRange_lastApplication", "yScale", "SplitPlotsPerTimeRange", "nFacetColumns", "FacetScale", "Plot_TimeProfiles", "ylimit_linear", "ylimit_log", "Plot_PredictedVsObserved", "FoldDistance_PvO", "Plot_ResidualsAsHistogram", "Plot_ResidualsVsTime", "Plot_ResidualsVsObserved", "Plot_QQ"],
+      "rows": [
+        {
+          "Level": null,
+          "Header": null,
+          "PlotName": "all rows with the same PlotName are plotted together, but may be splitted into different facets",
+          "Scenario": null,
+          "DataGroupIds": "",
+          "OutputPathIds": "outputs in brackets are plotted in the same panel facet",
+          "IndividualIds": "selects inividuals from a Scenario with an IndividualPopulation or from a data group",
+          "ScenarioName": "description of scenario. If empty scenario longname is used",
+          "plotCaptionAddon": "used in figure caption",
+          "TimeUnit": null,
+          "TimeOffset": "time offset for simulation",
+          "ReferenceScenario": null,
+          "TimeOffset_Reference": "Offset between Scenario and Reference",
+          "ColorLegend": "used for plots with reference scenarios. First entry scenario second entry referenceScenario. Entries are separated by \"|\" e.g. \"control | DDI\"",
+          "TimeRange_total": "c(0,24) or one of the following  total, firstApplication, lastApplication",
+          "TimeRange_firstApplication": null,
+          "TimeRange_lastApplication": null,
+          "yScale": "scale of y axis",
+          "SplitPlotsPerTimeRange": "if true (1) for each time range a special plot is created, if false (0) time ranges are displayed different panels in one plot",
+          "nFacetColumns": "number of facet columns",
+          "FacetScale": "passed on to facet_wrap , scales",
+          "Plot_TimeProfiles": "if TRUE (1) time profiles plots are generated",
+          "ylimit_linear": "ylimit used of linear scale, should be something like c(0,NA) to set lower limit to 0",
+          "ylimit_log": "ylimit used of log scale, should be something like c(0.1,NA) to set lower limit to 0.1",
+          "Plot_PredictedVsObserved": "if TRUE (1)predicted vs observed  plots are generated",
+          "FoldDistance_PvO": "value of  fold distances line",
+          "Plot_ResidualsAsHistogram": "if TRUE (1) residualshistograms are generated",
+          "Plot_ResidualsVsTime": "if TRUE (1) residuals vs time plots are generated",
+          "Plot_ResidualsVsObserved": "if TRUE (1)residuals vs observed plots are generated",
+          "Plot_QQ": "if TRUE (1) qq plots are generated"
+        }
+      ]
+    },
+    "TimeRange": {
+      "column_names": ["Tag", "CaptionText", "TimeLabel", "TimeShift"],
+      "rows": [
+        {
+          "Tag": "suffix of TimeRange_columns",
+          "CaptionText": "added to plot caption",
+          "TimeLabel": "time label for plot",
+          "TimeShift": "shift time axis, either numeric or empty, time shift is set to the  lower limit of the timerange, time axis will start at 0"
+        },
+        {
+          "Tag": "total",
+          "CaptionText": "",
+          "TimeLabel": "Time",
+          "TimeShift": "0"
+        },
+        {
+          "Tag": "firstApplication",
+          "CaptionText": "Zoom on the first dose",
+          "TimeLabel": "Time",
+          "TimeShift": ""
+        },
+        {
+          "Tag": "lastApplication",
+          "CaptionText": "Zoom on steady state dose",
+          "TimeLabel": "Time after dose",
+          "TimeShift": ""
+        }
+      ]
+    },
+    "PKParameter_Boxplot": {
+      "column_names": ["Level", "Header", "PlotName", "Scenario", "ReferenceScenario", "ColorLegend", "PkParameters", "OutputPathIds", "plotCaptionAddon", "yScale", "ylimit_linear", "ylimit_log", "FacetScale", "Plot_Absolute", "Plot_Ratio"],
+      "rows": [
+        {
+          "Level": null,
+          "Header": null,
+          "PlotName": "all rows with the same PlotName are plotted together",
+          "Scenario": "Scenario for PKParameter",
+          "ReferenceScenario": "used for Ratio calculation",
+          "ColorLegend": "used for plots with reference scenarios. First entry scenario second entry referenceScenario. Entries are separated by \"|\" e.g. \"control | DDI\"",
+          "PkParameters": "corresponds to name (identifier) of parameter, comma seperated list, creates one plot per Parameter",
+          "OutputPathIds": "comma separated List, produce one facet row per outputPath",
+          "plotCaptionAddon": "used in figure caption",
+          "yScale": "scale of y axis",
+          "ylimit_linear": "ylimit used of linear scale, should be something like c(0,NA) to set lower limit to 0",
+          "ylimit_log": "ylimit used of log scale, should be something like c(0.1,NA) to set lower limit to 0.1",
+          "FacetScale": "passed on to facet_wrap , scales",
+          "Plot_Absolute": "if TRUE (1) absolute values are displayed",
+          "Plot_Ratio": "if TRUE (1) values are displayed as ratio scenario/referenceScenario, scenarios without reference are omitted"
+        }
+      ]
+    },
+    "PKParameter_Forest": {
+      "column_names": ["Level", "Header", "PlotName", "ScenarioGroup", "Scenario", "ReferenceScenario", "PkParameters", "OutputPathIds", "plotCaptionAddon", "DataGroupId", "xScale", "xlimit_linear", "xlimit_log", "FacetScale"],
+      "rows": [
+        {
+          "Level": null,
+          "Header": null,
+          "PlotName": "all rows with the same PlotName are plotted together",
+          "ScenarioGroup": "used as y label and order criteria",
+          "Scenario": "Scenario for PKParameter",
+          "ReferenceScenario": "used for Ratio calculation",
+          "PkParameters": "corresponds to name (identifier) of parameter, comma seperated list, creates one plot per Parameter for absolute values",
+          "OutputPathIds": "comma separated List, produce one facet col umn (for absolute values / one plot for ratios) per outputPath",
+          "plotCaptionAddon": "used in figure caption",
+          "DataGroupId": "data identifier",
+          "xScale": "scale of x axis",
+          "xlimit_linear": "xlimit used of linear scale, should be something like c(0,NA) to set lower limit to 0",
+          "xlimit_log": "xlimit used of log scale, should be something like c(0.1,NA) to set lower limit to 0.1",
+          "FacetScale": "passed on to facet_wrap , scales"
+        }
+      ]
+    },
+    "Histograms": {
+      "column_names": ["Level", "Header", "PlotName", "Scenario", "ReferenceScenario", "ColorLegend", "ParameterIds", "OutputPathIds", "plotCaptionAddon", "xScale", "xlimit_linear", "xlimit_log", "FacetScale"],
+      "rows": [
+        {
+          "Level": null,
+          "Header": null,
+          "PlotName": "all rows with the same PlotName are plotted together",
+          "Scenario": "Scenario",
+          "ReferenceScenario": "used for comparsion",
+          "ColorLegend": "used for plots with reference scenarios. First entry scenario second entry referenceScenario. Entries are separated by \"|\" e.g. \"control | DDI\"",
+          "ParameterIds": "corresponds to name (identifier) of model or PK parameter, comma seperated list is split to plots",
+          "OutputPathIds": "Needed only  if ParameterId is PKParameter, comma separated List is split to facets",
+          "plotCaptionAddon": "used in figure caption",
+          "xScale": "scale of  x  axis",
+          "xlimit_linear": "limit used of linear scale, should be something like c(0,NA) to set lower limit to 0",
+          "xlimit_log": "limit used of log scale, should be something like c(0.1,NA) to set lower limit to 0.1",
+          "FacetScale": "passed on to facet_wrap , scales"
+        }
+      ]
+    },
+    "DistributionVsRange": {
+      "column_names": ["Level", "Header", "PlotName", "Scenarios", "ReferenceScenario", "ColorLegend", "ParameterIds", "OutputPathIds", "ParameterId_Bin", "ModeOfBinning", "NumberOfBins", "plotCaptionAddon", "yScale", "ylimit_linear", "ylimit_log", "FacetScale"],
+      "rows": [
+        {
+          "Level": null,
+          "Header": null,
+          "PlotName": "all rows with the same PlotName are plotted together",
+          "Scenarios": "Scenario for PKParameter, for Range plots comma separatedList is possible",
+          "ReferenceScenario": "used for comparsion",
+          "ColorLegend": "used for plots with reference scenarios. First entry scenario second entry referenceScenario. Entries are separated by \"|\" e.g. \"control | DDI\"",
+          "ParameterIds": "corresponds to name (identifier) of model or PK parameter, comma seperated list is split to plots",
+          "OutputPathIds": "Needed only  if ParameterId is PKParameter, comma separated List is split to facets",
+          "ParameterId_Bin": "Model parameter id used to bin , displayed o x-axis",
+          "ModeOfBinning": "mode how to creates the bins",
+          "NumberOfBins": "for \"custom binning\"  bin borders (soemthing like c(1,2,3)) otherwise number of bins.",
+          "plotCaptionAddon": "used in figure caption",
+          "yScale": "scale of  y axis",
+          "ylimit_linear": "limit used of linear scale, should be something like c(0,NA) to set lower limit to 0",
+          "ylimit_log": "limit used of log scale, should be something like c(0.1,NA) to set lower limit to 0.1",
+          "FacetScale": "passed on to facet_wrap , scales"
+        }
+      ]
+    },
+    "SensitivityPlots": {
+      "column_names": ["Level", "Header", "PlotName", "Scenario", "OutputPathIds", "SensitivityParameterSheet", "PKParameters", "Threshold", "plotCaptionAddon"],
+      "rows": [
+        {
+          "Level": null,
+          "Header": null,
+          "PlotName": "all rows with the same PlotName are plotted together, but may be splitted into different facet colums",
+          "Scenario": null,
+          "OutputPathIds": "comma separated list",
+          "SensitivityParameterSheet": null,
+          "PKParameters": "comma separated list",
+          "Threshold": "Threshold used to filter out the most  sensitive parameter. A threshold of `0.9` means that only parameter  participating to a total of `90` percent of the sensitivity would be  returned. A value of `1` would return the sensitivity for all parameters.",
+          "plotCaptionAddon": "used in figure caption"
+        }
+      ]
+    }
+  }
+}

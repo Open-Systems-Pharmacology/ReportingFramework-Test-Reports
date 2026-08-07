@@ -1,0 +1,16 @@
+﻿"IndividualId","QuantityPath","Parameter","Value","Unit"
+0,"Organism|PeripheralVenousBlood|Aciclovir|Plasma (Peripheral Venous Blood)","C_max",46.15048,µmol/l
+0,"Organism|PeripheralVenousBlood|Aciclovir|Plasma (Peripheral Venous Blood)","C_max_norm",3034916.5,mg/l
+0,"Organism|PeripheralVenousBlood|Aciclovir|Plasma (Peripheral Venous Blood)","t_max",0.18333334,h
+0,"Organism|PeripheralVenousBlood|Aciclovir|Plasma (Peripheral Venous Blood)","C_tEnd",0.03772745,µmol/l
+0,"Organism|PeripheralVenousBlood|Aciclovir|Plasma (Peripheral Venous Blood)","AUC_tEnd",14657.786,µg*h/l
+0,"Organism|PeripheralVenousBlood|Aciclovir|Plasma (Peripheral Venous Blood)","AUC_tEnd_norm",2.568044E+11,µg*min/l
+0,"Organism|PeripheralVenousBlood|Aciclovir|Plasma (Peripheral Venous Blood)","AUC_inf",3915.3171,µmol*min/l
+0,"Organism|PeripheralVenousBlood|Aciclovir|Plasma (Peripheral Venous Blood)","AUC_inf_norm",2.5747644E+11,µg*min/l
+0,"Organism|PeripheralVenousBlood|Aciclovir|Plasma (Peripheral Venous Blood)","MRT",3.3473184,h
+0,"Organism|PeripheralVenousBlood|Aciclovir|Plasma (Peripheral Venous Blood)","Thalf",3.129168,h
+0,"Organism|PeripheralVenousBlood|Aciclovir|Plasma (Peripheral Venous Blood)","FractionAucLastToInf",0.0026100278,
+0,"Organism|PeripheralVenousBlood|Aciclovir|Plasma (Peripheral Venous Blood)","CL",3.8838508,ml/min/kg
+0,"Organism|PeripheralVenousBlood|Aciclovir|Plasma (Peripheral Venous Blood)","Vss",780.0291,ml/kg
+0,"Organism|PeripheralVenousBlood|Aciclovir|Plasma (Peripheral Venous Blood)","Vd",1052.0035,ml/kg
+0,"Organism|PeripheralVenousBlood|Aciclovir|Plasma (Peripheral Venous Blood)","F_max",4615.048,%
