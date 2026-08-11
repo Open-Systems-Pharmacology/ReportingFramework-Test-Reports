@@ -1,7 +1,102 @@
 [
   {
+    "Script": "report-aciclovir-mean",
+    "Report": "Aciclovir-Mean",
+    "Reference": true
+  },
+  {
+    "Script": "report-aciclovir-mean-svg",
+    "Report": "Aciclovir-Mean-SVG",
+    "Reference": true
+  },
+  {
+    "Script": "report-aciclovir-population",
+    "Report": "Aciclovir-Population",
+    "Reference": true
+  },
+  {
+    "Script": "report-raltegravir-absorption",
+    "Report": "Raltegravir-Absorption",
+    "Reference": true
+  },
+  {
+    "Script": "report-raltegravir-mass-balance",
+    "Report": "Raltegravir-Mass-Balance",
+    "Reference": true
+  },
+  {
+    "Script": "report-NO7",
+    "Report": "Test-NO7",
+    "Reference": true
+  },
+  {
+    "Script": "report-NO8",
+    "Report": "Test-NO8",
+    "Reference": true
+  },
+  {
+    "Script": "report-NO9",
+    "Report": "Test-NO9",
+    "Reference": true
+  },
+  {
+    "Script": "report-NO10",
+    "Report": "Test-NO10",
+    "Reference": true
+  },
+  {
+    "Script": "report-NO11",
+    "Report": "Test-NO11",
+    "Reference": true
+  },
+  {
+    "Script": "report-NO12",
+    "Report": "Test-NO12",
+    "Reference": true
+  },
+  {
+    "Script": "report-uc-01-project-init",
+    "Report": "UC-01-Project-Initialization",
+    "Reference": true
+  },
+  {
+    "Script": "report-uc-02-scenario-creation",
+    "Report": "UC-02-Scenario-Creation",
+    "Reference": true
+  },
+  {
+    "Script": "report-uc-03-scenario-results-roundtrip",
+    "Report": "UC-03-Scenario-Results-RoundTrip",
+    "Reference": true
+  },
+  {
+    "Script": "report-uc-04-pk-parameter-loading",
+    "Report": "UC-04-PK-Parameter-Loading",
+    "Reference": true
+  },
+  {
+    "Script": "report-uc-05-population-export",
+    "Report": "UC-05-Population-Export",
+    "Reference": true
+  },
+  {
     "Script": "report-uc-06-utilities-data-integration",
     "Report": "UC-06-Utilities-Data-Integration",
+    "Reference": true
+  },
+  {
+    "Script": "report-uc-07a-plot-timeprofiles",
+    "Report": "UC-07A-Plot-TimeProfiles",
+    "Reference": true
+  },
+  {
+    "Script": "report-uc-07b-plot-pk-boxwhisker",
+    "Report": "UC-07B-Plot-PKBoxwhisker",
+    "Reference": true
+  },
+  {
+    "Script": "report-uc-07c-plot-pk-forest",
+    "Report": "UC-07C-Plot-PKForest",
     "Reference": true
   }
 ]
