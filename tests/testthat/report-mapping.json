@@ -103,5 +103,10 @@
     "Script": "report-uc-07d-plot-demographics",
     "Report": "UC-07D-Plot-Demographics",
     "Reference": true
+  },
+  {
+    "Script": "report-uc-08-report-generation",
+    "Report": "UC-08-Report-Generation",
+    "Reference": true
   }
 ]
