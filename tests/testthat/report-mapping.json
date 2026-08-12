@@ -98,5 +98,10 @@
     "Script": "report-uc-07c-plot-pk-forest",
     "Report": "UC-07C-Plot-PKForest",
     "Reference": true
+  },
+  {
+    "Script": "report-uc-07d-plot-demographics",
+    "Report": "UC-07D-Plot-Demographics",
+    "Reference": true
   }
 ]

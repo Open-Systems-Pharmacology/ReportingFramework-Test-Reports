@@ -15,7 +15,7 @@ file, context, test, nb, failed, skipped, error, warning, user, system, real, pa
 
 | 📚 Total Reports | 🕵 Total Tests | ⚠ Failed Tests | 📊 Global Success Rate |
 |------------------|---------------|----------------|------------------------|
-| 20               | 660           | 0              | 100 %                  |
+| 21               | 662           | 0              | 100 %                  |
 
 ## Test Infrastructure
 
@@ -129,6 +129,7 @@ currently available in this repository:
 | [UC-07A-Plot-TimeProfiles](./Reports/UC-07A-Plot-TimeProfiles) | [UC-07A-Plot-TimeProfiles](./tests/Reports/UC-07A-Plot-TimeProfiles/Report.md) | [report-uc-07a-plot-timeprofiles.R](./R/report-uc-07a-plot-timeprofiles.R) | NA |
 | [UC-07B-Plot-PKBoxwhisker](./Reports/UC-07B-Plot-PKBoxwhisker) | [UC-07B-Plot-PKBoxwhisker](./tests/Reports/UC-07B-Plot-PKBoxwhisker/Report.md) | [report-uc-07b-plot-pk-boxwhisker.R](./R/report-uc-07b-plot-pk-boxwhisker.R) | NA |
 | [UC-07C-Plot-PKForest](./Reports/UC-07C-Plot-PKForest) | [UC-07C-Plot-PKForest](./tests/Reports/UC-07C-Plot-PKForest/Report.md) | [report-uc-07c-plot-pk-forest.R](./R/report-uc-07c-plot-pk-forest.R) | NA |
+| [UC-07D-Plot-Demographics](./Reports/UC-07D-Plot-Demographics) | [UC-07D-Plot-Demographics](./tests/Reports/UC-07D-Plot-Demographics/Report.md) | [report-uc-07d-plot-demographics.R](./R/report-uc-07d-plot-demographics.R) | NA |
 
 ## Detailed Test Results
 
@@ -228,3 +229,5 @@ currently available in this repository:
 | [UC-07B-Plot-PKBoxwhisker](./tests/Reports/UC-07B-Plot-PKBoxwhisker) | Content of<br>Report | ![](https://img.shields.io/badge/%E2%9C%93-Passed%20tests-success) | 1 | 0 |
 | [UC-07C-Plot-PKForest](./tests/Reports/UC-07C-Plot-PKForest) | Expected Files | ![](https://img.shields.io/badge/%E2%9C%93-Passed%20tests-success) | 1 | 0 |
 | [UC-07C-Plot-PKForest](./tests/Reports/UC-07C-Plot-PKForest) | Content of<br>Report | ![](https://img.shields.io/badge/%E2%9C%93-Passed%20tests-success) | 1 | 0 |
+| [UC-07D-Plot-Demographics](./tests/Reports/UC-07D-Plot-Demographics) | Expected Files | ![](https://img.shields.io/badge/%E2%9C%93-Passed%20tests-success) | 1 | 0 |
+| [UC-07D-Plot-Demographics](./tests/Reports/UC-07D-Plot-Demographics) | Content of<br>Report | ![](https://img.shields.io/badge/%E2%9C%93-Passed%20tests-success) | 1 | 0 |
