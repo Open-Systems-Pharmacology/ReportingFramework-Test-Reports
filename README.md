@@ -15,7 +15,7 @@ file, context, test, nb, failed, skipped, error, warning, user, system, real, pa
 
 | 📚 Total Reports | 🕵 Total Tests | ⚠ Failed Tests | 📊 Global Success Rate |
 |------------------|---------------|----------------|------------------------|
-| 23               | 666           | 0              | 100 %                  |
+| 25               | 670           | 0              | 100 %                  |
 
 ## Test Infrastructure
 
@@ -132,6 +132,8 @@ currently available in this repository:
 | [UC-07D-Plot-Demographics](./Reports/UC-07D-Plot-Demographics) | [UC-07D-Plot-Demographics](./tests/Reports/UC-07D-Plot-Demographics/Report.md) | [report-uc-07d-plot-demographics.R](./R/report-uc-07d-plot-demographics.R) | NA |
 | [UC-08-Report-Generation](./Reports/UC-08-Report-Generation) | [UC-08-Report-Generation](./tests/Reports/UC-08-Report-Generation/Report.md) | [report-uc-08-report-generation.R](./R/report-uc-08-report-generation.R) | NA |
 | [UC-09-EPackage-Export](./Reports/UC-09-EPackage-Export) | [UC-09-EPackage-Export](./tests/Reports/UC-09-EPackage-Export/Report.md) | [report-uc-09-epackage-export.R](./R/report-uc-09-epackage-export.R) | NA |
+| [UC-10-Sensitivity-Analysis](./Reports/UC-10-Sensitivity-Analysis) | [UC-10-Sensitivity-Analysis](./tests/Reports/UC-10-Sensitivity-Analysis/Report.md) | [report-uc-10-sensitivity-analysis.R](./R/report-uc-10-sensitivity-analysis.R) | NA |
+| [UC-11-Snapshot-Version-Control](./Reports/UC-11-Snapshot-Version-Control) | [UC-11-Snapshot-Version-Control](./tests/Reports/UC-11-Snapshot-Version-Control/Report.md) | [report-uc-11-snapshot-version-control.R](./R/report-uc-11-snapshot-version-control.R) | NA |
 
 ## Detailed Test Results
 

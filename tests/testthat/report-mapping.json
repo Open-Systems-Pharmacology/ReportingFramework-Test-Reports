@@ -113,5 +113,15 @@
     "Script": "report-uc-09-epackage-export",
     "Report": "UC-09-EPackage-Export",
     "Reference": true
+  },
+  {
+    "Script": "report-uc-10-sensitivity-analysis",
+    "Report": "UC-10-Sensitivity-Analysis",
+    "Reference": true
+  },
+  {
+    "Script": "report-uc-11-snapshot-version-control",
+    "Report": "UC-11-Snapshot-Version-Control",
+    "Reference": true
   }
 ]
