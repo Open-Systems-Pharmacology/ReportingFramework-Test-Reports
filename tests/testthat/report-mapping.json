@@ -108,5 +108,10 @@
     "Script": "report-uc-08-report-generation",
     "Report": "UC-08-Report-Generation",
     "Reference": true
+  },
+  {
+    "Script": "report-uc-09-epackage-export",
+    "Report": "UC-09-EPackage-Export",
+    "Reference": true
   }
 ]
