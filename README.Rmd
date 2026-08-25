@@ -10,48 +10,10 @@ output: github_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
 library(dplyr)
+source(".github/workflows/test-results-utils.R")
 ```
 
 ```{r helpers, include=FALSE}
-#' @description Format backtrace to display errors in logs
-backtrace <- function(errorTrace) {
-  if (is.null(errorTrace)) {
-    return()
-  }
-  traceMessage <- paste0(
-    "Call ", errorTrace$parent, ", in ",
-    errorTrace$namespace, " (", errorTrace$scope, ") ",
-    errorTrace$call
-  )
-  return(traceMessage)
-}
-#' @description Function to log test results as JSON file
-logTestResults <- function(testResultsRaw, logFile = "log.json") {
-  # For each test, get all results messages and potential error backtraces
-  jsonResults <- vector("list", length(testResultsRaw))
-  index <- 1
-  for (testResult in testResultsRaw) {
-    resultMessage <- vector("list", length(testResult$results))
-    resultIndex <- 1
-    for (testResultContent in testResult$results) {
-      resultMessage[[resultIndex]] <- list(
-        test = testResultContent$test,
-        message = testResultContent$message,
-        backtrace = backtrace(testResultContent$trace),
-        code = as.character(testResultContent$srcref)
-      )
-      resultIndex <- resultIndex + 1
-    }
-    jsonResults[[index]] <- c(
-      testResult[setdiff(names(testResult), "results")],
-      results = list(resultMessage)
-    )
-    index <- index + 1
-  }
-  jsonlite::write_json(jsonResults, auto_unbox = TRUE, pretty = TRUE, path = logFile)
-  return(invisible())
-}
-
 #' @description Function to make nice line breaks for displaying the table
 strWrap <- function(text, width = 30){
   gsub(
@@ -76,14 +38,23 @@ Turning the list to data.frame and extracting the relevant data will give a grea
 -->
 
 ```{r, include=FALSE}
-# Remove previous tests
-unlink("./tests/Reports", recursive = TRUE, force = TRUE)
-dir.create("./tests/Reports")
-# Prevent failed tests to stop the workflow
-testResultsRaw <- testthat::test_local(
-  reporter = testthat::ListReporter,
-  stop_on_failure = FALSE
-)
+testResultsRds <- Sys.getenv("TEST_RESULTS_RDS")
+
+if (nzchar(testResultsRds)) {
+  if (!file.exists(testResultsRds)) {
+    stop(paste("Precomputed test results file does not exist:", testResultsRds))
+  }
+  testResultsRaw <- readRDS(testResultsRds)
+} else {
+  # Remove previous tests
+  unlink("./tests/Reports", recursive = TRUE, force = TRUE)
+  dir.create("./tests/Reports")
+  # Prevent failed tests to stop the workflow
+  testResultsRaw <- testthat::test_local(
+    reporter = testthat::ListReporter,
+    stop_on_failure = FALSE
+  )
+}
 # Creates a log.json file with the test results
 logTestResults(testResultsRaw)
 
@@ -142,7 +113,7 @@ Models, Observed and Simulated Data are respectively available in the [Models](.
 Here is the summary of the reports, their scripts and their run time currently available in this repository:
 
 ```{r, results='asis'}
-reportMappings <- jsonlite::fromJSON("tests/testthat/report-mapping.json", simplifyVector = TRUE)
+reportMappings <- loadReportMappings(simplifyVector = TRUE)
 
 availableDurations <- unname(sapply(
   reportMappings$Report,
