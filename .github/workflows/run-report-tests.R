@@ -2,6 +2,7 @@ library(testthat)
 library(jsonlite)
 
 source(".github/workflows/test-results-utils.R")
+source("tests/testthat/helper-reports.R")
 
 reportName <- Sys.getenv("REPORT_NAME")
 reportScript <- Sys.getenv("REPORT_SCRIPT")
@@ -20,8 +21,8 @@ source(
   encoding = "UTF-8"
 )
 
-testResultsRaw <- test_dir(
-  "tests/testthat",
+testResultsRaw <- test_file(
+  "tests/testthat/test-reports.R",
   reporter = ListReporter,
   stop_on_failure = FALSE
 )

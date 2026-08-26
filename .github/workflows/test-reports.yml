@@ -66,6 +66,7 @@ jobs:
       
       - name: Run report and validations
         run: |
+          options(repos = c(CRAN = "https://cloud.r-project.org"))
           install.packages(c('testthat','jsonlite'))
           source(".github/workflows/run-report-tests.R")
         shell: Rscript {0}
@@ -75,6 +76,7 @@ jobs:
         if: ${{ always() }}
         with:
           name: report-${{ matrix.report }}
+          if-no-files-found: warn
           path: |
             tests/Reports/${{ matrix.report }}
             test-results/${{ matrix.report }}.json
@@ -85,13 +87,18 @@ jobs:
     needs:
       - prepare-matrix
       - test-reports
-    if: ${{ always() }}
+    if: ${{ always() && needs.test-reports.result == 'success' }}
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
       TEST_RESULTS_RDS: test-results.rds
     steps:
       - name: Checkout
         uses: actions/checkout@v7
+
+      - name: Setup Qualification Environment
+        uses: Open-Systems-Pharmacology/Workflows/.github/actions/setup-qualification-environment@main
+        with:
+          tools-path: tools.csv
 
       - name: Download report artifacts
         uses: actions/download-artifact@v5
@@ -102,12 +109,14 @@ jobs:
 
       - name: Aggregate test results
         run: |
+          options(repos = c(CRAN = "https://cloud.r-project.org"))
           install.packages(c('jsonlite'))
           source(".github/workflows/merge-test-results.R")
         shell: Rscript {0}
 
       - name: Render README from aggregated results
         run: |
+          options(repos = c(CRAN = "https://cloud.r-project.org"))
           install.packages(c('testthat','covr','rmarkdown','pkgdown'))
           rmarkdown::render("README.Rmd", encoding = "UTF-8")
         shell: Rscript {0}
