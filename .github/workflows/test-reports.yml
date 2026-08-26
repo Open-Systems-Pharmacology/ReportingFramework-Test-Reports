@@ -131,6 +131,7 @@ jobs:
         run: |
           git config --local user.email "actions@github.com"
           git config --local user.name "GitHub Actions"
+          git pull --rebase origin ${{ github.head_ref || github.ref_name }}
           git add README.md || echo "No changes in README"
           git add ./tests/Reports || echo "No changes in Test Reports"
           git add log.json || echo "No changes in log"
