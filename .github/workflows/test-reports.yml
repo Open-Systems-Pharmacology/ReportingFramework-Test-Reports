@@ -120,7 +120,7 @@ jobs:
       - name: Render README from aggregated results
         run: |
           options(repos = c(CRAN = "https://cloud.r-project.org"))
-          install.packages(c('rmarkdown','jsonlite'))
+          install.packages(c('rmarkdown','jsonlite','dplyr','stringr','testthat'))
           rmarkdown::render("README.Rmd", encoding = "UTF-8")
         shell: Rscript {0}
 
