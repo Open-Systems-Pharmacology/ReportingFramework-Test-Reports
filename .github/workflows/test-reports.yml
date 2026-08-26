@@ -131,7 +131,9 @@ jobs:
         run: |
           git config --local user.email "actions@github.com"
           git config --local user.name "GitHub Actions"
+          git stash --include-untracked
           git pull --rebase origin ${{ github.head_ref || github.ref_name }}
+          git stash pop
           git add README.md || echo "No changes in README"
           git add ./tests/Reports || echo "No changes in Test Reports"
           git add log.json || echo "No changes in log"
