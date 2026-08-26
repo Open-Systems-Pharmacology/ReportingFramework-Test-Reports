@@ -40,9 +40,9 @@ for (reportName in expectedReports) {
   )
 }
 
-combinedResults <- unlist(lapply(expectedReports, function(reportName) {
+combinedResults <- normalizeTestResults(unlist(lapply(expectedReports, function(reportName) {
   readRDS(file.path(artifactResultsDir, paste0(reportName, ".rds")))
-}), recursive = FALSE)
+}), recursive = FALSE))
 
 saveRDS(combinedResults, "test-results.rds")
 logTestResults(combinedResults, "log.json")

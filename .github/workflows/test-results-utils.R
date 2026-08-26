@@ -34,6 +34,14 @@ logTestResults <- function(testResultsRaw, logFile = "log.json") {
   invisible()
 }
 
+normalizeTestResults <- function(testResultsRaw) {
+  if (inherits(testResultsRaw, "testthat_results")) {
+    return(testResultsRaw)
+  }
+
+  structure(testResultsRaw, class = "testthat_results")
+}
+
 loadReportMappings <- function(path = "tests/testthat/report-mapping.json", simplifyVector = TRUE) {
   jsonlite::fromJSON(path, simplifyVector = simplifyVector)
 }
