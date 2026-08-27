@@ -145,6 +145,7 @@ jobs:
           git fetch origin "${TARGET_BRANCH}"
           git rebase "origin/${TARGET_BRANCH}"
           git push origin "HEAD:${TARGET_BRANCH}"
+        shell: bash
       
       - name: Fail workflow when reports failed
         run: |
