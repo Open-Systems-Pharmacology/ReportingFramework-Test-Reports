@@ -15,6 +15,15 @@ resultsToTest <- data.frame(
 )
 
 reportMappings <- jsonlite::fromJSON("report-mapping.json", simplifyVector = FALSE)
+selectedReport <- Sys.getenv("REPORT_NAME")
+
+if (nzchar(selectedReport)) {
+  reportMappings <- Filter(function(mapping) identical(mapping$Report, selectedReport), reportMappings)
+}
+
+if (length(reportMappings) == 0) {
+  stop("No report mappings selected for testing.")
+}
 
 for (mapping in reportMappings) {
   context(mapping$Report)
