@@ -132,16 +132,19 @@ jobs:
 
       - name: Commit and push test files
         run: |
+          set -euo pipefail
+          TARGET_BRANCH="${{ github.head_ref || github.ref_name }}"
           git config --local user.email "actions@github.com"
           git config --local user.name "GitHub Actions"
-          git stash --include-untracked
-          git pull --rebase origin ${{ github.head_ref || github.ref_name }}
-          git stash pop
-          git add README.md || echo "No changes in README"
-          git add ./tests/Reports || echo "No changes in Test Reports"
-          git add log.json || echo "No changes in log"
-          git commit -m "Added/modified test reports and updated README" || echo "No changes to commit"
-          git push origin HEAD:${{ github.head_ref || github.ref_name }}
+          git add README.md ./tests/Reports log.json
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+            exit 0
+          fi
+          git commit -m "Added/modified test reports and updated README"
+          git fetch origin "${TARGET_BRANCH}"
+          git rebase "origin/${TARGET_BRANCH}"
+          git push origin "HEAD:${TARGET_BRANCH}"
       
       - name: Fail workflow when reports failed
         run: |
