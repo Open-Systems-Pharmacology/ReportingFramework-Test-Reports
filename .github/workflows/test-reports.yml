@@ -87,7 +87,7 @@ jobs:
     needs:
       - prepare-matrix
       - test-reports
-    if: ${{ always() && needs.test-reports.result == 'success' }}
+    if: ${{ always() }}
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
       TEST_RESULTS_RDS: test-results.rds
@@ -142,6 +142,17 @@ jobs:
           git add log.json || echo "No changes in log"
           git commit -m "Added/modified test reports and updated README" || echo "No changes to commit"
           git push origin HEAD:${{ github.head_ref || github.ref_name }}
+      
+      - name: Fail workflow when reports failed
+        run: |
+          statusLog <- jsonlite::fromJSON("log.json", simplifyVector = TRUE)
+          if (is.null(statusLog$summary$failed_reports)) {
+            stop("log.json does not contain summary.failed_reports.")
+          }
+          if (statusLog$summary$failed_reports > 0) {
+            stop(paste(statusLog$summary$failed_reports, "report(s) failed."))
+          }
+        shell: Rscript {0}
   
   notify-on-failure:
     runs-on: ubuntu-latest

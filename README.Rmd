@@ -40,6 +40,8 @@ Turning the list to data.frame and extracting the relevant data will give a grea
 
 ```{r, include=FALSE}
 testResultsRds <- Sys.getenv("TEST_RESULTS_RDS")
+reportMappings <- loadReportMappings(simplifyVector = TRUE)
+expectedReports <- reportMappings$Report
 
 if (nzchar(testResultsRds)) {
   if (!file.exists(testResultsRds)) {
@@ -56,44 +58,101 @@ if (nzchar(testResultsRds)) {
     stop_on_failure = FALSE
   )
 }
-# Creates a log.json file with the test results
 testResultsRaw <- normalizeTestResults(testResultsRaw)
-logTestResults(testResultsRaw)
 
-testResultsRaw <- as.data.frame(testResultsRaw)
-testResults <- testResultsRaw %>%
-  # Keep only performed tests
-  filter(!skipped, nb>0) %>%
-  mutate(
-    Report = paste0("[", strWrap(context), "](./tests/Reports/", context, ")"),
-    Test = strWrap(test, width = 15),
-    Status = if_else(
-      failed > 0,
-      "![](https://img.shields.io/badge/%E2%9A%A0-Failed%20tests-red)",
-      if_else(
-        warning > 0,
-        "![](https://img.shields.io/badge/%E2%9A%A0-Warned%20tests-red)",
-        "![](https://img.shields.io/badge/%E2%9C%93-Passed%20tests-success)"
-      )
-    ),
-    # Commenting this information as it is not relevant for the user. 
-    # Duration = real,
-    # N = if_else(skipped, 0, nb),
-    Success = passed,
-    Failed = warning+failed
-  ) %>%
-  select(Report, Test, Status, Success, Failed)
+if (!nzchar(testResultsRds)) {
+  # For local runs, keep generating detailed test logs.
+  logTestResults(testResultsRaw)
+}
 
-totalReports <- n_distinct(testResults$Report)
+testResultsDf <- tryCatch(as.data.frame(testResultsRaw), error = function(e) data.frame())
+if (nrow(testResultsDf) > 0 && all(c("skipped", "nb", "context", "test", "failed", "warning", "passed") %in% names(testResultsDf))) {
+  testResults <- testResultsDf %>%
+    # Keep only performed tests
+    filter(!skipped, nb > 0) %>%
+    mutate(
+      Report = paste0("[", strWrap(context), "](./tests/Reports/", context, ")"),
+      Test = strWrap(test, width = 15),
+      Status = if_else(
+        failed > 0,
+        "![](https://img.shields.io/badge/%E2%9A%A0-Failed%20tests-red)",
+        if_else(
+          warning > 0,
+          "![](https://img.shields.io/badge/%E2%9A%A0-Warned%20tests-red)",
+          "![](https://img.shields.io/badge/%E2%9C%93-Passed%20tests-success)"
+        )
+      ),
+      # Commenting this information as it is not relevant for the user. 
+      # Duration = real,
+      # N = if_else(skipped, 0, nb),
+      Success = passed,
+      Failed = warning + failed
+    ) %>%
+    select(Report, Test, Status, Success, Failed)
+} else {
+  testResults <- data.frame(
+    Report = character(),
+    Test = character(),
+    Status = character(),
+    Success = numeric(),
+    Failed = numeric()
+  )
+}
+
+reportStatusLog <- tryCatch({
+  if (!file.exists("log.json")) {
+    return(NULL)
+  }
+  parsed <- jsonlite::fromJSON("log.json", simplifyVector = TRUE)
+  if (!is.list(parsed) || is.null(parsed$reports)) {
+    return(NULL)
+  }
+  parsed
+}, error = function(e) NULL)
+
+if (!is.null(reportStatusLog) && !is.null(reportStatusLog$summary)) {
+  totalReports <- as.integer(reportStatusLog$summary$total_reports)
+  passedReports <- as.integer(reportStatusLog$summary$passed_reports)
+  failedReports <- as.integer(reportStatusLog$summary$failed_reports)
+} else {
+  reportLevelStatus <- data.frame(report = expectedReports, status = "failed", stringsAsFactors = FALSE)
+  if (nrow(testResultsDf) > 0 && all(c("context", "failed", "warning") %in% names(testResultsDf))) {
+    statusFromTests <- testResultsDf %>%
+      group_by(context) %>%
+      summarize(
+        failed_checks = sum(failed + warning, na.rm = TRUE),
+        .groups = "drop"
+      ) %>%
+      mutate(
+        report = context,
+        status = if_else(failed_checks > 0, "failed", "passed")
+      ) %>%
+      select(report, status)
+    reportLevelStatus <- reportLevelStatus %>%
+      select(report) %>%
+      left_join(statusFromTests, by = "report") %>%
+      mutate(status = if_else(is.na(status), "failed", status))
+  }
+  totalReports <- length(expectedReports)
+  passedReports <- sum(reportLevelStatus$status == "passed")
+  failedReports <- totalReports - passedReports
+}
+
 totalTests <- sum(testResults$Success, testResults$Failed)
 totalFailedTests <- sum(testResults$Failed)
-globalResult <- round(100 * sum(testResults$Success) / totalTests, 1)
+globalResult <- if (totalTests > 0) {
+  round(100 * sum(testResults$Success) / totalTests, 1)
+} else {
+  0
+}
 ```
 
 
 | &#x1F4DA; Total Reports | &#x1F575; Total Tests | &#x26A0; Failed Tests | &#x1F4CA; Global Success Rate |
 |-------------------------|-----------------------|--------------|-------------------------------|
 | `r totalReports` | `r totalTests` | `r totalFailedTests` | `r globalResult` % |
+
+**Report execution status:** `r passedReports` of `r totalReports` reports passed (`r failedReports` failed).
 
 
 ## Test Infrastructure
@@ -115,8 +174,6 @@ Models, Observed and Simulated Data are respectively available in the [Models](.
 Here is the summary of the reports, their scripts and their run time currently available in this repository:
 
 ```{r, results='asis'}
-reportMappings <- loadReportMappings(simplifyVector = TRUE)
-
 availableDurations <- unname(sapply(
   reportMappings$Report,
   function(reportDir) {
