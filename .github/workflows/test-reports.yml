@@ -143,7 +143,7 @@ jobs:
           fi
           git commit -m "Added/modified test reports and updated README"
           git fetch origin "${TARGET_BRANCH}"
-          git rebase "origin/${TARGET_BRANCH}"
+          git rebase --autostash "origin/${TARGET_BRANCH}"
           git push origin "HEAD:${TARGET_BRANCH}"
         shell: bash
       
