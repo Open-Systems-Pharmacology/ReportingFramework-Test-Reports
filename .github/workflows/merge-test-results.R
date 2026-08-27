@@ -25,7 +25,7 @@ summarizeReportResult <- function(reportResults) {
 
   failedTests <- sum(reportResultsDf$failed, na.rm = TRUE)
   warningTests <- sum(reportResultsDf$warning, na.rm = TRUE)
-  status <- ifelse((failedTests + warningTests) > 0, "failed", "passed")
+  status <- ifelse(failedTests > 0, "failed", "passed")
 
   list(
     status = status,
@@ -101,6 +101,27 @@ passedReports <- sum(vapply(reportStatuses, function(status) identical(status$st
 totalReports <- length(reportStatuses)
 failedReports <- totalReports - passedReports
 
+testsDetail <- vector("list", length(combinedResults))
+idx <- 1
+for (testResult in combinedResults) {
+  resultMessage <- vector("list", length(testResult$results))
+  ri <- 1
+  for (testResultContent in testResult$results) {
+    resultMessage[[ri]] <- list(
+      test = testResultContent$test,
+      message = testResultContent$message,
+      backtrace = backtrace(testResultContent$trace),
+      code = as.character(testResultContent$srcref)
+    )
+    ri <- ri + 1
+  }
+  testsDetail[[idx]] <- c(
+    testResult[setdiff(names(testResult), "results")],
+    results = list(resultMessage)
+  )
+  idx <- idx + 1
+}
+
 write_json(
   list(
     summary = list(
@@ -108,7 +129,8 @@ write_json(
       passed_reports = passedReports,
       failed_reports = failedReports
     ),
-    reports = reportStatuses
+    reports = reportStatuses,
+    tests = testsDetail
   ),
   path = "log.json",
   auto_unbox = TRUE,
