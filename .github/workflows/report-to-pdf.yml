@@ -7,20 +7,23 @@ on:
         description: 'Report to convert'
         required: true
         type: choice
-        # TODO options to be called from a script or code
+        # UC Use Case reports based on ReportingFramework
         options:
-        - Aciclovir-Mean
-        - Aciclovir-Mean-SVG
-        - Aciclovir-Population
-        - Raltegravir-Absorption
-        - Raltegravir-Mass-Balance
-        - Test-NO7
-        - Test-NO8
-        - Test-NO9
-        - Test-NO10
-        - Test-NO11
-        - Test-NO12
-  
+        - UC-01-Project-Initialization
+        - UC-02-Scenario-Creation
+        - UC-03-Scenario-Results-RoundTrip
+        - UC-04-PK-Parameter-Loading
+        - UC-05-Population-Export
+        - UC-06-Utilities-Data-Integration
+        - UC-07A-Plot-TimeProfiles
+        - UC-07B-Plot-PKBoxwhisker
+        - UC-07C-Plot-PKForest
+        - UC-07D-Plot-Demographics
+        - UC-08-Report-Generation
+        - UC-09-EPackage-Export
+        - UC-10-Sensitivity-Analysis
+        - UC-11-Snapshot-Version-Control
+
 jobs:
   report-to-pdf:
     runs-on: ubuntu-latest
@@ -45,7 +48,7 @@ jobs:
           htmlFile: ./Reports/${{ inputs.report }}/Report.html
           outputFile: ./Reports/${{ inputs.report }}/Report.pdf
           pdfOptions: '{"format": "A4", "margin": {"top": "10mm", "left": "10mm", "right": "10mm", "bottom": "10mm"}, "displayHeaderFooter": true, "headerTemplate": "<span></span>", "footerTemplate": "<span style=\"font-size: 12px;\">&emsp;&emsp;Page <span class=\"pageNumber\"></span> / <span class=\"totalPages\"></span></span>"}'
-          
+
       - name: Save PDF file as artifacts
         uses: actions/upload-artifact@v7
         with:

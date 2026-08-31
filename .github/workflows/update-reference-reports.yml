@@ -7,22 +7,25 @@ on:
         description: 'Report to update'
         required: true
         type: choice
-        # TODO options to be called from a script or code
+        # UC Use Case reports based on ReportingFramework
         options:
-        - Aciclovir-Mean
-        - Aciclovir-Mean-SVG
-        - Aciclovir-Population
-        - Raltegravir-Absorption
-        - Raltegravir-Mass-Balance
-        - Test-NO7
-        - Test-NO8
-        - Test-NO9
-        - Test-NO10
-        - Test-NO11
-        - Test-NO12
+        - UC-01-Project-Initialization
+        - UC-02-Scenario-Creation
+        - UC-03-Scenario-Results-RoundTrip
+        - UC-04-PK-Parameter-Loading
+        - UC-05-Population-Export
+        - UC-06-Utilities-Data-Integration
+        - UC-07A-Plot-TimeProfiles
+        - UC-07B-Plot-PKBoxwhisker
+        - UC-07C-Plot-PKForest
+        - UC-07D-Plot-Demographics
+        - UC-08-Report-Generation
+        - UC-09-EPackage-Export
+        - UC-10-Sensitivity-Analysis
+        - UC-11-Snapshot-Version-Control
 
 permissions: write-all
-  
+
 jobs:
   update-reference-reports:
     runs-on: ubuntu-latest
