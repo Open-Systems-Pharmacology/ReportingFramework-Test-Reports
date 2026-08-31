@@ -16,11 +16,44 @@ permissions:
   issues: write
   
 jobs:
+  prepare-matrix:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.report-matrix.outputs.matrix }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Build report matrix
+        id: report-matrix
+        shell: python
+        run: |
+          import json
+          import os
+          from pathlib import Path
+
+          report_mappings = json.loads(Path("tests/testthat/report-mapping.json").read_text(encoding="utf-8"))
+          matrix = {
+              "include": [
+                  {"report": mapping["Report"], "script": mapping["Script"]}
+                  for mapping in report_mappings
+              ]
+          }
+
+          with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as github_output:
+              github_output.write(f"matrix={json.dumps(matrix)}\n")
+
   test-reports:
+    needs: prepare-matrix
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.prepare-matrix.outputs.matrix) }}
     runs-on: windows-latest
     # Allow only authorized collaborators to trigger GA:
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      REPORT_NAME: ${{ matrix.report }}
+      REPORT_SCRIPT: ${{ matrix.script }}
 
     steps:
       - name: Checkout
@@ -31,31 +64,107 @@ jobs:
         with:
           tools-path: tools.csv
       
-      - name: Run Tests through README.Rmd
+      - name: Run report and validations
         run: |
-          install.packages(c('testthat','covr','rmarkdown','pkgdown'))
-          rmarkdown::render("README.Rmd", encoding = "UTF-8")
+          options(repos = c(CRAN = "https://cloud.r-project.org"))
+          install.packages(c('testthat','jsonlite'))
+          source(".github/workflows/run-report-tests.R")
         shell: Rscript {0}
       
+      - name: Save report artifacts
+        uses: actions/upload-artifact@v7
+        if: ${{ always() }}
+        with:
+          name: report-${{ matrix.report }}
+          if-no-files-found: warn
+          path: |
+            tests/Reports/${{ matrix.report }}
+            test-results/${{ matrix.report }}.json
+            test-results/${{ matrix.report }}.rds
+  
+  aggregate-results:
+    runs-on: windows-latest
+    needs:
+      - prepare-matrix
+      - test-reports
+    if: ${{ always() }}
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      TEST_RESULTS_RDS: test-results.rds
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup R
+        uses: r-lib/actions/setup-r@v2
+        with:
+          use-public-rspm: true
+      
+      - name: Install Pandoc
+        uses: r-lib/actions/setup-pandoc@v2
+
+      - name: Download report artifacts
+        uses: actions/download-artifact@v5
+        with:
+          pattern: report-*
+          path: artifact-data
+          merge-multiple: true
+
+      - name: Aggregate test results
+        run: |
+          options(repos = c(CRAN = "https://cloud.r-project.org"))
+          install.packages(c('jsonlite'))
+          source(".github/workflows/merge-test-results.R")
+        shell: Rscript {0}
+
+      - name: Render README from aggregated results
+        run: |
+          options(repos = c(CRAN = "https://cloud.r-project.org"))
+          install.packages(c('rmarkdown','jsonlite','dplyr','stringr','testthat'))
+          rmarkdown::render("README.Rmd", encoding = "UTF-8")
+        shell: Rscript {0}
+
       - name: Save test results as zip artifact
         uses: actions/upload-artifact@v7
         with:
           name: test-log
           path: log.json
-      
+
       - name: Commit and push test files
         run: |
+          set -euo pipefail
+          TARGET_BRANCH="${{ github.head_ref || github.ref_name }}"
           git config --local user.email "actions@github.com"
           git config --local user.name "GitHub Actions"
-          git add README.md || echo "No changes in README"
-          git add ./tests/Reports || echo "No changes in Test Reports"
-          git commit -m "Added/modified test reports and updated README" || echo "No changes to commit"
-          git push origin
+          git add README.md ./tests/Reports log.json
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+            exit 0
+          fi
+          git commit -m "Added/modified test reports and updated README"
+          git fetch origin "${TARGET_BRANCH}"
+          git rebase --autostash "origin/${TARGET_BRANCH}"
+          git push origin "HEAD:${TARGET_BRANCH}"
+        shell: bash
+      
+      - name: Fail workflow when reports failed
+        run: |
+          statusLog <- jsonlite::fromJSON("log.json", simplifyVector = TRUE)
+          if (is.null(statusLog$summary$failed_reports)) {
+            stop("log.json does not contain summary.failed_reports.")
+          }
+          if (statusLog$summary$failed_reports > 0) {
+            stop(paste(statusLog$summary$failed_reports, "report(s) failed."))
+          }
+        shell: Rscript {0}
   
   notify-on-failure:
     runs-on: ubuntu-latest
-    needs: test-reports
-    if: ${{ failure() && needs.test-reports.result == 'failure' && github.event_name == 'schedule' }}
+    needs:
+      - prepare-matrix
+      - test-reports
+      - aggregate-results
+    if: ${{ always() && failure() && github.event_name == 'schedule' }}
     permissions:
       issues: write
     steps:
