@@ -6,10 +6,17 @@ rm(list = ls())
 pkgload::load_all("../OSPSuite.ReportingFramework", quiet = TRUE)
 
 reportFolder <- file.path("tests", "Reports", "UC-01-Project-Initialization")
-originalProjectDir <- file.path(reportFolder, "project-original")
-restoredProjectDir <- file.path(reportFolder, "project-restored")
+originalProjectDir <- tempfile(pattern = "uc01_original_")
+restoredProjectDir <- tempfile(pattern = "uc01_restored_")
+on.exit(
+    unlink(
+        c(originalProjectDir, restoredProjectDir),
+        recursive = TRUE,
+        force = TRUE
+    ),
+    add = TRUE
+)
 
-unlink(reportFolder, recursive = TRUE, force = TRUE)
 dir.create(reportFolder, recursive = TRUE, showWarnings = FALSE)
 
 assertOrStop <- function(condition, message) {

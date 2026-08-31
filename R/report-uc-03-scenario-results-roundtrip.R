@@ -10,9 +10,9 @@ reportFolder <- file.path(
     "Reports",
     "UC-03-Scenario-Results-RoundTrip"
 )
-projectDir <- file.path(reportFolder, "project")
+projectDir <- tempfile(pattern = "uc03_")
+on.exit(unlink(projectDir, recursive = TRUE, force = TRUE), add = TRUE)
 
-unlink(reportFolder, recursive = TRUE, force = TRUE)
 dir.create(reportFolder, recursive = TRUE, showWarnings = FALSE)
 
 assertOrStop <- function(condition, message) {
