@@ -3,7 +3,8 @@
 #' Integration scenario for UC-07D demographic plot generation.
 
 rm(list = ls())
-pkgload::load_all("../OSPSuite.ReportingFramework", quiet = TRUE)
+library(ospsuite.reportingframework)
+source("R/helpers-uc-shared.R")
 
 reportFolder <- file.path("tests", "Reports", "UC-07D-Plot-Demographics")
 projectDir <- tempfile(pattern = "uc07d_demography_")
@@ -12,43 +13,14 @@ on.exit(unlink(projectDir, recursive = TRUE, force = TRUE), add = TRUE)
 unlink(reportFolder, recursive = TRUE, force = TRUE)
 dir.create(reportFolder, recursive = TRUE, showWarnings = FALSE)
 
-assertOrStop <- function(condition, message) {
-    if (!isTRUE(condition)) {
-        stop(message, call. = FALSE)
-    }
-    invisible(NULL)
-}
-
-initProject(projectDirectory = projectDir, overwrite = TRUE)
-
-configurationDir <- file.path(projectDir, "Scripts", "ReportingFramework")
-projectConfigPath <- file.path(configurationDir, "ProjectConfiguration.xlsx")
-pc <- createProjectConfiguration(
-    path = projectConfigPath,
-    ignoreVersionCheck = FALSE
-)
-
-scenariosFile <- file.path(configurationDir, "Scenarios.xlsx")
-pkParameterFile <- file.path(configurationDir, "PKParameter.xlsx")
-wbScenarios <- openxlsx::loadWorkbook(scenariosFile)
+pc <- setupProject(projectDir)
+pkParameterFile <- file.path(dirname(pc$scenariosFile), "PKParameter.xlsx")
+wbScenarios <- openxlsx::loadWorkbook(pc$scenariosFile)
 scenariosConfig <- xlsxReadData(wbScenarios, sheetName = "Scenarios")
 scenarioOutputs <- xlsxReadData(wbScenarios, sheetName = "OutputPaths")
 
 modelFile <- "Aciclovir.pkml"
-sourceModelPath <- file.path("Models", modelFile)
-targetModelPath <- fs::path_abs(modelFile, start = pc$modelFolder)
-
-assertOrStop(
-    file.exists(sourceModelPath),
-    paste0("Source model file not found: ", sourceModelPath)
-)
-if (!file.exists(targetModelPath)) {
-    ignore <- file.copy(sourceModelPath, targetModelPath, overwrite = TRUE)
-}
-assertOrStop(
-    file.exists(targetModelPath),
-    paste0("Model file not found: ", targetModelPath)
-)
+copyModelFile(pc, modelFile)
 
 # Export default configured population(s) and use those IDs in the scenario sheet.
 exportRandomPopulations(projectConfiguration = pc, overwrite = TRUE)
@@ -94,24 +66,9 @@ pkScenarioSetup <- data.table::data.table(
     pKParameter = "PK_Plasma"
 )
 xlsxWriteData(wbScenarios, sheetName = "PKParameter", pkScenarioSetup)
-openxlsx::saveWorkbook(wbScenarios, scenariosFile, overwrite = TRUE)
+openxlsx::saveWorkbook(wbScenarios, pc$scenariosFile, overwrite = TRUE)
 
-wbPk <- openxlsx::loadWorkbook(pkParameterFile)
-pkTemplate <- xlsxReadData(
-    wbPk,
-    sheetName = "Template",
-    skipDescriptionRow = TRUE
-)
-pkSheetData <- pkTemplate[
-    pkTemplate$name %in% c("C_max", "t_max", "AUC_tEnd"),
-]
-pkSheetData$outputPathIds <- defaultOutputPathId
-if ("PK_Plasma" %in% openxlsx::getSheetNames(pkParameterFile)) {
-    openxlsx::removeWorksheet(wbPk, "PK_Plasma")
-}
-openxlsx::addWorksheet(wbPk, "PK_Plasma")
-openxlsx::writeData(wbPk, sheet = "PK_Plasma", x = pkSheetData)
-openxlsx::saveWorkbook(wbPk, pkParameterFile, overwrite = TRUE)
+setupPKPlasmaSheet(pkParameterFile, defaultOutputPathId)
 
 scenarioList <- createScenariosWrapped(pc, scenarioNames = NULL)
 scenarioNames <- names(scenarioList)
@@ -127,21 +84,7 @@ pkParameterDT <- loadPKParameter(pc, scenarioList)
 
 setWorkflowOptions(isValidRun = FALSE)
 
-wbReports <- openxlsx::loadWorkbook(pc$addOns$reportsFile)
-outputsSheet <- xlsxReadData(
-    wbReports,
-    sheetName = "Outputs",
-    skipDescriptionRow = TRUE
-)
-missingDisplayNames <- is.na(outputsSheet$displayName) |
-    trimws(as.character(outputsSheet$displayName)) == ""
-outputsSheet$displayName[missingDisplayNames] <-
-    as.character(outputsSheet$outputPathId[missingDisplayNames])
-missingDisplayUnits <- is.na(outputsSheet$displayUnit) |
-    trimws(as.character(outputsSheet$displayUnit)) == ""
-outputsSheet$displayUnit[missingDisplayUnits] <- "mol/l"
-xlsxWriteData(wbReports, sheetName = "Outputs", outputsSheet)
-openxlsx::saveWorkbook(wbReports, pc$addOns$reportsFile, overwrite = TRUE)
+configureOutputsSheet(pc)
 
 addDefaultConfigForHistograms(
     projectConfiguration = pc,

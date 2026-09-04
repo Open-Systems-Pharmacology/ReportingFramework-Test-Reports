@@ -2,8 +2,7 @@
 
 ## Summary
 
-This scenario validates representative time-profile variant families derived from external config_timeprofiles.csv.
-Source variants: H:/VP_auxiliary_functions/plotTimeProfile/tests/testthat/testdata/config_timeprofiles.csv
+This scenario validates representative time-profile variant families for mean models.
 
 ## Assertions
 
@@ -15,11 +14,12 @@ Source variants: H:/VP_auxiliary_functions/plotTimeProfile/tests/testthat/testda
 
 | Family | Representative Plot Name | Status | Returned Objects |
 |---|---|---|---:|
-| single-without-data | singlePlot_withoutData | PASS | 0 |
-| single-with-data | singlePlot_withData | PASS | 0 |
-| single-with-reference | singlePlot_withReference | PASS | 0 |
-| single-with-offset | singlePlot_withOffset | PASS | 0 |
-| single-with-limits | singlePlot_withLimits | PASS | 0 |
-| multidose-time-ranges | multiDosePlot | PASS | 0 |
-| many-panel-fixed | manyPanelPlot | PASS | 0 |
-| many-panel-free-col3 | manyPanelPlot_col3 | PASS | 0 |
+| single-without-data | singlePlot_withoutData | PASS | 2 |
+| single-with-data | singlePlot_withData | PASS | 12 |
+| single-with-reference | singlePlot_withReference | PASS | 2 |
+| single-with-offset | singlePlot_withOffset | PASS | 2 |
+| single-with-limits | singlePlot_withLimits | PASS | 2 |
+| multidose-time-ranges | multiDosePlot | PASS | 6 |
+| many-panel-fixed | manyPanelPlot | PASS | 2 |
+| many-panel-free-col3 | manyPanelPlot_col3 | PASS | 2 |
+| single-without-data | manyPanelPlot_col3 | PASS | 2 |

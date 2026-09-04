@@ -68,5 +68,10 @@
     "Script": "report-uc-11-snapshot-version-control",
     "Report": "UC-11-Snapshot-Version-Control",
     "Reference": true
+  },
+  {
+    "Script": "report-uc-12-plot-timeprofiles-tutorial",
+    "Report": "UC-12-Plot-TimeProfiles-Tutorial",
+    "Reference": true
   }
 ]

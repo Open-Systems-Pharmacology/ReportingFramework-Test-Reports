@@ -3,7 +3,8 @@
 #' Integration scenario for UC-01 full project initialization round-trip.
 
 rm(list = ls())
-pkgload::load_all("../OSPSuite.ReportingFramework", quiet = TRUE)
+library(ospsuite.reportingframework)
+source("R/helpers-uc-shared.R")
 
 reportFolder <- file.path("tests", "Reports", "UC-01-Project-Initialization")
 originalProjectDir <- tempfile(pattern = "uc01_original_")
@@ -18,13 +19,6 @@ on.exit(
 )
 
 dir.create(reportFolder, recursive = TRUE, showWarnings = FALSE)
-
-assertOrStop <- function(condition, message) {
-    if (!isTRUE(condition)) {
-        stop(message, call. = FALSE)
-    }
-    invisible(NULL)
-}
 
 normalizeAddOnPaths <- function(projectConfiguration) {
     # Compare add-on path semantics relative to the configuration folder.
@@ -162,6 +156,7 @@ reportLines <- c(
     "## Summary",
     "",
     "This scenario validates init/create/snapshot/restore workflow for project configuration.",
+    "It initialises a projectdirectory from scratch and restores it in another directory from the json file."
     "",
     "## Assertions",
     "",

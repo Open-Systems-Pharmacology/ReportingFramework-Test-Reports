@@ -3,7 +3,8 @@
 #' Integration scenario for UC-10 sensitivity analysis plot generation.
 
 rm(list = ls())
-pkgload::load_all("../OSPSuite.ReportingFramework", quiet = TRUE)
+library(ospsuite.reportingframework)
+source("R/helpers-uc-shared.R")
 
 reportFolder <- file.path("tests", "Reports", "UC-10-Sensitivity-Analysis")
 projectDir <- tempfile(pattern = "uc10_sensitivity_")
@@ -12,48 +13,16 @@ on.exit(unlink(projectDir, recursive = TRUE, force = TRUE), add = TRUE)
 unlink(reportFolder, recursive = TRUE, force = TRUE)
 dir.create(reportFolder, recursive = TRUE, showWarnings = FALSE)
 
-assertOrStop <- function(condition, message) {
-    if (!isTRUE(condition)) {
-        stop(message, call. = FALSE)
-    }
-    invisible(NULL)
-}
-
 # Initialize project
-initProject(projectDirectory = projectDir, overwrite = TRUE)
-
-configurationDir <- file.path(projectDir, "Scripts", "ReportingFramework")
-projectConfigPath <- file.path(configurationDir, "ProjectConfiguration.xlsx")
-
-# Create project configuration
-pc <- createProjectConfiguration(
-    path = projectConfigPath,
-    ignoreVersionCheck = FALSE
-)
+pc <- setupProject(projectDir)
 
 # Load scenario configuration
-scenariosFile <- file.path(configurationDir, "Scenarios.xlsx")
-wbScenarios <- openxlsx::loadWorkbook(scenariosFile)
+wbScenarios <- openxlsx::loadWorkbook(pc$scenariosFile)
 scenariosConfig <- xlsxReadData(wbScenarios, sheetName = "Scenarios")
 
 # Copy model file
 modelFile <- "Aciclovir.pkml"
-sourceModelPath <- file.path("Models", modelFile)
-targetModelPath <- fs::path_abs(modelFile, start = pc$modelFolder)
-
-assertOrStop(
-    file.exists(sourceModelPath),
-    paste0("Source model file not found: ", sourceModelPath)
-)
-
-if (!file.exists(targetModelPath)) {
-    ignore <- file.copy(sourceModelPath, targetModelPath, overwrite = TRUE)
-}
-
-assertOrStop(
-    file.exists(targetModelPath),
-    paste0("Model file not found: ", targetModelPath)
-)
+copyModelFile(pc, modelFile)
 
 # Verify sensitivity analysis functions
 assertOrStop(
@@ -119,9 +88,12 @@ reportLines <- c(
     "## Project Configuration",
     "",
     paste0("- Project Directory: ", projectDir),
-    paste0("- Configuration Path: ", projectConfigPath),
+    paste0(
+        "- Configuration Path: ",
+        file.path(dirname(pc$scenariosFile), "ProjectConfiguration.xlsx")
+    ),
     paste0("- Model File: ", modelFile),
-    paste0("- Model Path: ", targetModelPath),
+    paste0("- Model Path: ", fs::path_abs(modelFile, start = pc$modelFolder)),
     paste0("- Sensitivity Results: ", pc$addOns$sensitivityResults),
     "",
     "## Validations Performed",

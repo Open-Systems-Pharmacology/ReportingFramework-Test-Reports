@@ -3,7 +3,8 @@
 #' Integration scenario for UC-08 report generation using markdown helpers and mergeRmds.
 
 rm(list = ls())
-pkgload::load_all("../OSPSuite.ReportingFramework", quiet = TRUE)
+library(ospsuite.reportingframework)
+source("R/helpers-uc-shared.R")
 
 reportFolder <- file.path("tests", "Reports", "UC-08-Report-Generation")
 projectDir <- tempfile(pattern = "uc08_report_")
@@ -12,24 +13,7 @@ on.exit(unlink(projectDir, recursive = TRUE, force = TRUE), add = TRUE)
 unlink(reportFolder, recursive = TRUE, force = TRUE)
 dir.create(reportFolder, recursive = TRUE, showWarnings = FALSE)
 
-assertOrStop <- function(condition, message) {
-    if (!isTRUE(condition)) {
-        stop(message, call. = FALSE)
-    }
-    invisible(NULL)
-}
-
-initProject(projectDirectory = projectDir, overwrite = TRUE)
-
-pc <- createProjectConfiguration(
-    path = file.path(
-        projectDir,
-        "Scripts",
-        "ReportingFramework",
-        "ProjectConfiguration.xlsx"
-    ),
-    ignoreVersionCheck = FALSE
-)
+pc <- setupProject(projectDir)
 outputDir <- pc$outputFolder
 
 # ---- markdown helper assertions -----------------------------------------------

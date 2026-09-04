@@ -101,6 +101,7 @@ currently available in this repository:
 | [UC-09-EPackage-Export](./Reports/UC-09-EPackage-Export) | [UC-09-EPackage-Export](./tests/Reports/UC-09-EPackage-Export/Report.md) | [report-uc-09-epackage-export.R](./R/report-uc-09-epackage-export.R) | NA |
 | [UC-10-Sensitivity-Analysis](./Reports/UC-10-Sensitivity-Analysis) | [UC-10-Sensitivity-Analysis](./tests/Reports/UC-10-Sensitivity-Analysis/Report.md) | [report-uc-10-sensitivity-analysis.R](./R/report-uc-10-sensitivity-analysis.R) | NA |
 | [UC-11-Snapshot-Version-Control](./Reports/UC-11-Snapshot-Version-Control) | [UC-11-Snapshot-Version-Control](./tests/Reports/UC-11-Snapshot-Version-Control/Report.md) | [report-uc-11-snapshot-version-control.R](./R/report-uc-11-snapshot-version-control.R) | NA |
+| [UC-12-Plot-TimeProfiles-Tutorial](./Reports/UC-12-Plot-TimeProfiles-Tutorial) | [UC-12-Plot-TimeProfiles-Tutorial](./tests/Reports/UC-12-Plot-TimeProfiles-Tutorial/Report.md) | [report-uc-12-plot-timeprofiles-tutorial.R](./R/report-uc-12-plot-timeprofiles-tutorial.R) | NA |
 
 ## Detailed Test Results
 

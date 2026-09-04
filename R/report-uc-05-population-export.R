@@ -3,7 +3,8 @@
 #' Integration scenario for UC-05 population export.
 
 rm(list = ls())
-pkgload::load_all("../OSPSuite.ReportingFramework", quiet = TRUE)
+library(ospsuite.reportingframework)
+source("R/helpers-uc-shared.R")
 
 reportFolder <- file.path("tests", "Reports", "UC-05-Population-Export")
 projectDir <- tempfile(pattern = "uc05_")
@@ -11,12 +12,7 @@ on.exit(unlink(projectDir, recursive = TRUE, force = TRUE), add = TRUE)
 
 dir.create(reportFolder, recursive = TRUE, showWarnings = FALSE)
 
-assertOrStop <- function(condition, message) {
-    if (!isTRUE(condition)) {
-        stop(message, call. = FALSE)
-    }
-    invisible(NULL)
-}
+pc <- setupProject(projectDir)
 
 assertHasCorePopulationColumns <- function(dt, context) {
     requiredColumns <- c("IndividualId", "Gender", "Population")
@@ -37,31 +33,8 @@ assertHasCorePopulationColumns <- function(dt, context) {
     invisible(NULL)
 }
 
-initProject(projectDirectory = projectDir, overwrite = TRUE)
-
-configurationDir <- file.path(projectDir, "Scripts", "ReportingFramework")
-projectConfigPath <- file.path(configurationDir, "ProjectConfiguration.xlsx")
-
-pc <- createProjectConfiguration(
-    path = projectConfigPath,
-    ignoreVersionCheck = FALSE
-)
-
 modelFile <- "Aciclovir.pkml"
-sourceModelPath <- file.path("Models", modelFile)
-targetModelPath <- fs::path_abs(modelFile, start = pc$modelFolder)
-
-assertOrStop(
-    file.exists(sourceModelPath),
-    paste0("Source model file not found: ", sourceModelPath)
-)
-if (!file.exists(targetModelPath)) {
-    ignore <- file.copy(sourceModelPath, targetModelPath, overwrite = TRUE)
-}
-assertOrStop(
-    file.exists(targetModelPath),
-    paste0("Model file not found: ", targetModelPath)
-)
+copyModelFile(pc, modelFile)
 
 randomPopulationName <- "TestPopulation_noOnto"
 exportRandomPopulations(
@@ -89,7 +62,7 @@ assertHasCorePopulationColumns(
     context = "Random population CSV"
 )
 
-individualsFile <- file.path(configurationDir, "Individuals.xlsx")
+individualsFile <- file.path(dirname(pc$scenariosFile), "Individuals.xlsx")
 wbIndividuals <- openxlsx::loadWorkbook(individualsFile)
 
 virtualTwinPopulationName <- "VT_Indiv1"

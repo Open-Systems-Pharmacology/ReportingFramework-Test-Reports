@@ -3,7 +3,8 @@
 #' Integration scenario for UC-11 configuration snapshot version control workflow.
 
 rm(list = ls())
-pkgload::load_all("../OSPSuite.ReportingFramework", quiet = TRUE)
+library(ospsuite.reportingframework)
+source("R/helpers-uc-shared.R")
 
 reportFolder <- file.path("tests", "Reports", "UC-11-Snapshot-Version-Control")
 projectDir <- tempfile(pattern = "uc11_snapshot_")
@@ -12,43 +13,12 @@ on.exit(unlink(projectDir, recursive = TRUE, force = TRUE), add = TRUE)
 unlink(reportFolder, recursive = TRUE, force = TRUE)
 dir.create(reportFolder, recursive = TRUE, showWarnings = FALSE)
 
-assertOrStop <- function(condition, message) {
-    if (!isTRUE(condition)) {
-        stop(message, call. = FALSE)
-    }
-    invisible(NULL)
-}
-
 # Initialize project
-initProject(projectDirectory = projectDir, overwrite = TRUE)
-
-configurationDir <- file.path(projectDir, "Scripts", "ReportingFramework")
-projectConfigPath <- file.path(configurationDir, "ProjectConfiguration.xlsx")
-
-# Create initial project configuration
-pc <- createProjectConfiguration(
-    path = projectConfigPath,
-    ignoreVersionCheck = FALSE
-)
+pc <- setupProject(projectDir)
 
 # Copy model file
 modelFile <- "Aciclovir.pkml"
-sourceModelPath <- file.path("Models", modelFile)
-targetModelPath <- fs::path_abs(modelFile, start = pc$modelFolder)
-
-assertOrStop(
-    file.exists(sourceModelPath),
-    paste0("Source model file not found: ", sourceModelPath)
-)
-
-if (!file.exists(targetModelPath)) {
-    ignore <- file.copy(sourceModelPath, targetModelPath, overwrite = TRUE)
-}
-
-assertOrStop(
-    file.exists(targetModelPath),
-    paste0("Model file not found: ", targetModelPath)
-)
+copyModelFile(pc, modelFile)
 
 # Test snapshot functions
 assertOrStop(
@@ -62,7 +32,7 @@ assertOrStop(
 )
 
 # Create a snapshot of the current configuration
-configDir <- dirname(projectConfigPath)
+configDir <- dirname(pc$scenariosFile)
 snapshotFile <- file.path(configDir, "ProjectConfiguration.json")
 tryCatch(
     {
@@ -129,9 +99,12 @@ reportLines <- c(
     "## Project Configuration",
     "",
     paste0("- Project Directory: ", projectDir),
-    paste0("- Configuration Path: ", projectConfigPath),
+    paste0(
+        "- Configuration Path: ",
+        file.path(dirname(pc$scenariosFile), "ProjectConfiguration.xlsx")
+    ),
     paste0("- Model File: ", modelFile),
-    paste0("- Model Path: ", targetModelPath),
+    paste0("- Model Path: ", fs::path_abs(modelFile, start = pc$modelFolder)),
     paste0("- Snapshot File: ", snapshotFile),
     "",
     "## Validations Performed",
