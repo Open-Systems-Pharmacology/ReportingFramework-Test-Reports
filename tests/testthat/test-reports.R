@@ -1,31 +1,6 @@
 # Reference reports are in Reports directory
 # Tested reports are in tests/Reports directory
 
-resultsToTest <- data.frame(
-  name = c(
-    "Simulation Results",
-    "PK Analysis Results",
-    "Sensitivity Results",
-    "Goodness of Fit",
-    "PK Parameter Tables",
-    "Sensitivity Tables",
-    "Mass Balance Results",
-    "Absorption Results",
-    "Demography Results"
-  ),
-  folder = c(
-    "SimulationResults",
-    "PKAnalysisResults",
-    "SensitivityResults",
-    "TimeProfiles",
-    "PKAnalysis",
-    "Sensitivity",
-    "MassBalance",
-    "Absorption",
-    "Demography"
-  )
-)
-
 reportMappings <- jsonlite::fromJSON(
   "report-mapping.json",
   simplifyVector = FALSE
@@ -73,6 +48,27 @@ for (mapping in reportMappings) {
     )
     for (imageIndex in seq_along(referenceImages)) {
       expectKnownImage(testImages[imageIndex], referenceImages[imageIndex])
+    }
+  })
+
+  test_that("Expected Captions", {
+    referenceCaptions <- list.files(
+      path = file.path("../..", "Reports", mapping$Report),
+      recursive = TRUE,
+      full.names = TRUE,
+      pattern = "\\.captions$"
+    )
+    testCaptions <- list.files(
+      path = file.path("..", "Reports", mapping$Report),
+      recursive = TRUE,
+      full.names = TRUE,
+      pattern = "\\.captions$"
+    )
+    for (captionIndex in seq_along(referenceCaptions)) {
+      expectKnownCaption(
+        testCaptions[captionIndex],
+        referenceCaptions[captionIndex]
+      )
     }
   })
 

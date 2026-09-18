@@ -60,3 +60,15 @@ expectKnownImage <- function(testFile, refFile) {
   ))
 }
 
+#' @title expectKnownCaption
+#' @description
+#' Compare content of a caption file
+#' @param testCaption Caption file to compare
+#' @param refCaption Reference caption file to be compared with
+expectKnownCaption <- function(testCaption, refCaption) {
+  return(expectEqual(
+    x = readLines(testCaption),
+    y = readLines(refCaption),
+    label = testCaption
+  ))
+}

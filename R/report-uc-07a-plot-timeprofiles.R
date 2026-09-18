@@ -381,6 +381,7 @@ for (i in seq_len(nrow(familyCoverage))) {
   }
 }
 
+
 assertOrStop(
   !any(familyCoverage$status == "FAIL"),
   paste0(
@@ -392,7 +393,48 @@ assertOrStop(
   )
 )
 
-csvSourcePath <- "H:/VP_auxiliary_functions/plotTimeProfile/tests/testthat/testdata/config_timeprofiles.csv"
+
+# adjust export width
+ospsuite.plots::setOspsuite.plots.option(
+  optionKey = ospsuite.plots::OptionKeys$exportWidth,
+  value = 20
+)
+
+# export Plots
+runPlot(
+  nameOfplotFunction = "plotTimeProfiles",
+  projectConfiguration = pc,
+  configTableSheet = "TimeProfiles",
+  theme = themeToUse,
+  inputs = list(
+    dataObserved = plotDataObserved,
+    scenarioResults = scenarioResults
+  )
+)
+
+copyWorkflowOutputsToReport(
+  outputsRoot = pc$outputFolder,
+  reportFolder = reportFolder
+)
+
+plotFiles <- list.files(
+  reportFolder,
+  recursive = TRUE,
+  full.names = TRUE,
+  pattern = "(png|svg)$"
+)
+assertOrStop(
+  length(plotFiles) > 0,
+  "No plot files were generated in the UC-07a report folder"
+)
+
+# Render qmd content to markdown using helper function
+qmdRenderResult <- renderQmdToMarkdown(
+  searchFolder = reportFolder,
+  pattern = "\\.qmd$"
+)
+
+
 reportTable <- c(
   "| Family | Representative Plot Name | Status | Returned Objects |",
   "|---|---|---|---:|"
@@ -430,7 +472,12 @@ reportLines <- c(
   "",
   "## Family Coverage",
   "",
-  reportTable
+  reportTable,
+  qmdRenderContentSection(
+    qmdRenderResult,
+    sectionTitle = "Time Profile Report",
+    sectionDescription = "The following content is from the auto-generated Timeprofile.qmd with all figures, captions, and headings as defined in the TimeProfiles configuration sheet:"
+  )
 )
 
 writeLines(reportLines, con = file.path(reportFolder, "Report.md"))

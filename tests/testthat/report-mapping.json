@@ -73,5 +73,35 @@
     "Script": "report-uc-12-plot-timeprofiles-tutorial",
     "Report": "UC-12-Plot-TimeProfiles-Tutorial",
     "Reference": true
+  },
+  {
+    "Script": "report-uc-13-data-dictionary",
+    "Report": "UC-13-Data-Dictionary-Operations",
+    "Reference": false
+  },
+  {
+    "Script": "report-uc-14-word-rendering",
+    "Report": "UC-14-Word-Report-Rendering",
+    "Reference": false
+  },
+  {
+    "Script": "report-uc-15-project-upgrade",
+    "Report": "UC-15-Legacy-Project-Upgrade",
+    "Reference": false
+  },
+  {
+    "Script": "report-uc-16-calc-methods-scenarios",
+    "Report": "UC-16-Calculation-Methods-Scenarios",
+    "Reference": false
+  },
+  {
+    "Script": "report-uc-17-per-scenario-pk",
+    "Report": "UC-17-Per-Scenario-PK-Loading",
+    "Reference": false
+  },
+  {
+    "Script": "report-uc-18-excel-io-edges",
+    "Report": "UC-18-Excel-IO-Edge-Cases",
+    "Reference": false
   }
 ]

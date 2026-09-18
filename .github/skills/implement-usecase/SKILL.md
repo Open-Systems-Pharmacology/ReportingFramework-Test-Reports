@@ -84,7 +84,49 @@ testDataDir <- "Data/test-NN"
 dataFile <- file.path(testDataDir, "input-file.csv")
 ```
 
-### 5. Create Report Markdown
+### 5. Update Integration Test Configuration
+
+**IMPORTANT**: These files MUST be updated when creating a new UC.
+
+#### Update `tests/testthat/report-mapping.json`
+
+Add entry to the JSON array with the following structure:
+```json
+{
+  "Script": "report-uc-NN-descriptive-name",
+  "Report": "UC-NN-Your-Feature-Name",
+  "Reference": true|false
+}
+```
+
+**Reference flag guidance:**
+- `"Reference": true` - UC has reference reports in `/Reports/` folder with plots, captions, and results for comparison testing
+- `"Reference": false` - UC is new and only verifies Report.md file exists (no reference baseline yet)
+
+**Example (new UC without reference):**
+```json
+{
+  "Script": "report-uc-18-excel-io-edges",
+  "Report": "UC-18-Excel-IO-Edge-Cases",
+  "Reference": false
+}
+```
+
+#### Update `README.md`
+
+Add row to the test report summary table in the "Using Reports and Scripts as template" section:
+
+**Table format:**
+```markdown
+| [UC-NN-Your-Feature-Name](./Reports/UC-NN-Your-Feature-Name) | [UC-NN-Your-Feature-Name](./tests/Reports/UC-NN-Your-Feature-Name/Report.md) | [report-uc-nn-descriptive-name.R](./R/report-uc-nn-descriptive-name.R) | NA |
+```
+
+**Example:**
+```markdown
+| [UC-18-Excel-IO-Edge-Cases](./Reports/UC-18-Excel-IO-Edge-Cases) | [UC-18-Excel-IO-Edge-Cases](./tests/Reports/UC-18-Excel-IO-Edge-Cases/Report.md) | [report-uc-18-excel-io-edges.R](./R/report-uc-18-excel-io-edges.R) | NA |
+```
+
+### 6. Create Report Markdown
 
 **File location**: `Reports/UC-NN-Your-Feature-Name/Report.md`
 
@@ -173,15 +215,43 @@ results <- lapply(scenarios$scenario_name, function(name) {
 })
 ```
 
+## Output Validation
+
+**Important**: UC scripts should focus on workflow execution, NOT output validation.
+
+- **UC responsibility**: Execute workflow steps and generate outputs (plots, reports, data files)
+- **Test responsibility**: Validate that outputs match reference/expected results
+
+### Validation belongs in tests, not in UC scripts:
+
+| Validation Type | Location | How |
+|-----------------|----------|-----|
+| Image comparison (PNG/SVG) | `tests/testthat/test-reports.R` | `expectKnownImage()` helper |
+| Caption files (.captions) | `tests/testthat/test-reports.R` | `expectKnownCaption()` helper |
+| CSV/Report content | `tests/testthat/test-reports.R` | `expectKnownReport()` helper |
+| Data existence/counts | UC script | `assertOrStop()` to verify workflow completed |
+
+**Example - UC script should only verify execution:**
+```r
+# ✓ Good: UC verifies workflow ran
+plotFiles <- list.files(reportFolder, pattern = "(png|svg)$")
+assertOrStop(length(plotFiles) > 0, "No plots were generated")
+
+# ✗ Bad: UC should not compare plots to reference
+# compareGeneratedPlotsToReference(reportFolder, referenceFolder)
+```
+
 ## Best Practices
 
-1. **Numbering**: Use zero-padded sequential numbers (UC-01, UC-02, ..., UC-12)
+1. **Numbering**: Use zero-padded sequential numbers (UC-01, UC-02, ..., UC-18)
 2. **Naming**: Use kebab-case descriptive names: `report-uc-07b-plot-pk-boxwhisker`
 3. **Cleanup**: Always use `on.exit()` for temporary directory cleanup
 4. **Assertions**: Make them specific and measurable, not vague
 5. **Documentation**: Keep R script comments and Report.md in sync
 6. **Modularity**: Reuse helper functions instead of duplicating code
 7. **Error Handling**: Use `assertOrStop()` for validation, not silent failures
+8. **Validation**: Keep output validation (plots, captions, files) in tests, not UC scripts
+9. **Integration Test Files**: Update `report-mapping.json` and `README.md` when adding a new UC
 
 ## Execution & Testing
 
@@ -200,3 +270,4 @@ Reports/UC-NN-Feature/Report.md
 - [helpers-uc-shared.R](../../R/helpers-uc-shared.R) - Shared helper functions
 - [README.md](../../README.md) - Project overview
 - [Tests](../../tests/) - Test infrastructure
+- [report-mapping.json](../../tests/testthat/report-mapping.json) - Test configuration

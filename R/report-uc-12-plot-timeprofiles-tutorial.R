@@ -184,8 +184,7 @@ configuredTimeProfilePlotNames <- function(reportsFile) {
   unique(plotNames[runnable])
 }
 
-copyWorkflowOutputsToReport <- function(projectDir, reportFolder) {
-  outputsRoot <- file.path(projectDir, "Outputs", "ReportingFramework")
+copyWorkflowOutputsToReport <- function(outputsRoot, reportFolder) {
   assertOrStop(
     dir.exists(outputsRoot),
     "Workflow outputs directory does not exist"
@@ -218,92 +217,6 @@ copyWorkflowOutputsToReport <- function(projectDir, reportFolder) {
   invisible(NULL)
 }
 
-compareGeneratedPlotsToReference <- function(reportFolder, referenceFolder) {
-  generated <- list.files(
-    reportFolder,
-    recursive = TRUE,
-    full.names = TRUE,
-    pattern = "(png|svg)$"
-  )
-  reference <- list.files(
-    referenceFolder,
-    recursive = TRUE,
-    full.names = TRUE,
-    pattern = "(png|svg)$"
-  )
-
-  assertOrStop(length(generated) > 0, "No generated plots found for comparison")
-  assertOrStop(length(reference) > 0, "No reference plots found for comparison")
-
-  reportRoot <- normalizePath(reportFolder, winslash = "/")
-  referenceRoot <- normalizePath(referenceFolder, winslash = "/")
-  relGenerated <- vapply(
-    generated,
-    function(path) {
-      substring(normalizePath(path, winslash = "/"), nchar(reportRoot) + 2)
-    },
-    character(1)
-  )
-  relReference <- vapply(
-    reference,
-    function(path) {
-      substring(normalizePath(path, winslash = "/"), nchar(referenceRoot) + 2)
-    },
-    character(1)
-  )
-
-  missingInReference <- setdiff(relGenerated, relReference)
-  missingInGenerated <- setdiff(relReference, relGenerated)
-
-  assertOrStop(
-    length(missingInReference) == 0,
-    paste0(
-      "Generated plots without reference: ",
-      paste(missingInReference, collapse = ", ")
-    )
-  )
-  assertOrStop(
-    length(missingInGenerated) == 0,
-    paste0(
-      "Reference plots missing in generated outputs: ",
-      paste(missingInGenerated, collapse = ", ")
-    )
-  )
-
-  mismatches <- character(0)
-  for (relativePath in sort(relGenerated)) {
-    generatedPath <- file.path(reportFolder, relativePath)
-    referencePath <- file.path(referenceFolder, relativePath)
-    extension <- tolower(tools::file_ext(relativePath))
-
-    equal <- tryCatch(
-      {
-        if (extension == "svg") {
-          isTRUE(all(rsvg::rsvg(generatedPath) == rsvg::rsvg(referencePath)))
-        } else {
-          isTRUE(all(
-            png::readPNG(generatedPath) == png::readPNG(referencePath)
-          ))
-        }
-      },
-      error = function(e) FALSE
-    )
-
-    if (!equal) {
-      mismatches <- c(mismatches, relativePath)
-    }
-  }
-
-  assertOrStop(
-    length(mismatches) == 0,
-    paste0(
-      "Generated plots differ from reference: ",
-      paste(mismatches, collapse = ", ")
-    )
-  )
-
-  invisible(length(relGenerated))
-}
 
 # setup project  --------
 
@@ -422,6 +335,11 @@ assertOrStop(
     paste(coverage$plotName[coverage$status == "FAIL"], collapse = ", ")
   )
 )
+# adjust export width
+ospsuite.plots::setOspsuite.plots.option(
+  optionKey = ospsuite.plots::OptionKeys$exportWidth,
+  value = 20
+)
 
 # export Plots
 runPlot(
@@ -437,7 +355,7 @@ runPlot(
 
 
 copyWorkflowOutputsToReport(
-  projectDir = pc,
+  outputsRoot = pc$outputFolder,
   reportFolder = reportFolder
 )
 
@@ -452,9 +370,10 @@ assertOrStop(
   "No plot files were generated in the UC-12 report folder"
 )
 
-comparedPlots <- compareGeneratedPlotsToReference(
-  reportFolder = reportFolder,
-  referenceFolder = referenceFolder
+# Render qmd content to markdown using helper function
+qmdRenderResult <- renderQmdToMarkdown(
+  searchFolder = reportFolder,
+  pattern = "\\.qmd$"
 )
 
 reportTable <- c(
@@ -493,13 +412,17 @@ reportLines <- c(
   paste0("- TimeProfiles plot configurations executed: ", length(plotNames)),
   paste0("- Executed plot names: ", paste(coverage$plotName, collapse = ", ")),
   paste0("- Generated plot files: ", length(plotFiles)),
-  paste0("- Compared against reference plots: ", comparedPlots),
-  "- Generated and reference plot sets are identical.",
+  qmdRenderAssertionLine(qmdRenderResult, assertionPrefix = "Timeprofile.qmd"),
   "",
   "## Plot Coverage",
   "",
   reportTable,
-  ""
+  "",
+  qmdRenderContentSection(
+    qmdRenderResult,
+    sectionTitle = "Time Profile Report",
+    sectionDescription = "The following content is from the auto-generated Timeprofile.qmd with all figures, captions, and headings as defined in the TimeProfiles configuration sheet:"
+  )
 )
 
 reportPath <- file.path(reportFolder, "Report.md")

@@ -102,6 +102,12 @@ currently available in this repository:
 | [UC-10-Sensitivity-Analysis](./Reports/UC-10-Sensitivity-Analysis) | [UC-10-Sensitivity-Analysis](./tests/Reports/UC-10-Sensitivity-Analysis/Report.md) | [report-uc-10-sensitivity-analysis.R](./R/report-uc-10-sensitivity-analysis.R) | NA |
 | [UC-11-Snapshot-Version-Control](./Reports/UC-11-Snapshot-Version-Control) | [UC-11-Snapshot-Version-Control](./tests/Reports/UC-11-Snapshot-Version-Control/Report.md) | [report-uc-11-snapshot-version-control.R](./R/report-uc-11-snapshot-version-control.R) | NA |
 | [UC-12-Plot-TimeProfiles-Tutorial](./Reports/UC-12-Plot-TimeProfiles-Tutorial) | [UC-12-Plot-TimeProfiles-Tutorial](./tests/Reports/UC-12-Plot-TimeProfiles-Tutorial/Report.md) | [report-uc-12-plot-timeprofiles-tutorial.R](./R/report-uc-12-plot-timeprofiles-tutorial.R) | NA |
+| [UC-13-Data-Dictionary-Operations](./Reports/UC-13-Data-Dictionary-Operations) | [UC-13-Data-Dictionary-Operations](./tests/Reports/UC-13-Data-Dictionary-Operations/Report.md) | [report-uc-13-data-dictionary.R](./R/report-uc-13-data-dictionary.R) | NA |
+| [UC-14-Word-Report-Rendering](./Reports/UC-14-Word-Report-Rendering) | [UC-14-Word-Report-Rendering](./tests/Reports/UC-14-Word-Report-Rendering/Report.md) | [report-uc-14-word-rendering.R](./R/report-uc-14-word-rendering.R) | NA |
+| [UC-15-Legacy-Project-Upgrade](./Reports/UC-15-Legacy-Project-Upgrade) | [UC-15-Legacy-Project-Upgrade](./tests/Reports/UC-15-Legacy-Project-Upgrade/Report.md) | [report-uc-15-project-upgrade.R](./R/report-uc-15-project-upgrade.R) | NA |
+| [UC-16-Calculation-Methods-Scenarios](./Reports/UC-16-Calculation-Methods-Scenarios) | [UC-16-Calculation-Methods-Scenarios](./tests/Reports/UC-16-Calculation-Methods-Scenarios/Report.md) | [report-uc-16-calc-methods-scenarios.R](./R/report-uc-16-calc-methods-scenarios.R) | NA |
+| [UC-17-Per-Scenario-PK-Loading](./Reports/UC-17-Per-Scenario-PK-Loading) | [UC-17-Per-Scenario-PK-Loading](./tests/Reports/UC-17-Per-Scenario-PK-Loading/Report.md) | [report-uc-17-per-scenario-pk.R](./R/report-uc-17-per-scenario-pk.R) | NA |
+| [UC-18-Excel-IO-Edge-Cases](./Reports/UC-18-Excel-IO-Edge-Cases) | [UC-18-Excel-IO-Edge-Cases](./tests/Reports/UC-18-Excel-IO-Edge-Cases/Report.md) | [report-uc-18-excel-io-edges.R](./R/report-uc-18-excel-io-edges.R) | NA |
 
 ## Detailed Test Results
 
