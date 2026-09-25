@@ -445,14 +445,6 @@ pkComparisons <- comparePKFixtureFiles(
   tolerance = 1e-6
 )
 
-fixtureOnlyPkParameters <- sort(unique(unlist(lapply(
-  pkComparisons,
-  function(result) result$fixtureOnlyParameters
-))))
-generatedOnlyPkParameters <- sort(unique(unlist(lapply(
-  pkComparisons,
-  function(result) result$generatedOnlyParameters
-))))
 pkMaxRelativeDiff <- max(vapply(
   pkComparisons,
   function(result) result$maxRelDiff,
@@ -513,22 +505,6 @@ reportLines <- c(
     "- Mean PK relative difference across scenarios on comparable shared rows: ",
     signif(pkMeanRelativeDiff, digits = 4)
   ),
-  if (length(fixtureOnlyPkParameters) > 0) {
-    paste0(
-      "- Fixture-only PK parameters: ",
-      paste(fixtureOnlyPkParameters, collapse = ", ")
-    )
-  } else {
-    "- Fixture-only PK parameters: none"
-  },
-  if (length(generatedOnlyPkParameters) > 0) {
-    paste0(
-      "- Generated-only PK parameters: ",
-      paste(generatedOnlyPkParameters, collapse = ", ")
-    )
-  } else {
-    "- Generated-only PK parameters: none"
-  },
   "",
   "## Compared files",
   ""

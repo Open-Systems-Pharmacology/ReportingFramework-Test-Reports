@@ -11,6 +11,7 @@ source("R/helpers-uc-shared.R")
 reportName <- "UC-12-Plot-TimeProfiles-Tutorial"
 reportFolder <- file.path("tests", "Reports", reportName)
 referenceFolder <- file.path("Reports", reportName)
+configSheetName <- "TimeProfiles"
 qmdName <- "Timeprofile"
 projectDir <- tempfile(pattern = "uc12_timeprofiles_tutorial_")
 on.exit(unlink(projectDir, recursive = TRUE, force = TRUE), add = TRUE)
@@ -156,68 +157,6 @@ copyTutorialAssets <- function(pc) {
   invisible(tutorialDir)
 }
 
-configuredTimeProfilePlotNames <- function(reportsFile) {
-  raw <- openxlsx::readWorkbook(
-    reportsFile,
-    sheet = "TimeProfiles",
-    colNames = FALSE
-  )
-
-  assertOrStop(nrow(raw) >= 3, "TimeProfiles sheet has insufficient rows")
-
-  header <- trimws(as.character(raw[1, ]))
-  plotNameIdx <- which(header == "PlotName")[1]
-  levelIdx <- which(header == "Level")[1]
-
-  assertOrStop(
-    !is.na(plotNameIdx),
-    "TimeProfiles sheet missing PlotName column"
-  )
-  assertOrStop(!is.na(levelIdx), "TimeProfiles sheet missing Level column")
-
-  body <- raw[-c(1, 2), , drop = FALSE]
-  plotNames <- trimws(as.character(body[[plotNameIdx]]))
-  levels <- trimws(as.character(body[[levelIdx]]))
-
-  runnable <- (is.na(levels) | levels == "") &
-    !is.na(plotNames) &
-    plotNames != ""
-  unique(plotNames[runnable])
-}
-
-copyWorkflowOutputsToReport <- function(outputsRoot, reportFolder) {
-  assertOrStop(
-    dir.exists(outputsRoot),
-    "Workflow outputs directory does not exist"
-  )
-  outputsRootNormalized <- normalizePath(outputsRoot, winslash = "/")
-
-  outputFiles <- list.files(outputsRoot, recursive = TRUE, full.names = TRUE)
-  assertOrStop(
-    length(outputFiles) > 0,
-    "No workflow output files were generated"
-  )
-
-  for (sourceFile in outputFiles) {
-    sourceNormalized <- normalizePath(sourceFile, winslash = "/")
-    relativePath <- substring(
-      sourceNormalized,
-      nchar(outputsRootNormalized) + 2
-    )
-    destinationFile <- file.path(reportFolder, relativePath)
-
-    if (dir.exists(sourceFile)) {
-      dir.create(destinationFile, recursive = TRUE, showWarnings = FALSE)
-      next
-    }
-
-    dir.create(dirname(destinationFile), recursive = TRUE, showWarnings = FALSE)
-    file.copy(sourceFile, destinationFile, overwrite = TRUE)
-  }
-
-  invisible(NULL)
-}
-
 
 # setup project  --------
 
@@ -276,19 +215,9 @@ themeToUse <-
   theme(legend.position = 'top', legend.title = element_blank())
 options(knitr.kable.NA = '')
 
-
-plotNames <- configuredTimeProfilePlotNames(pc$addOns$reportsFile)
-assertOrStop(
-  length(plotNames) > 0,
-  "No runnable plot names found in TimeProfiles sheet"
-)
-
-coverage <- data.table::data.table(
-  plotName = plotNames,
-  inputsUsed = "",
-  status = "PASS",
-  returnedObjects = 0L,
-  errorMessage = ""
+coverage <- loadAndFilterConfigSheet(
+  pc,
+  sheetName = configSheetName
 )
 
 # run per plotName to get coverage statistic (plotNames != NULL hinders export)
@@ -302,7 +231,7 @@ for (i in seq_len(nrow(coverage))) {
       runPlot(
         nameOfplotFunction = "plotTimeProfiles",
         projectConfiguration = pc,
-        configTableSheet = "TimeProfiles",
+        configTableSheet = configSheetName,
         qmdName = qmdName,
         plotNames = plotName,
         theme = themeToUse,
@@ -337,6 +266,9 @@ assertOrStop(
     paste(coverage$plotName[coverage$status == "FAIL"], collapse = ", ")
   )
 )
+returnedPlots <-
+  sum(as.double(unlist(coverage$returnedObjects)), na.rm = TRUE)
+
 # adjust export width
 ospsuite.plots::setOspsuite.plots.option(
   optionKey = ospsuite.plots::OptionKeys$exportWidth,
@@ -347,7 +279,7 @@ ospsuite.plots::setOspsuite.plots.option(
 runPlot(
   nameOfplotFunction = "plotTimeProfiles",
   projectConfiguration = pc,
-  configTableSheet = "TimeProfiles",
+  configTableSheet = configSheetName,
   qmdName = qmdName,
   theme = themeToUse,
   inputs = list(
@@ -365,51 +297,26 @@ plotFiles <- verifyAndCopyPlots(
 # Render qmd content to markdown using helper function
 qmdRenderResult <- renderQmdToMarkdown(
   searchFolder = reportFolder,
-  pattern = "\\.qmd$"
+  pattern = "Timeprofile\\.qmd$"
 )
-
-reportTable <- c(
-  "| Plot Name | Inputs | Status | Returned Objects |",
-  "|---|---|---|---:|"
-)
-for (i in seq_len(nrow(coverage))) {
-  reportTable <- c(
-    reportTable,
-    paste0(
-      "| ",
-      coverage$plotName[[i]],
-      " | ",
-      coverage$inputsUsed[[i]],
-      " | ",
-      coverage$status[[i]],
-      " | ",
-      coverage$returnedObjects[[i]],
-      " |"
-    )
-  )
-}
 
 reportLines <- c(
   "# UC-12 Tutorial Time Profiles",
   "",
   "## Summary",
   "",
-  "This scenario validates tutorial-based time profile plotting using tutorial configuration and observed-data assets from ospsuite.reportingframework extdata.",
+  "This scenario validates tutorial-based time-profile plot generation using tutorial configuration and observed-data assets from ospsuite.reportingframework extdata.",
   "",
   "## Assertions",
   "",
   paste0("- Tutorial directory found: ", tutorialDir),
   paste0("- Scenarios created: ", paste(scenarioNames, collapse = ", ")),
   paste0("- Observed rows loaded: ", nrow(dataObserved)),
-  paste0("- TimeProfiles plot configurations executed: ", length(plotNames)),
-  paste0("- Executed plot names: ", paste(coverage$plotName, collapse = ", ")),
-  paste0("- Generated plot files: ", length(plotFiles)),
+  "- TimeProfiles configuration sheet contains runnable plot definitions.",
+  "- All runPlot(nameOfplotFunction = 'plotTimeProfiles') calls completed without error.",
+  paste0("- Returned plot/table objects across coverage runs: ", returnedPlots),
   qmdRenderAssertionLine(qmdRenderResult, assertionPrefix = "Timeprofile.qmd"),
-  "",
-  "## Plot Coverage",
-  "",
-  reportTable,
-  "",
+  coverageReportSection(coverage, configSheetName),
   qmdRenderContentSection(
     qmdRenderResult,
     sectionTitle = "Time Profile Report",

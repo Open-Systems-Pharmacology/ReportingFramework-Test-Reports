@@ -121,6 +121,24 @@ configureOutputsSheet <- function(pc) {
   invisible(NULL)
 }
 
+# Normalizes the copied UC07 PK_Plasma sheet to the molar units used by the
+# checked-in PKAnalysisResults fixtures, avoiding model-based MW conversion.
+configureUC7PKPlasmaSheet <- function(pc) {
+  wbPk <- openxlsx::loadWorkbook(pc$addOns$pKParameterFile)
+  pkSheet <- xlsxReadData(
+    wbPk,
+    sheetName = "PK_Plasma",
+    skipDescriptionRow = FALSE
+  )
+
+  pkSheet$displayUnit[pkSheet$name == "C_max"] <- "µmol/l"
+  pkSheet$displayUnit[pkSheet$name == "t_max"] <- "h"
+  pkSheet$displayUnit[pkSheet$name == "AUC_tEnd"] <- "µmol*min/l"
+
+  xlsxWriteData(wbPk, sheetName = "PK_Plasma", pkSheet)
+  openxlsx::saveWorkbook(wbPk, pc$addOns$pKParameterFile, overwrite = TRUE)
+  invisible(NULL)
+}
 
 
 updateUC7Project <- function(pc, scenarioNames, copyPK, copySimResult) {
@@ -142,6 +160,8 @@ updateUC7Project <- function(pc, scenarioNames, copyPK, copySimResult) {
     to = pc$addOns$reportsFile,
     overwrite = TRUE
   )
+
+  configureUC7PKPlasmaSheet(pc)
 
   if (copyPK) {
     filesToCopy <- paste0(scenarioNames, ".csv")
@@ -451,17 +471,22 @@ qmdRenderAssertionLine <- function(
 # @return Character vector of formatted report lines (empty if no content to add)
 qmdRenderContentSection <- function(
   qmdRenderResult,
-  sectionTitle = "Generated Content Report",
+  sectionTitle = NULL,
   sectionDescription = "The following content is from auto-generated documentation:"
 ) {
   if (length(qmdRenderResult$content) == 0) {
     return(character(0))
   }
 
+  titleLines <- if (is.null(sectionTitle)) {
+    character(0)
+  } else {
+    c(sectionTitle, "")
+  }
+
   c(
-    "## ",
-    sectionTitle,
     "",
+    titleLines,
     sectionDescription,
     "",
     qmdRenderResult$content,
@@ -501,7 +526,6 @@ loadAndFilterConfigSheet <- function(
 
   plotRows <- dtConfig[is.na(level), ]
   assertOrStop(nrow(plotRows) > 0, paste("No runnable rows in", sheetName))
-
   # Filter to runnable rows
   plotNames <- unique(plotRows$plotName)
   assertOrStop(
@@ -518,6 +542,59 @@ loadAndFilterConfigSheet <- function(
   )
 
   return(coverage)
+}
+
+# Formats a coverage data.table as a report section with one row per plotName.
+#
+# @param coverage Data.table returned by loadAndFilterConfigSheet() and updated
+#   with status / returnedObjects during execution
+# @param configSheetName Character vector naming the source config sheet
+# @param sectionTitle Character vector markdown heading for the section
+# @return Character vector of formatted report lines
+coverageReportSection <- function(
+  coverage,
+  configSheetName,
+  sectionTitle = "## Plot Coverage"
+) {
+  requiredColumns <- c("plotName", "status", "returnedObjects")
+  assertOrStop(
+    all(requiredColumns %in% names(coverage)),
+    paste0(
+      "Coverage table is missing required columns: ",
+      paste(setdiff(requiredColumns, names(coverage)), collapse = ", ")
+    )
+  )
+
+  coverageTableRows <- c(
+    "| Plot Name | Status | Returned Objects |",
+    "|---|---|---:|"
+  )
+
+  for (i in seq_len(nrow(coverage))) {
+    coverageTableRows <- c(
+      coverageTableRows,
+      paste0(
+        "| ", as.character(coverage$plotName[[i]]),
+        " | ", as.character(coverage$status[[i]]),
+        " | ", as.character(coverage$returnedObjects[[i]]),
+        " |"
+      )
+    )
+  }
+
+  c(
+    "",
+    sectionTitle,
+    "",
+    paste0(
+      "The following table summarizes the plot generation results for each plot name in the ",
+      configSheetName,
+      " configuration:"
+    ),
+    "",
+    coverageTableRows,
+    ""
+  )
 }
 
 # Copies workflow outputs to report folder and verifies plot files were generated.
@@ -555,7 +632,11 @@ verifyAndCopyPlots <- function(reportFolder, outputsRoot, qmdNames = NULL) {
 }
 
 # Copies workflow outputs from the project output folder into the report folder.
-copyWorkflowOutputsToReport <- function(outputsRoot, reportFolder, qmdNames = NULL) {
+copyWorkflowOutputsToReport <- function(
+  outputsRoot,
+  reportFolder,
+  qmdNames = NULL
+) {
   assertOrStop(
     dir.exists(outputsRoot),
     "Workflow outputs directory does not exist"
@@ -578,7 +659,11 @@ copyWorkflowOutputsToReport <- function(outputsRoot, reportFolder, qmdNames = NU
       )
 
       destinationQmd <- file.path(reportFolder, basename(qmdFile))
-      dir.create(dirname(destinationQmd), recursive = TRUE, showWarnings = FALSE)
+      dir.create(
+        dirname(destinationQmd),
+        recursive = TRUE,
+        showWarnings = FALSE
+      )
       file.copy(qmdFile, destinationQmd, overwrite = TRUE)
 
       destinationDir <- file.path(reportFolder, basename(qmdDir))
@@ -597,7 +682,11 @@ copyWorkflowOutputsToReport <- function(outputsRoot, reportFolder, qmdNames = NU
           next
         }
 
-        dir.create(dirname(destinationFile), recursive = TRUE, showWarnings = FALSE)
+        dir.create(
+          dirname(destinationFile),
+          recursive = TRUE,
+          showWarnings = FALSE
+        )
         file.copy(sourceFile, destinationFile, overwrite = TRUE)
       }
     }

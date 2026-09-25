@@ -96,11 +96,8 @@ assertOrStop(
   !inherits(histCall, "error"),
   paste0("runPlot(plotHistograms) failed: ", histCall$message)
 )
-returnedPlots <- if (inherits(histCall, "error")) {
-  0
-} else {
-  length(histCall)
-}
+returnedPlots <-
+  sum(as.double(unlist(coverage$returnedObjects)), na.rm = TRUE)
 
 setPlotExportOptions(width = 20)
 
@@ -131,7 +128,7 @@ reportLines <- c(
   "",
   "## Summary",
   "",
-  "This scenario validates runPlot execution for histogram plots across multi-population scenarios.",
+  "This scenario validates histogram plot generation using runPlot() across multiple population scenarios.",
   "",
   "## Assertions",
   "",
@@ -144,12 +141,11 @@ reportLines <- c(
   paste0("- Coverage tested: ", nrow(coverage), " plot configurations"),
   "- runPlot(nameOfplotFunction = 'plotHistograms') completed without error.",
   paste0("- Returned plot/table objects: ", returnedPlots),
-  paste0("- Generated plot files: ", length(plotFiles)),
   qmdRenderAssertionLine(
     qmdRenderResult,
     assertionPrefix = "UC07G_Histograms.qmd"
   ),
-  "",
+  coverageReportSection(coverage, qmdName),
   qmdRenderContentSection(
     qmdRenderResult,
     sectionTitle = "Histogram Report",

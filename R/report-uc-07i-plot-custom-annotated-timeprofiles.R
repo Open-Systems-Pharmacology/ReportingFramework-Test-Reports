@@ -111,11 +111,8 @@ assertOrStop(
     )
   )
 )
-returnedPlots <- if (any(inherits(customCall, "error"))) {
-  0
-} else {
-  coverage$returnedObjects[[nrow(coverage)]]
-}
+returnedPlots <-
+  sum(as.double(unlist(coverage$returnedObjects)), na.rm = TRUE)
 
 setPlotExportOptions(width = 20)
 
@@ -147,8 +144,8 @@ reportLines <- c(
   "",
   "## Summary",
   "",
-  "This scenario validates runPlot execution for custom time profile plot generation using the UC-07A workflow inputs while routing plotting through a custom wrapper function.",
-  "The custom plot function (plotCustomAnnotatedTimeProfiles) demonstrates how to:",
+  "This scenario validates custom time-profile plot generation using the UC-07A workflow inputs while routing plotting through a custom wrapper function.",
+  "The custom plot function (plotCustomAnnotatedTimeProfiles) extends the standard workflow with additional annotations and styling.",
   "",
   "## Approach",
   "",
@@ -164,12 +161,14 @@ reportLines <- c(
   ),
   "- Observed data loaded from ReportInputs/UC7_observed_TP.csv.",
   paste0("- Total data points in observed data: ", nrow(dataObserved)),
-  paste0("- ", configSheetName, " contains at least one runnable row."),
-  paste0("- Selected plotName: ", plotName),
-  "- Custom plot function (plotCustomAnnotatedTimeProfiles) completed without error.",
+  paste0(
+    "- ",
+    configSheetName,
+    " configuration sheet contains runnable plot definitions."
+  ),
+  "- All custom plot calls (plotCustomAnnotatedTimeProfiles) completed without error.",
   "- Custom wrapper adds reference lines and export annotations on top of plotTimeProfiles.",
-  paste0("- Returned plot/table objects: ", returnedPlots),
-  paste0("- Generated plot files: ", length(plotFiles)),
+  paste0("- Returned plot/table objects from final execution: ", returnedPlots),
   qmdRenderAssertionLine(
     qmdRenderResult,
     assertionPrefix = "UC07I_CustomAnnotatedTimeProfiles.qmd"
@@ -181,7 +180,7 @@ reportLines <- c(
   "- Extend plots with additional ggplot2 layers and styling",
   "- Customize export attributes with captions and footnotes",
   "- Implement configuration validation",
-  "",
+  coverageReportSection(coverage, configSheetName),
   qmdRenderContentSection(
     qmdRenderResult,
     sectionTitle = "Custom Annotated Time Profiles Report",

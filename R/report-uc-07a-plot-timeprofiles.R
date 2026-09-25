@@ -29,7 +29,6 @@ updateUC7Project(
   copyPK = FALSE,
   copySimResult = TRUE
 )
-
 scenarioList <- createScenariosWrapped(pc, scenarioNames = scenarioNames)
 assertOrStop(length(scenarioList) == 2, "UC-07a requires two scenarios")
 
@@ -106,11 +105,8 @@ assertOrStop(
     )
   )
 )
-returnedPlots <- if (any(inherits(tpCall, "error"))) {
-  0
-} else {
-  coverage$returnedObjects[[nrow(coverage)]]
-}
+returnedPlots <-
+  sum(as.double(unlist(coverage$returnedObjects)), na.rm = TRUE)
 
 
 # adjust export width
@@ -138,22 +134,22 @@ plotFiles <- verifyAndCopyPlots(
 # Render qmd content to markdown using helper function
 qmdRenderResult <- renderQmdToMarkdown(
   searchFolder = reportFolder,
-  pattern = "UC07A_TimeProfiles\\\\.qmd$"
+  pattern = "UC07A_TimeProfiles\\.qmd$"
 )
-
 
 reportLines <- c(
   "# UC-07A Plot generation: Time Profiles",
   "",
   "## Summary",
   "",
-  "This scenario validates runPlot execution for time profile plot generation using mean simulation results with observed data and exports the generated workflow outputs.",
+  "This scenario validates time-profile plot generation using runPlot() with simulation results and overlaid observed data. Plots are generated across multiple variant families and exported for reporting.",
   "",
   "## Approach",
   "",
-  "- Uses simulation results from mean model scenarios copied from the repo-local ReportInputs folder.",
-  "- Loads stable observed time-profile fixture data from ReportInputs/UC7_observed_TP.csv.",
-  "- Generates time profile plots showing concentration-time profiles with overlaid observed data.",
+  "- Uses population model simulation results from repo-local ReportInputs folder.",
+  "- Loads observed time-profile fixture data from ReportInputs/UC7_observed_TP.csv.",
+  "- Generates time profile plots with concentration-time profiles and overlaid observed data using runPlot(nameOfplotFunction = 'plotTimeProfiles').",
+  "- Exports plots and generates Quarto markdown report with figures and captions.",
   "",
   "## Assertions",
   "",
@@ -163,20 +159,17 @@ reportLines <- c(
   ),
   "- Observed data loaded from ReportInputs/UC7_observed_TP.csv.",
   paste0("- Total data points in observed data: ", nrow(dataObserved)),
-  "- UC07A_TimeProfiles contains at least one runnable row.",
-  paste0("- Selected plotName: ", plotName),
-  "- runPlot(nameOfplotFunction = 'plotTimeProfiles') completed without error.",
-  paste0("- Returned plot/table objects: ", returnedPlots),
-  paste0("- Generated plot files: ", length(plotFiles)),
+  "- UC07A_TimeProfiles configuration sheet contains runnable plot definitions.",
+  "- All runPlot(nameOfplotFunction = 'plotTimeProfiles') calls completed without error.",
+  paste0("- Returned plot/table objects from final execution: ", returnedPlots),
   qmdRenderAssertionLine(
     qmdRenderResult,
     assertionPrefix = "UC07A_TimeProfiles.qmd"
   ),
-  "",
+  coverageReportSection(coverage, qmdName),
   qmdRenderContentSection(
     qmdRenderResult,
-    sectionTitle = "Time Profile Report",
-    sectionDescription = "The following content is from the auto-generated UC07A_TimeProfiles.qmd with the exported figures and captions from the time profile workflow:"
+    sectionDescription = "The following content is from the auto-generated UC07A_TimeProfiles.qmd with exported figures and captions:"
   )
 )
 

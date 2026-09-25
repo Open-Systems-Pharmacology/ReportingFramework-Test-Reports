@@ -98,11 +98,8 @@ assertOrStop(
     pkForestCall$message
   )
 )
-returnedPlots <- if (inherits(pkForestCall, "error")) {
-  0
-} else {
-  length(pkForestCall)
-}
+returnedPlots <-
+  sum(as.double(unlist(coverage$returnedObjects)), na.rm = TRUE)
 
 setPlotExportOptions(width = 20)
 
@@ -126,7 +123,7 @@ plotFiles <- verifyAndCopyPlots(
 
 qmdRenderResult <- renderQmdToMarkdown(
   searchFolder = reportFolder,
-  pattern = "UC07D_PK_Forest_PointEstimate_Absolute\\.qmd$"
+  pattern = qmdName
 )
 
 reportLines <- c(
@@ -134,22 +131,20 @@ reportLines <- c(
   "",
   "## Summary",
   "",
-  "This scenario validates runPlot execution for PK forest point-estimate plots of absolute values using simulated PK data and aggregated observed PK overlays.",
+  "This scenario validates point-estimate PK forest plot generation for absolute values using runPlot() with simulated PK parameters and aggregated observed PK overlays.",
   "",
   "## Assertions",
   "",
   paste0("- Scenarios configured: ", paste(scenarioNames, collapse = ", ")),
   "- Observed PK data loaded from ReportInputs/UC7_observed_PK.csv and aggregated to geometric mean with 90% CI interval overlays.",
-  "- Configuration sheet cloned from UC07C_PK_Forest.",
-  paste0("- Selected plotName: ", plotName),
-  "- runPlot(nameOfplotFunction = 'plotPKForestPointEstimateOfAbsoluteValues') completed without error.",
-  paste0("- Returned plot/table objects: ", returnedPlots),
-  paste0("- Generated plot files: ", length(plotFiles)),
+  "- UC07D_PK_Forest configuration sheet contains runnable plot definitions.",
+  "- All runPlot(nameOfplotFunction = 'plotPKForestPointEstimateOfAbsoluteValues') calls completed without error.",
+  paste0("- Returned plot/table objects from final execution: ", returnedPlots),
   qmdRenderAssertionLine(
     qmdRenderResult,
     assertionPrefix = "UC07D_PK_Forest_PointEstimate_Absolute.qmd"
   ),
-  "",
+  coverageReportSection(coverage, qmdName),
   qmdRenderContentSection(
     qmdRenderResult,
     sectionTitle = "PK Forest Point-Estimate Report",

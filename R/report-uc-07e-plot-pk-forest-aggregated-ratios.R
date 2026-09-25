@@ -20,6 +20,7 @@ unlink(reportFolder, recursive = TRUE, force = TRUE)
 dir.create(reportFolder, recursive = TRUE, showWarnings = FALSE)
 
 scenarioNames <- c(
+  "adults_po",
   "adolescents_iv",
   "adolescents_po",
   "children_iv",
@@ -41,7 +42,7 @@ updateUC7Project(
 )
 
 scenarioList <- createScenariosWrapped(pc, scenarioNames = scenarioNames)
-assertOrStop(length(scenarioList) == 8, "UC-07E requires 8 scenarios")
+assertOrStop(length(scenarioList) == 9, "UC-07E requires 9 scenarios")
 
 pkParameterDT <- ospsuite.reportingframework::loadPKParameter(
   pc,
@@ -99,11 +100,8 @@ assertOrStop(
     pkForestCall$message
   )
 )
-returnedPlots <- if (inherits(pkForestCall, "error")) {
-  0
-} else {
-  length(pkForestCall)
-}
+returnedPlots <-
+  sum(as.double(unlist(coverage$returnedObjects)), na.rm = TRUE)
 
 setPlotExportOptions(width = 20)
 
@@ -126,7 +124,7 @@ plotFiles <- verifyAndCopyPlots(
 
 qmdRenderResult <- renderQmdToMarkdown(
   searchFolder = reportFolder,
-  pattern = "UC07E_PK_Forest_Aggregated_Ratios\\.qmd$"
+  pattern = qmdName
 )
 
 reportLines <- c(
@@ -134,22 +132,21 @@ reportLines <- c(
   "",
   "## Summary",
   "",
-  "This scenario validates runPlot execution for aggregated PK forest ratio plots built as PO / IV comparisons within each population.",
+  "This scenario validates aggregated PK forest ratio plot generation using runPlot() for PO / IV comparisons within each population.",
   "",
   "## Assertions",
   "",
   paste0("- Scenarios configured: ", paste(scenarioNames, collapse = ", ")),
   "- Ratio configuration derived from UC07C_PK_Forest using PO scenarios as numerators and the matching IV scenarios as referenceScenario denominators.",
   "- Observed PK ratios were aggregated from ReportInputs/UC7_observed_PK.csv as PO / IV.",
-  paste0("- Selected plotName: ", plotName),
-  "- runPlot(nameOfplotFunction = 'plotPKForestAggregatedRatios') completed without error.",
-  paste0("- Returned plot/table objects: ", returnedPlots),
-  paste0("- Generated plot files: ", length(plotFiles)),
+  "- UC07E_PK_Forest configuration sheet contains runnable plot definitions.",
+  "- All runPlot(nameOfplotFunction = 'plotPKForestAggregatedRatios') calls completed without error.",
+  paste0("- Returned plot/table objects from final execution: ", returnedPlots),
   qmdRenderAssertionLine(
     qmdRenderResult,
     assertionPrefix = "UC07E_PK_Forest_Aggregated_Ratios.qmd"
   ),
-  "",
+  coverageReportSection(coverage, qmdName),
   qmdRenderContentSection(
     qmdRenderResult,
     sectionTitle = "PK Forest Aggregated Ratios Report",

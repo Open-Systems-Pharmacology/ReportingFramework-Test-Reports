@@ -104,11 +104,8 @@ assertOrStop(
     rangeCall$message
   )
 )
-returnedPlots <- if (inherits(rangeCall, "error")) {
-  0
-} else {
-  length(rangeCall)
-}
+returnedPlots <-
+  sum(as.double(unlist(coverage$returnedObjects)), na.rm = TRUE)
 
 setPlotExportOptions(width = 20)
 
@@ -163,7 +160,7 @@ reportLines <- c(
   "",
   "## Summary",
   "",
-  "This scenario validates runPlot execution for distribution vs demographics plots with both step plot and range plot rendering.",
+  "This scenario validates distribution-vs-demographics plot generation using runPlot() with both step-plot and range-plot rendering.",
   "",
   "## Assertions",
   "",
@@ -177,7 +174,6 @@ reportLines <- c(
   "- runPlot(nameOfplotFunction = 'plotDistributionVsDemographics') completed with asStepPlot = TRUE.",
   "- runPlot(nameOfplotFunction = 'plotDistributionVsDemographics') completed with asStepPlot = FALSE.",
   paste0("- Returned plot/table objects: ", returnedPlots),
-  paste0("- Generated plot files: ", length(plotFiles)),
   qmdRenderAssertionLine(
     qmdRenderResultStep,
     assertionPrefix = "UC07H_DistVsDemo_StepPlot.qmd"
@@ -186,7 +182,7 @@ reportLines <- c(
     qmdRenderResultRange,
     assertionPrefix = "UC07H_DistVsDemo_RangePlot.qmd"
   ),
-  "",
+  coverageReportSection(coverage, configSheetName),
   qmdRenderContentSection(
     qmdRenderResultStep,
     sectionTitle = "Distribution vs Demographics (Step Plot)",

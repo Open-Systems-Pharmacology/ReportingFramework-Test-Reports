@@ -38,6 +38,10 @@ pkParameterDT <- ospsuite.reportingframework::loadPKParameter(
 
 setWorkflowOptions(isValidRun = FALSE)
 
+themeToUse <-
+  theme(legend.position = "top", legend.title = element_blank())
+options(knitr.kable.NA = "")
+
 coverage <- loadAndFilterConfigSheet(
   pc,
   sheetName = qmdName
@@ -84,7 +88,8 @@ assertOrStop(
   !inherits(pkBoxCall, "error"),
   paste0("runPlot(plotPKBoxwhisker) failed: ", pkBoxCall$message)
 )
-returnedPlots <- if (inherits(pkBoxCall, "error")) 0 else length(pkBoxCall)
+returnedPlots <-
+  sum(as.double(unlist(coverage$returnedObjects)), na.rm = TRUE)
 
 setPlotExportOptions(width = 20)
 
@@ -115,13 +120,14 @@ reportLines <- c(
   "",
   "## Summary",
   "",
-  "This scenario validates runPlot execution for PK box-whisker plot generation using population-based pharmacokinetic parameters and exports the generated workflow outputs.",
+  "This scenario validates PK box-whisker plot generation using runPlot() with population-based pharmacokinetic parameters. Plots display the distribution of key PK parameters across multiple individuals and are exported for reporting.",
   "",
   "## Approach",
   "",
-  "- Uses pre-computed PK analysis results from population simulations copied from the repo-local ReportInputs folder.",
-  "- Loads PK parameters from PKAnalysisResults CSV files for multiple individuals in the adult population",
-  "- Generates PK box-whisker plots showing distribution of key parameters across the population",
+  "- Uses pre-computed PK analysis results from population simulations in repo-local ReportInputs folder.",
+  "- Loads PK parameters from PKAnalysisResults CSV files for multiple individuals across population scenarios.",
+  "- Generates PK box-whisker plots showing parameter distributions using runPlot(nameOfplotFunction = 'plotPKBoxwhisker').",
+  "- Exports plots and generates Quarto markdown report with figures and captions.",
   "",
   "## Assertions",
   "",
@@ -129,22 +135,20 @@ reportLines <- c(
     "- Population scenarios configured: ",
     paste(scenarioNames, collapse = ", ")
   ),
-  "- PK parameter data loaded from PKAnalysisResults (adults_iv.csv, adults_po.csv)",
-  paste0("- Total individuals in population analysis: ", nrow(pkParameterDT)),
-  "- UC07B_PK_Boxplot contains at least one runnable row.",
-  paste0("- Selected plotName: ", plotName),
-  "- runPlot(nameOfplotFunction = 'plotPKBoxwhisker') completed without error.",
-  paste0("- Returned plot/table objects: ", returnedPlots),
-  paste0("- Generated plot files: ", length(plotFiles)),
+  "- PK parameter data loaded from PKAnalysisResults CSV files.",
+  paste0("- Total PK parameter records: ", nrow(pkParameterDT)),
+  "- UC07B_PK_Boxplot configuration sheet contains runnable plot definitions.",
+  "- All runPlot(nameOfplotFunction = 'plotPKBoxwhisker') calls completed without error.",
+  paste0("- Returned plot/table objects from final execution: ", returnedPlots),
   qmdRenderAssertionLine(
     qmdRenderResult,
     assertionPrefix = "UC07B_PK_Boxplot.qmd"
   ),
-  "",
+  coverageReportSection(coverage, qmdName),
   qmdRenderContentSection(
     qmdRenderResult,
-    sectionTitle = "PK Box-Whisker Report",
-    sectionDescription = "The following content is from the auto-generated UC07B_PK_Boxplot.qmd with the exported figures and captions from the PK box-whisker workflow:"
+    sectionTitle = "Generated PK Box-Whisker Report",
+    sectionDescription = "The following content is from the auto-generated UC07B_PK_Boxplot.qmd with exported figures and captions:"
   )
 )
 

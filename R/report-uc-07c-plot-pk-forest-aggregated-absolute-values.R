@@ -107,11 +107,8 @@ assertOrStop(
     pkForestCall$message
   )
 )
-returnedPlots <- if (inherits(pkForestCall, "error")) {
-  0
-} else {
-  length(pkForestCall)
-}
+returnedPlots <-
+  sum(as.double(unlist(coverage$returnedObjects)), na.rm = TRUE)
 
 setPlotExportOptions(width = 20)
 
@@ -143,22 +140,20 @@ reportLines <- c(
   "",
   "## Summary",
   "",
-  "This scenario validates runPlot execution for aggregated absolute-value PK forest plots using simulated PK data and a stable observed PK fixture prepared for forest-plot overlays, and exports the generated workflow outputs.",
+  "This scenario validates aggregated absolute-value PK forest plot generation using runPlot() with simulated PK parameters and stable observed PK aggregates for forest-plot overlays.",
   "",
   "## Assertions",
   "",
   paste0("- Scenarios configured: ", paste(scenarioNames, collapse = ", ")),
   "- Observed PK data loaded from ReportInputs/UC7_observed_PK.csv and aggregated to the package's pkAggregated format.",
-  "- Configuration sheet cloned from UC07C_PK_Forest.",
-  paste0("- Selected plotName: ", plotName),
-  "- runPlot(nameOfplotFunction = 'plotPKForestAggregatedAbsoluteValues') completed without error.",
-  paste0("- Returned plot/table objects: ", returnedPlots),
-  paste0("- Generated plot files: ", length(plotFiles)),
+  "- UC07C_PK_Forest configuration sheet contains runnable plot definitions.",
+  "- All runPlot(nameOfplotFunction = 'plotPKForestAggregatedAbsoluteValues') calls completed without error.",
+  paste0("- Returned plot/table objects from final execution: ", returnedPlots),
   qmdRenderAssertionLine(
     qmdRenderResult,
     assertionPrefix = "UC07C_PK_Forest_Aggregated_Absolute_Values.qmd"
   ),
-  "",
+  coverageReportSection(coverage, qmdName),
   qmdRenderContentSection(
     qmdRenderResult,
     sectionTitle = "PK Forest Aggregated Absolute Values Report",
