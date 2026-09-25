@@ -18,19 +18,7 @@ pc <- setupProject(projectDir)
 
 # Copy model file
 modelFile <- "Aciclovir.pkml"
-copyModelFile(pc, modelFile)
-
-# Get tutorial directory to access sample .qmd files
-tutorialDir <- system.file(
-    "extdata",
-    "Tutorial",
-    package = "ospsuite.reportingframework"
-)
-
-assertOrStop(
-    nzchar(tutorialDir) && dir.exists(tutorialDir),
-    "Tutorial directory not found in ospsuite.reportingframework"
-)
+copyModelFiles(pc, modelFile)
 
 # Look for template .qmd files in the reporting framework package
 # If available, test rendering one

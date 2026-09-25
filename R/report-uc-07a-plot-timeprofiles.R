@@ -3,10 +3,9 @@
 #' Integration scenario for UC-07A time profile plot generation.
 
 rm(list = ls())
-#library(ospsuite.reportingframework)
-pkgload::load_all("../OSPSuite.ReportingFramework", quiet = TRUE)
-#pkgload::load_all("../OSPSuite.Plots", quiet = TRUE)
+library(ospsuite.reportingframework)
 source("R/helpers-uc-shared.R")
+source("R/helpers-uc-observedData.R")
 set.seed(1)
 
 reportFolder <- file.path("tests", "Reports", "UC-07A-Plot-TimeProfiles")
@@ -16,352 +15,62 @@ on.exit(unlink(projectDir, recursive = TRUE, force = TRUE), add = TRUE)
 unlink(reportFolder, recursive = TRUE, force = TRUE)
 dir.create(reportFolder, recursive = TRUE, showWarnings = FALSE)
 
-createObservedData <- function(outputPathIds) {
-  groups <- c(
-    "Set1-A",
-    "Set1-B",
-    "Set1_Reference-A",
-    "Set1_Reference-B",
-    "Set2_OD-A",
-    "Set2_OD-B"
-  )
-  subjectByGroup <- list(
-    "Set1-A" = c(1001L, 1002L),
-    "Set1-B" = c(1003L, 1004L),
-    "Set1_Reference-A" = c(2001L, 2002L),
-    "Set1_Reference-B" = c(2003L, 2004L),
-    "Set2_OD-A" = c(3001L, 3002L),
-    "Set2_OD-B" = c(3003L, 3004L)
-  )
-  times <- c(0, 0.25, 0.5, 1, 2, 6, 12, 24)
-  yValuesSim = list(
-    c(9850.14, 4812.23, 3040.64, 2271.72, 779.98, 165.63, 9.62),
-    c(2060.27, 2588.18, 2437.43, 1887.89, 637.77, 129.73, 6.71)
-  )
-  set.seed(1234)
-  dtObserved <- data.table::rbindlist(lapply(
-    seq_along(groups),
-    function(gIdx) {
-      groupName <- groups[[gIdx]]
-      subjects <- subjectByGroup[[groupName]]
-      data.table::rbindlist(lapply(seq_along(subjects), function(sIdx) {
-        subject <- subjects[[sIdx]]
-        data.table::rbindlist(lapply(
-          seq_along(outputPathIds),
-          function(oIdx) {
-            outputId <- outputPathIds[[oIdx]]
-            yValues <- yValuesSim[[oIdx]] *
-              rlnorm(n = length(times), meanlog = 0, sdlog = 0.2) *
-              1000
-            data.table::data.table(
-              studyId = "1234",
-              subjectId = as.character(subject),
-              individualId = as.character(subject),
-              group = groupName,
-              outputPathId = outputId,
-              xValues = times,
-              xUnit = "h",
-              yValues = yValues,
-              yUnit = "ng/l",
-              lloq = 0.1,
-              dataType = "observed",
-              dataClass = DATACLASS$tpIndividual
-            )
-          }
-        ))
-      }))
-    }
-  ))
-
-  identifierCols <- c(
-    "studyId",
-    "subjectId",
-    "individualId",
-    "group",
-    "outputPathId",
-    "dataType",
-    "dataClass"
-  )
-  timeprofileCols <- c("xValues", "xUnit", "yValues", "yUnit", "lloq")
-
-  for (col in intersect(identifierCols, names(dtObserved))) {
-    data.table::setattr(dtObserved[[col]], "columnType", "identifier")
-  }
-  for (col in intersect(timeprofileCols, names(dtObserved))) {
-    data.table::setattr(dtObserved[[col]], "columnType", "timeprofile")
-  }
-
-  dtObserved
-}
-
-makeConfigRow <- function(
-  baseRow,
-  plotName,
-  scenario,
-  outputPathIds,
-  dataGroupIds = NA_character_,
-  referenceScenario = NA_character_,
-  timeOffset = 0,
-  timeOffsetReference = 0,
-  facetScale = "fixed",
-  nFacetColumns = 1,
-  ylimitLinear = NA_character_,
-  ylimitLog = NA_character_,
-  timeRangeTotal = "total",
-  timeRangeFirst = NA_character_,
-  timeRangeLast = NA_character_,
-  withDiagnostics = FALSE,
-  splitPerTimeRange = TRUE
-) {
-  row <- data.table::copy(baseRow)
-  row$plotName <- plotName
-  row$scenario <- scenario
-  row$outputPathIds <- outputPathIds
-  row$dataGroupIds <- dataGroupIds
-  row$referenceScenario <- referenceScenario
-  row$timeOffset <- timeOffset
-  row$timeOffset_Reference <- timeOffsetReference
-  row$facetScale <- facetScale
-  row$nFacetColumns <- nFacetColumns
-  row$yScale <- "linear, log"
-  row$ylimit_linear <- ylimitLinear
-  row$ylimit_log <- ylimitLog
-  row$timeRange_total <- timeRangeTotal
-  row$timeRange_firstApplication <- timeRangeFirst
-  row$timeRange_lastApplication <- timeRangeLast
-  row$splitPlotsPerTimeRange <- as.numeric(splitPerTimeRange)
-  row$plot_TimeProfiles <- 1
-  row$plot_PredictedVsObserved <- as.numeric(withDiagnostics)
-  row$plot_ResidualsAsHistogram <- as.numeric(withDiagnostics)
-  row$plot_ResidualsVsTime <- as.numeric(withDiagnostics)
-  row$plot_ResidualsVsObserved <- as.numeric(withDiagnostics)
-  row$plot_QQ <- as.numeric(withDiagnostics)
-
-  if (!is.na(referenceScenario)) {
-    row$colorLegend <- "Simulation | Reference"
-  } else {
-    row$colorLegend <- NA_character_
-  }
-
-  row
-}
 
 pc <- setupProject(projectDir)
 
-wbScenarios <- openxlsx::loadWorkbook(pc$scenariosFile)
-scenariosConfig <- xlsxReadData(wbScenarios, sheetName = "Scenarios")
-scenarioOutputs <- xlsxReadData(wbScenarios, sheetName = "OutputPaths")
+# scenarios used in this use case:
+scenarioNames <- c("adults_iv", "adults_po")
 
-modelFile <- "Aciclovir.pkml"
-copyModelFile(pc, modelFile)
+qmdName <- "UC07A_TimeProfiles"
 
-defaultIndividualId <- as.character(scenariosConfig$individualId[[1]])
-availableOutputPathIds <- as.character(scenarioOutputs$outputPathId)
-availableOutputPathIds <- unique(availableOutputPathIds[
-  !is.na(availableOutputPathIds)
-])
-assertOrStop(
-  length(availableOutputPathIds) >= 2,
-  "UC-07A requires at least two output paths"
+updateUC7Project(
+  pc,
+  scenarioNames = scenarioNames,
+  copyPK = FALSE,
+  copySimResult = TRUE
 )
 
-primaryOutputPathId <- availableOutputPathIds[[1]]
-secondaryOutputPathId <- availableOutputPathIds[[2]]
+scenarioList <- createScenariosWrapped(pc, scenarioNames = scenarioNames)
+assertOrStop(length(scenarioList) == 2, "UC-07a requires two scenarios")
 
-scenarioSetup <- data.table::data.table(
-  scenario_name = c("Set1", "Set1_Reference", "Set2_OD"),
-  individualId = c(
-    defaultIndividualId,
-    defaultIndividualId,
-    defaultIndividualId
-  ),
-  populationId = c(NA_character_, NA_character_, NA_character_),
-  readPopulationFromCSV = c(NA, NA, NA),
-  modelParameterSheets = c(NA_character_, NA_character_, NA_character_),
-  applicationProtocol = c(NA_character_, NA_character_, NA_character_),
-  simulationTime = c("0, 24, 60", "0, 24, 60", "0, 24, 240"),
-  simulationTimeUnit = c("h", "h", "h"),
-  steadyState = c(NA, NA, NA),
-  steadyStateTime = c(NA, NA, NA),
-  steadyStateTimeUnit = c(NA_character_, NA_character_, NA_character_),
-  modelFile = c(modelFile, modelFile, modelFile),
-  outputPathsIds = c(
-    paste(primaryOutputPathId, secondaryOutputPathId, sep = ", "),
-    paste(primaryOutputPathId, secondaryOutputPathId, sep = ", "),
-    paste(primaryOutputPathId, secondaryOutputPathId, sep = ", ")
-  )
-)
-
-xlsxWriteData(wbScenarios, sheetName = "Scenarios", scenarioSetup)
-openxlsx::saveWorkbook(wbScenarios, pc$scenariosFile, overwrite = TRUE)
-
-scenarioList <- createScenariosWrapped(pc, scenarioNames = NULL)
-scenarioNames <- names(scenarioList)
-assertOrStop(length(scenarioList) == 3, "UC-07A requires three scenarios")
-
-scenarioResults <- runAndSaveScenarios(pc, scenarioList)
 scenarioResultsForPlots <- loadScenarioResultsToFramework(pc, scenarioNames)
 
-dataObserved <- createObservedData(
-  outputPathIds = c(primaryOutputPathId, secondaryOutputPathId)
+dataObserved <- data.table::fread(reportInputsPath("UC7_observed_TP.csv"))
+dataObserved <- setObservedTimeProfileColumnTypes(dataObserved)
+
+dataObserved <- rbind(
+  dataObserved,
+  ospsuite.reportingframework::aggregateObservedDataGroups(
+    dataObserved = dataObserved
+  ),
+  fill = TRUE
 )
 validateObservedData(dataObserved, dataClassType = "timeprofile")
 updateDataGroupId(projectConfiguration = pc, dataDT = dataObserved)
 
+
 setWorkflowOptions(isValidRun = FALSE)
 
-configureOutputsSheet(pc)
+themeToUse <-
+  theme(legend.position = "top", legend.title = element_blank())
+options(knitr.kable.NA = "")
 
-addDefaultConfigForTimeProfilePlots(
-  projectConfiguration = pc,
-  dataObserved = dataObserved,
-  sheetName = "UC07A_TimeProfiles",
-  overwrite = TRUE
+coverage <- loadAndFilterConfigSheet(
+  pc,
+  sheetName = qmdName
 )
 
-wbReports <- openxlsx::loadWorkbook(pc$addOns$reportsFile)
-dtConfigRaw <- xlsxReadData(
-  wbReports,
-  sheetName = "UC07A_TimeProfiles",
-  skipDescriptionRow = TRUE
-)
-
-headerRows <- dtConfigRaw[!is.na(level), ]
-plotRows <- dtConfigRaw[is.na(level), ]
-assertOrStop(nrow(plotRows) > 0, "No runnable rows in UC07A_TimeProfiles")
-baseRow <- plotRows[1]
-
-representativeRows <- data.table::rbindlist(
-  list(
-    makeConfigRow(
-      baseRow = baseRow,
-      plotName = "singlePlot_withoutData",
-      scenario = "Set1",
-      outputPathIds = primaryOutputPathId,
-      dataGroupIds = NA_character_
-    ),
-    makeConfigRow(
-      baseRow = baseRow,
-      plotName = "singlePlot_withData",
-      scenario = "Set1",
-      outputPathIds = primaryOutputPathId,
-      dataGroupIds = "Set1-A, Set1-B",
-      withDiagnostics = TRUE
-    ),
-    makeConfigRow(
-      baseRow = baseRow,
-      plotName = "singlePlot_withReference",
-      scenario = "Set1",
-      outputPathIds = primaryOutputPathId,
-      referenceScenario = "Set1_Reference"
-    ),
-    makeConfigRow(
-      baseRow = baseRow,
-      plotName = "singlePlot_withOffset",
-      scenario = "Set1",
-      outputPathIds = primaryOutputPathId,
-      referenceScenario = "Set1_Reference",
-      timeOffset = -5,
-      timeOffsetReference = -10
-    ),
-    makeConfigRow(
-      baseRow = baseRow,
-      plotName = "singlePlot_withLimits",
-      scenario = "Set1",
-      outputPathIds = primaryOutputPathId,
-      ylimitLinear = "c(0, 10000)",
-      ylimitLog = "c(0.01, 10000)"
-    ),
-    makeConfigRow(
-      baseRow = baseRow,
-      plotName = "multiDosePlot",
-      scenario = "Set2_OD",
-      outputPathIds = primaryOutputPathId,
-      dataGroupIds = "Set2_OD-A, Set2_OD-B",
-      timeRangeFirst = "c(0, 24)",
-      timeRangeLast = "c(12, 24)",
-      splitPerTimeRange = TRUE
-    ),
-    makeConfigRow(
-      baseRow = baseRow,
-      plotName = "manyPanelPlot",
-      scenario = "Set1",
-      outputPathIds = paste(
-        primaryOutputPathId,
-        secondaryOutputPathId,
-        sep = ", "
-      ),
-      dataGroupIds = "Set1-A, Set1-B",
-      referenceScenario = "Set1_Reference",
-      facetScale = "fixed",
-      nFacetColumns = 2
-    ),
-    makeConfigRow(
-      baseRow = baseRow,
-      plotName = "manyPanelPlot_col3",
-      scenario = "Set1",
-      outputPathIds = paste(
-        primaryOutputPathId,
-        secondaryOutputPathId,
-        sep = ", "
-      ),
-      dataGroupIds = "Set1-A, Set1-B",
-      referenceScenario = "Set1_Reference",
-      facetScale = "free",
-      nFacetColumns = 3
-    ),
-    makeConfigRow(
-      baseRow = baseRow,
-      plotName = "manyPanelPlot_col3",
-      scenario = "Set1_Reference",
-      outputPathIds = paste(
-        primaryOutputPathId,
-        secondaryOutputPathId,
-        sep = ", "
-      ),
-      dataGroupIds = "",
-      referenceScenario = "",
-      facetScale = "free",
-      nFacetColumns = 3
-    )
-  ),
-  fill = TRUE
-)
-
-updatedConfig <- data.table::rbindlist(
-  list(headerRows, representativeRows),
-  fill = TRUE
-)
-xlsxWriteData(wbReports, sheetName = "UC07A_TimeProfiles", updatedConfig)
-openxlsx::saveWorkbook(wbReports, pc$addOns$reportsFile, overwrite = TRUE)
-
-familyCoverage <- data.table::data.table(
-  family = c(
-    "single-without-data",
-    "single-with-data",
-    "single-with-reference",
-    "single-with-offset",
-    "single-with-limits",
-    "multidose-time-ranges",
-    "many-panel-fixed",
-    "many-panel-free-col3"
-  ),
-  plotName = as.character(representativeRows$plotName),
-  status = "PASS",
-  returnedObjects = 0L,
-  errorMessage = ""
-)
-
-for (i in seq_len(nrow(familyCoverage))) {
-  plotName <- familyCoverage$plotName[[i]]
+for (i in seq_len(nrow(coverage))) {
+  plotName <- coverage$plotName[[i]]
   tpCall <- tryCatch(
     {
       plotList <- runPlot(
         projectConfiguration = pc,
         nameOfplotFunction = "plotTimeProfiles",
-        configTableSheet = "UC07A_TimeProfiles",
-        rmdName = "UC07A_TimeProfiles",
+        configTableSheet = qmdName,
+        qmdName = qmdName,
         plotNames = plotName,
+        theme = themeToUse,
         inputs = list(
           scenarioResults = scenarioResultsForPlots,
           dataObserved = dataObserved
@@ -374,109 +83,100 @@ for (i in seq_len(nrow(familyCoverage))) {
   )
 
   if (inherits(tpCall, "error")) {
-    familyCoverage$status[[i]] <- "FAIL"
-    familyCoverage$errorMessage[[i]] <- tpCall$message
-  } else {
-    familyCoverage$returnedObjects[[i]] <- length(tpCall)
+    coverage$status[[i]] <- "FAIL"
+    coverage$errorMessage[[i]] <- tpCall$message
+    next
+  }
+
+  coverage$returnedObjects[[i]] <- length(tpCall)
+  if (coverage$returnedObjects[[i]] == 0) {
+    coverage$status[[i]] <- "FAIL"
+    coverage$errorMessage[[i]] <- "runPlot returned no plot objects"
   }
 }
 
 
 assertOrStop(
-  !any(familyCoverage$status == "FAIL"),
+  !any(coverage$status == "FAIL"),
   paste0(
-    "UC-07A family failures: ",
+    "UC-07A plot failures: ",
     paste(
-      familyCoverage$family[familyCoverage$status == "FAIL"],
+      coverage$plotName[coverage$status == "FAIL"],
       collapse = ", "
     )
   )
 )
+returnedPlots <- if (any(inherits(tpCall, "error"))) {
+  0
+} else {
+  coverage$returnedObjects[[nrow(coverage)]]
+}
 
 
 # adjust export width
-ospsuite.plots::setOspsuite.plots.option(
-  optionKey = ospsuite.plots::OptionKeys$exportWidth,
-  value = 20
-)
+setPlotExportOptions(width = 20)
 
 # export Plots
 runPlot(
   nameOfplotFunction = "plotTimeProfiles",
   projectConfiguration = pc,
-  configTableSheet = "TimeProfiles",
+  configTableSheet = qmdName,
+  qmdName = qmdName,
   theme = themeToUse,
   inputs = list(
-    dataObserved = plotDataObserved,
-    scenarioResults = scenarioResults
+    dataObserved = dataObserved,
+    scenarioResults = scenarioResultsForPlots
   )
 )
 
-copyWorkflowOutputsToReport(
+plotFiles <- verifyAndCopyPlots(
+  reportFolder = reportFolder,
   outputsRoot = pc$outputFolder,
-  reportFolder = reportFolder
-)
-
-plotFiles <- list.files(
-  reportFolder,
-  recursive = TRUE,
-  full.names = TRUE,
-  pattern = "(png|svg)$"
-)
-assertOrStop(
-  length(plotFiles) > 0,
-  "No plot files were generated in the UC-07a report folder"
+  qmdNames = qmdName
 )
 
 # Render qmd content to markdown using helper function
 qmdRenderResult <- renderQmdToMarkdown(
   searchFolder = reportFolder,
-  pattern = "\\.qmd$"
+  pattern = "UC07A_TimeProfiles\\\\.qmd$"
 )
 
-
-reportTable <- c(
-  "| Family | Representative Plot Name | Status | Returned Objects |",
-  "|---|---|---|---:|"
-)
-
-for (i in seq_len(nrow(familyCoverage))) {
-  reportTable <- c(
-    reportTable,
-    paste0(
-      "| ",
-      familyCoverage$family[[i]],
-      " | ",
-      familyCoverage$plotName[[i]],
-      " | ",
-      familyCoverage$status[[i]],
-      " | ",
-      familyCoverage$returnedObjects[[i]],
-      " |"
-    )
-  )
-}
 
 reportLines <- c(
   "# UC-07A Plot generation: Time Profiles",
   "",
   "## Summary",
   "",
-  "This scenario validates representative time-profile variant families for mean models.",
+  "This scenario validates runPlot execution for time profile plot generation using mean simulation results with observed data and exports the generated workflow outputs.",
+  "",
+  "## Approach",
+  "",
+  "- Uses simulation results from mean model scenarios copied from the repo-local ReportInputs folder.",
+  "- Loads stable observed time-profile fixture data from ReportInputs/UC7_observed_TP.csv.",
+  "- Generates time profile plots showing concentration-time profiles with overlaid observed data.",
   "",
   "## Assertions",
   "",
-  paste0("- Scenarios configured: ", paste(scenarioNames, collapse = ", ")),
-  "- UC07A_TimeProfiles contains one representative row for each variant family.",
-  "- All family-specific runPlot(nameOfplotFunction = 'plotTimeProfiles') calls completed without hard errors.",
+  paste0(
+    "- Mean model scenarios configured: ",
+    paste(scenarioNames, collapse = ", ")
+  ),
+  "- Observed data loaded from ReportInputs/UC7_observed_TP.csv.",
+  paste0("- Total data points in observed data: ", nrow(dataObserved)),
+  "- UC07A_TimeProfiles contains at least one runnable row.",
+  paste0("- Selected plotName: ", plotName),
+  "- runPlot(nameOfplotFunction = 'plotTimeProfiles') completed without error.",
+  paste0("- Returned plot/table objects: ", returnedPlots),
+  paste0("- Generated plot files: ", length(plotFiles)),
+  qmdRenderAssertionLine(
+    qmdRenderResult,
+    assertionPrefix = "UC07A_TimeProfiles.qmd"
+  ),
   "",
-  "## Family Coverage",
-  "",
-  reportTable,
   qmdRenderContentSection(
     qmdRenderResult,
     sectionTitle = "Time Profile Report",
-    sectionDescription = "The following content is from the auto-generated Timeprofile.qmd with all figures, captions, and headings as defined in the TimeProfiles configuration sheet:"
+    sectionDescription = "The following content is from the auto-generated UC07A_TimeProfiles.qmd with the exported figures and captions from the time profile workflow:"
   )
 )
 

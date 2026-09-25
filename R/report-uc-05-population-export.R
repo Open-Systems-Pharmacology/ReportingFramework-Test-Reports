@@ -34,7 +34,7 @@ assertHasCorePopulationColumns <- function(dt, context) {
 }
 
 modelFile <- "Aciclovir.pkml"
-copyModelFile(pc, modelFile)
+copyModelFiles(pc, modelFile)
 
 randomPopulationName <- "TestPopulation_noOnto"
 exportRandomPopulations(

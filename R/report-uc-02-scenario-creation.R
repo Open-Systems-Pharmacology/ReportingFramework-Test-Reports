@@ -19,7 +19,7 @@ scenariosConfig <- xlsxReadData(wbScenarios, sheetName = "Scenarios")
 scenarioOutputs <- xlsxReadData(wbScenarios, sheetName = "OutputPaths")
 
 modelFile <- "Aciclovir.pkml"
-copyModelFile(pc, modelFile)
+copyModelFiles(pc, modelFile)
 
 defaultIndividualId <- as.character(scenariosConfig$individualId[[1]])
 defaultOutputPathId <- as.character(scenarioOutputs$outputPathId[[1]])

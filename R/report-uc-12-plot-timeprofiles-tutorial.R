@@ -11,6 +11,7 @@ source("R/helpers-uc-shared.R")
 reportName <- "UC-12-Plot-TimeProfiles-Tutorial"
 reportFolder <- file.path("tests", "Reports", reportName)
 referenceFolder <- file.path("Reports", reportName)
+qmdName <- "Timeprofile"
 projectDir <- tempfile(pattern = "uc12_timeprofiles_tutorial_")
 on.exit(unlink(projectDir, recursive = TRUE, force = TRUE), add = TRUE)
 
@@ -302,6 +303,7 @@ for (i in seq_len(nrow(coverage))) {
         nameOfplotFunction = "plotTimeProfiles",
         projectConfiguration = pc,
         configTableSheet = "TimeProfiles",
+        qmdName = qmdName,
         plotNames = plotName,
         theme = themeToUse,
         inputs = list(
@@ -346,6 +348,7 @@ runPlot(
   nameOfplotFunction = "plotTimeProfiles",
   projectConfiguration = pc,
   configTableSheet = "TimeProfiles",
+  qmdName = qmdName,
   theme = themeToUse,
   inputs = list(
     dataObserved = plotDataObserved,
@@ -353,21 +356,10 @@ runPlot(
   )
 )
 
-
-copyWorkflowOutputsToReport(
+plotFiles <- verifyAndCopyPlots(
+  reportFolder = reportFolder,
   outputsRoot = pc$outputFolder,
-  reportFolder = reportFolder
-)
-
-plotFiles <- list.files(
-  reportFolder,
-  recursive = TRUE,
-  full.names = TRUE,
-  pattern = "(png|svg)$"
-)
-assertOrStop(
-  length(plotFiles) > 0,
-  "No plot files were generated in the UC-12 report folder"
+  qmdNames = qmdName
 )
 
 # Render qmd content to markdown using helper function

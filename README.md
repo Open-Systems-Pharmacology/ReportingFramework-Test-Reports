@@ -68,25 +68,17 @@ Users can find the reports and their description in the
 [/Reports](./Reports) folder as well as the corresponding R code in the
 [/R](./R) folder.
 
-Models, Observed and Simulated Data are respectively available in the
-[Models](./Models) and [Data](./Data) folders.
+Repo-local inputs used by the report workflows are available in
+[ReportInputs](./ReportInputs), including the
+[Models](./ReportInputs/Models),
+[PKAnalysisResults](./ReportInputs/PKAnalysisResults), and
+[Populations](./ReportInputs/Populations) subfolders.
 
 Here is the summary of the reports, their scripts and their run time
 currently available in this repository:
 
-| Reference | Test Report | Script | Run Time |
+| Use Case | Test Report | Script | Run Time |
 |:---|:---|:---|:---|
-| [Aciclovir-Mean](./Reports/Aciclovir-Mean) | [Aciclovir-Mean](./tests/Reports/Aciclovir-Mean/Report.md) | [report-aciclovir-mean.R](./R/report-aciclovir-mean.R) | 0.5 min |
-| [Aciclovir-Mean-SVG](./Reports/Aciclovir-Mean-SVG) | [Aciclovir-Mean-SVG](./tests/Reports/Aciclovir-Mean-SVG/Report.md) | [report-aciclovir-mean-svg.R](./R/report-aciclovir-mean-svg.R) | 0.8 min |
-| [Aciclovir-Population](./Reports/Aciclovir-Population) | [Aciclovir-Population](./tests/Reports/Aciclovir-Population/Report.md) | [report-aciclovir-population.R](./R/report-aciclovir-population.R) | 7.5 min |
-| [Raltegravir-Absorption](./Reports/Raltegravir-Absorption) | [Raltegravir-Absorption](./tests/Reports/Raltegravir-Absorption/Report.md) | [report-raltegravir-absorption.R](./R/report-raltegravir-absorption.R) | 0.9 min |
-| [Raltegravir-Mass-Balance](./Reports/Raltegravir-Mass-Balance) | [Raltegravir-Mass-Balance](./tests/Reports/Raltegravir-Mass-Balance/Report.md) | [report-raltegravir-mass-<br>balance.R](./R/report-raltegravir-mass-balance.R) | 1.5 min |
-| [Test-NO7](./Reports/Test-NO7) | [Test-NO7](./tests/Reports/Test-NO7/Report.md) | [report-NO7.R](./R/report-NO7.R) | 0.3 min |
-| [Test-NO8](./Reports/Test-NO8) | [Test-NO8](./tests/Reports/Test-NO8/Report.md) | [report-NO8.R](./R/report-NO8.R) | 0.8 min |
-| [Test-NO9](./Reports/Test-NO9) | [Test-NO9](./tests/Reports/Test-NO9/Report.md) | [report-NO9.R](./R/report-NO9.R) | 1 min |
-| [Test-NO10](./Reports/Test-NO10) | [Test-NO10](./tests/Reports/Test-NO10/Report.md) | [report-NO10.R](./R/report-NO10.R) | 6.4 min |
-| [Test-NO11](./Reports/Test-NO11) | [Test-NO11](./tests/Reports/Test-NO11/Report.md) | [report-NO11.R](./R/report-NO11.R) | 0.4 min |
-| [Test-NO12](./Reports/Test-NO12) | [Test-NO12](./tests/Reports/Test-NO12/Report.md) | [report-NO12.R](./R/report-NO12.R) | 0.8 min |
 | [UC-01-Project-Initialization](./Reports/UC-01-Project-Initialization) | [UC-01-Project-Initialization](./tests/Reports/UC-01-Project-Initialization/Report.md) | [report-uc-01-project-init.R](./R/report-uc-01-project-init.R) | NA |
 | [UC-02-Scenario-Creation](./Reports/UC-02-Scenario-Creation) | [UC-02-Scenario-Creation](./tests/Reports/UC-02-Scenario-Creation/Report.md) | [report-uc-02-scenario-creation.R](./R/report-uc-02-scenario-creation.R) | NA |
 | [UC-03-Scenario-Results-RoundTrip](./Reports/UC-03-Scenario-Results-RoundTrip) | [UC-03-Scenario-Results-RoundTrip](./tests/Reports/UC-03-Scenario-Results-RoundTrip/Report.md) | [report-uc-03-scenario-results-roundtrip.R](./R/report-uc-03-scenario-results-roundtrip.R) | NA |
@@ -95,8 +87,14 @@ currently available in this repository:
 | [UC-06-Utilities-Data-Integration](./Reports/UC-06-Utilities-Data-Integration) | [UC-06-Utilities-Data-Integration](./tests/Reports/UC-06-Utilities-Data-Integration/Report.md) | [report-uc-06-utilities-data-integration.R](./R/report-uc-06-utilities-data-integration.R) | NA |
 | [UC-07A-Plot-TimeProfiles](./Reports/UC-07A-Plot-TimeProfiles) | [UC-07A-Plot-TimeProfiles](./tests/Reports/UC-07A-Plot-TimeProfiles/Report.md) | [report-uc-07a-plot-timeprofiles.R](./R/report-uc-07a-plot-timeprofiles.R) | NA |
 | [UC-07B-Plot-PKBoxwhisker](./Reports/UC-07B-Plot-PKBoxwhisker) | [UC-07B-Plot-PKBoxwhisker](./tests/Reports/UC-07B-Plot-PKBoxwhisker/Report.md) | [report-uc-07b-plot-pk-boxwhisker.R](./R/report-uc-07b-plot-pk-boxwhisker.R) | NA |
-| [UC-07C-Plot-PKForest](./Reports/UC-07C-Plot-PKForest) | [UC-07C-Plot-PKForest](./tests/Reports/UC-07C-Plot-PKForest/Report.md) | [report-uc-07c-plot-pk-forest.R](./R/report-uc-07c-plot-pk-forest.R) | NA |
-| [UC-07D-Plot-Demographics](./Reports/UC-07D-Plot-Demographics) | [UC-07D-Plot-Demographics](./tests/Reports/UC-07D-Plot-Demographics/Report.md) | [report-uc-07d-plot-demographics.R](./R/report-uc-07d-plot-demographics.R) | NA |
+| [UC-07C-Plot-PKForest-AggregatedAbsoluteValues](./Reports/UC-07C-Plot-PKForest-AggregatedAbsoluteValues) | [UC-07C-Plot-PKForest-AggregatedAbsoluteValues](./tests/Reports/UC-07C-Plot-PKForest-AggregatedAbsoluteValues/Report.md) | [report-uc-07c-plot-pk-forest-aggregated-absolute-values.R](./R/report-uc-07c-plot-pk-forest-aggregated-absolute-values.R) | NA |
+| [UC-07D-Plot-PKForest-PointEstimateAbsolute](./Reports/UC-07D-Plot-PKForest-PointEstimateAbsolute) | [UC-07D-Plot-PKForest-PointEstimateAbsolute](./tests/Reports/UC-07D-Plot-PKForest-PointEstimateAbsolute/Report.md) | [report-uc-07d-plot-pk-forest-point-estimate-absolute.R](./R/report-uc-07d-plot-pk-forest-point-estimate-absolute.R) | NA |
+| [UC-07E-Plot-PKForest-AggregatedRatios](./Reports/UC-07E-Plot-PKForest-AggregatedRatios) | [UC-07E-Plot-PKForest-AggregatedRatios](./tests/Reports/UC-07E-Plot-PKForest-AggregatedRatios/Report.md) | [report-uc-07e-plot-pk-forest-aggregated-ratios.R](./R/report-uc-07e-plot-pk-forest-aggregated-ratios.R) | NA |
+| [UC-07F-Plot-PKForest-PointEstimateRatios](./Reports/UC-07F-Plot-PKForest-PointEstimateRatios) | [UC-07F-Plot-PKForest-PointEstimateRatios](./tests/Reports/UC-07F-Plot-PKForest-PointEstimateRatios/Report.md) | [report-uc-07f-plot-pk-forest-point-estimate-ratios.R](./R/report-uc-07f-plot-pk-forest-point-estimate-ratios.R) | NA |
+| [UC-07G-Plot-Histograms](./Reports/UC-07G-Plot-Histograms) | [UC-07G-Plot-Histograms](./tests/Reports/UC-07G-Plot-Histograms/Report.md) | [report-uc-07g-plot-histograms.R](./R/report-uc-07g-plot-histograms.R) | NA |
+| [UC-07H-Plot-DistributionVsDemographics](./Reports/UC-07H-Plot-DistributionVsDemographics) | [UC-07H-Plot-DistributionVsDemographics](./tests/Reports/UC-07H-Plot-DistributionVsDemographics/Report.md) | [report-uc-07h-plot-distribution-vs-demographics.R](./R/report-uc-07h-plot-distribution-vs-demographics.R) | NA |
+| [UC-07I-Plot-CustomAnnotatedTimeProfiles](./Reports/UC-07I-Plot-CustomAnnotatedTimeProfiles) | [UC-07I-Plot-CustomAnnotatedTimeProfiles](./tests/Reports/UC-07I-Plot-CustomAnnotatedTimeProfiles/Report.md) | [report-uc-07i-plot-custom-annotated-timeprofiles.R](./R/report-uc-07i-plot-custom-annotated-timeprofiles.R) | NA |
+| [UC-07-Generate-Compare-Results](./Reports/UC-07-Generate-Compare-Results) | [UC-07-Generate-Compare-Results](./tests/Reports/UC-07-Generate-Compare-Results/Report.md) | [report-uc-07-generate-and-compare-results.R](./R/report-uc-07-generate-and-compare-results.R) | NA |
 | [UC-08-Report-Generation](./Reports/UC-08-Report-Generation) | [UC-08-Report-Generation](./tests/Reports/UC-08-Report-Generation/Report.md) | [report-uc-08-report-generation.R](./R/report-uc-08-report-generation.R) | NA |
 | [UC-09-EPackage-Export](./Reports/UC-09-EPackage-Export) | [UC-09-EPackage-Export](./tests/Reports/UC-09-EPackage-Export/Report.md) | [report-uc-09-epackage-export.R](./R/report-uc-09-epackage-export.R) | NA |
 | [UC-10-Sensitivity-Analysis](./Reports/UC-10-Sensitivity-Analysis) | [UC-10-Sensitivity-Analysis](./tests/Reports/UC-10-Sensitivity-Analysis/Report.md) | [report-uc-10-sensitivity-analysis.R](./R/report-uc-10-sensitivity-analysis.R) | NA |
@@ -205,9 +203,9 @@ currently available in this repository:
 | [UC-07A-Plot-TimeProfiles](./tests/Reports/UC-07A-Plot-TimeProfiles) | Content of<br>Report | ![](https://img.shields.io/badge/%E2%9C%93-Passed%20tests-success) | 1 | 0 |
 | [UC-07B-Plot-PKBoxwhisker](./tests/Reports/UC-07B-Plot-PKBoxwhisker) | Expected Files | ![](https://img.shields.io/badge/%E2%9C%93-Passed%20tests-success) | 1 | 0 |
 | [UC-07B-Plot-PKBoxwhisker](./tests/Reports/UC-07B-Plot-PKBoxwhisker) | Content of<br>Report | ![](https://img.shields.io/badge/%E2%9C%93-Passed%20tests-success) | 1 | 0 |
-| [UC-07C-Plot-PKForest](./tests/Reports/UC-07C-Plot-PKForest) | Expected Files | ![](https://img.shields.io/badge/%E2%9C%93-Passed%20tests-success) | 1 | 0 |
-| [UC-07C-Plot-PKForest](./tests/Reports/UC-07C-Plot-PKForest) | Content of<br>Report | ![](https://img.shields.io/badge/%E2%9C%93-Passed%20tests-success) | 1 | 0 |
-| [UC-07D-Plot-Demographics](./tests/Reports/UC-07D-Plot-Demographics) | Expected Files | ![](https://img.shields.io/badge/%E2%9C%93-Passed%20tests-success) | 1 | 0 |
-| [UC-07D-Plot-Demographics](./tests/Reports/UC-07D-Plot-Demographics) | Content of<br>Report | ![](https://img.shields.io/badge/%E2%9C%93-Passed%20tests-success) | 1 | 0 |
+| [UC-07C-Plot-PKForest-AggregatedAbsoluteValues](./tests/Reports/UC-07C-Plot-PKForest-AggregatedAbsoluteValues) | Expected Files | ![](https://img.shields.io/badge/%E2%9C%93-Passed%20tests-success) | 1 | 0 |
+| [UC-07C-Plot-PKForest-AggregatedAbsoluteValues](./tests/Reports/UC-07C-Plot-PKForest-AggregatedAbsoluteValues) | Content of<br>Report | ![](https://img.shields.io/badge/%E2%9C%93-Passed%20tests-success) | 1 | 0 |
+| [UC-07G-Plot-Histograms](./tests/Reports/UC-07G-Plot-Histograms) | Expected Files | ![](https://img.shields.io/badge/%E2%9C%93-Passed%20tests-success) | 1 | 0 |
+| [UC-07G-Plot-Histograms](./tests/Reports/UC-07G-Plot-Histograms) | Content of<br>Report | ![](https://img.shields.io/badge/%E2%9C%93-Passed%20tests-success) | 1 | 0 |
 | [UC-08-Report-Generation](./tests/Reports/UC-08-Report-Generation) | Expected Files | ![](https://img.shields.io/badge/%E2%9C%93-Passed%20tests-success) | 1 | 0 |
 | [UC-08-Report-Generation](./tests/Reports/UC-08-Report-Generation) | Content of<br>Report | ![](https://img.shields.io/badge/%E2%9C%93-Passed%20tests-success) | 1 | 0 |

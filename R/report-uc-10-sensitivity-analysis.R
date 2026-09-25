@@ -22,7 +22,7 @@ scenariosConfig <- xlsxReadData(wbScenarios, sheetName = "Scenarios")
 
 # Copy model file
 modelFile <- "Aciclovir.pkml"
-copyModelFile(pc, modelFile)
+copyModelFiles(pc, modelFile)
 
 # Verify sensitivity analysis functions
 assertOrStop(

@@ -18,7 +18,7 @@ pc <- setupProject(projectDir)
 
 # Copy model file
 modelFile <- "Aciclovir.pkml"
-copyModelFile(pc, modelFile)
+copyModelFiles(pc, modelFile)
 
 # Test snapshot functions
 assertOrStop(

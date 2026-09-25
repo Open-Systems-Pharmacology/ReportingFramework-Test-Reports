@@ -40,14 +40,44 @@
     "Reference": true
   },
   {
-    "Script": "report-uc-07c-plot-pk-forest",
-    "Report": "UC-07C-Plot-PKForest",
+    "Script": "report-uc-07c-plot-pk-forest-aggregated-absolute-values",
+    "Report": "UC-07C-Plot-PKForest-AggregatedAbsoluteValues",
     "Reference": true
   },
   {
-    "Script": "report-uc-07d-plot-demographics",
-    "Report": "UC-07D-Plot-Demographics",
+    "Script": "report-uc-07d-plot-pk-forest-point-estimate-absolute",
+    "Report": "UC-07D-Plot-PKForest-PointEstimateAbsolute",
     "Reference": true
+  },
+  {
+    "Script": "report-uc-07e-plot-pk-forest-aggregated-ratios",
+    "Report": "UC-07E-Plot-PKForest-AggregatedRatios",
+    "Reference": false
+  },
+  {
+    "Script": "report-uc-07f-plot-pk-forest-point-estimate-ratios",
+    "Report": "UC-07F-Plot-PKForest-PointEstimateRatios",
+    "Reference": false
+  },
+  {
+    "Script": "report-uc-07g-plot-histograms",
+    "Report": "UC-07G-Plot-Histograms",
+    "Reference": true
+  },
+  {
+    "Script": "report-uc-07h-plot-distribution-vs-demographics",
+    "Report": "UC-07H-Plot-DistributionVsDemographics",
+    "Reference": true
+  },
+  {
+    "Script": "report-uc-07i-plot-custom-annotated-timeprofiles",
+    "Report": "UC-07I-Plot-CustomAnnotatedTimeProfiles",
+    "Reference": true
+  },
+  {
+    "Script": "report-uc-07-generate-and-compare-results",
+    "Report": "UC-07-Generate-Compare-Results",
+    "Reference": false
   },
   {
     "Script": "report-uc-08-report-generation",
