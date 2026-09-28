@@ -110,9 +110,9 @@
       "file": "test-reports.R",
       "context": "Aciclovir-Mean",
       "test": "Expected Files",
-      "user": 0.02,
-      "system": 0,
-      "real": 0.03,
+      "user": 0,
+      "system": 0.01,
+      "real": 0.01,
       "results": [
         {
           "test": "Expected Files",
@@ -126,7 +126,7 @@
       "file": "test-reports.R",
       "context": "Aciclovir-Mean",
       "test": "Content of Report",
-      "user": 0,
+      "user": 0.03,
       "system": 0.02,
       "real": 0.03,
       "results": [
@@ -142,8 +142,8 @@
       "file": "test-reports.R",
       "context": "Aciclovir-Mean",
       "test": "Expected Plots",
-      "user": 2.27,
-      "system": 0.41,
+      "user": 2.22,
+      "system": 0.42,
       "real": 2.66,
       "results": [
         {
@@ -188,9 +188,9 @@
       "file": "test-reports.R",
       "context": "Aciclovir-Mean",
       "test": "Expected Simulation Results",
-      "user": 0,
+      "user": 0.01,
       "system": 0,
-      "real": 0.02,
+      "real": 0.01,
       "results": [
         {
           "test": "Expected Simulation Results",
@@ -204,9 +204,9 @@
       "file": "test-reports.R",
       "context": "Aciclovir-Mean",
       "test": "Expected PK Analysis Results",
-      "user": 0,
+      "user": 0.02,
       "system": 0,
-      "real": 0.01,
+      "real": 0.02,
       "results": [
         {
           "test": "Expected PK Analysis Results",
@@ -220,7 +220,7 @@
       "file": "test-reports.R",
       "context": "Aciclovir-Mean",
       "test": "Expected Sensitivity Results",
-      "user": 0.01,
+      "user": 0.02,
       "system": 0,
       "real": 0.02,
       "results": [
@@ -237,8 +237,8 @@
       "context": "Aciclovir-Mean",
       "test": "Expected Goodness of Fit",
       "user": 0,
-      "system": 0.01,
-      "real": 0.02,
+      "system": 0,
+      "real": 0.01,
       "results": [
         {
           "test": "Expected Goodness of Fit",
@@ -252,9 +252,9 @@
       "file": "test-reports.R",
       "context": "Aciclovir-Mean",
       "test": "Expected PK Parameter Tables",
-      "user": 0.02,
+      "user": 0,
       "system": 0,
-      "real": 0.01,
+      "real": 0.02,
       "results": [
         {
           "test": "Expected PK Parameter Tables",
@@ -268,9 +268,9 @@
       "file": "test-reports.R",
       "context": "Aciclovir-Mean",
       "test": "Expected Sensitivity Tables",
-      "user": 0.01,
+      "user": 0,
       "system": 0,
-      "real": 0,
+      "real": 0.01,
       "results": [
         {
           "test": "Expected Sensitivity Tables",
@@ -284,9 +284,9 @@
       "file": "test-reports.R",
       "context": "Aciclovir-Mean",
       "test": "Expected Mass Balance Results",
-      "user": 0.02,
-      "system": 0,
-      "real": 0,
+      "user": 0,
+      "system": 0.01,
+      "real": 0.02,
       "results": [
         {
           "test": "Expected Mass Balance Results",
@@ -300,7 +300,7 @@
       "file": "test-reports.R",
       "context": "Aciclovir-Mean",
       "test": "Expected Absorption Results",
-      "user": 0,
+      "user": 0.01,
       "system": 0,
       "real": 0,
       "results": [
@@ -318,7 +318,7 @@
       "test": "Expected Demography Results",
       "user": 0,
       "system": 0,
-      "real": 0.01,
+      "real": 0,
       "results": [
         {
           "test": "Expected Demography Results",
@@ -332,7 +332,7 @@
       "file": "test-reports.R",
       "context": "Aciclovir-Mean-SVG",
       "test": "Expected Files",
-      "user": 0.03,
+      "user": 0.02,
       "system": 0,
       "real": 0.03,
       "results": [
@@ -350,7 +350,7 @@
       "test": "Content of Report",
       "user": 0.03,
       "system": 0,
-      "real": 0.01,
+      "real": 0.03,
       "results": [
         {
           "test": "Content of Report",
@@ -364,9 +364,9 @@
       "file": "test-reports.R",
       "context": "Aciclovir-Mean-SVG",
       "test": "Expected Plots",
-      "user": 0.69,
-      "system": 0.37,
-      "real": 0.61,
+      "user": 0.64,
+      "system": 0.33,
+      "real": 0.58,
       "results": [
         {
           "test": "Expected Plots",
@@ -410,9 +410,9 @@
       "file": "test-reports.R",
       "context": "Aciclovir-Mean-SVG",
       "test": "Expected Simulation Results",
-      "user": 0,
+      "user": 0.01,
       "system": 0,
-      "real": 0.01,
+      "real": 0,
       "results": [
         {
           "test": "Expected Simulation Results",
@@ -426,9 +426,9 @@
       "file": "test-reports.R",
       "context": "Aciclovir-Mean-SVG",
       "test": "Expected PK Analysis Results",
-      "user": 0.01,
+      "user": 0,
       "system": 0,
-      "real": 0.02,
+      "real": 0,
       "results": [
         {
           "test": "Expected PK Analysis Results",
@@ -442,9 +442,9 @@
       "file": "test-reports.R",
       "context": "Aciclovir-Mean-SVG",
       "test": "Expected Sensitivity Results",
-      "user": 0.02,
-      "system": 0.02,
-      "real": 0.01,
+      "user": 0.03,
+      "system": 0.03,
+      "real": 0.02,
       "results": [
         {
           "test": "Expected Sensitivity Results",
@@ -458,9 +458,9 @@
       "file": "test-reports.R",
       "context": "Aciclovir-Mean-SVG",
       "test": "Expected Goodness of Fit",
-      "user": 0.01,
-      "system": 0.02,
-      "real": 0.02,
+      "user": 0.02,
+      "system": 0.01,
+      "real": 0,
       "results": [
         {
           "test": "Expected Goodness of Fit",
@@ -474,7 +474,7 @@
       "file": "test-reports.R",
       "context": "Aciclovir-Mean-SVG",
       "test": "Expected PK Parameter Tables",
-      "user": 0,
+      "user": 0.01,
       "system": 0.02,
       "real": 0,
       "results": [
@@ -506,7 +506,7 @@
       "file": "test-reports.R",
       "context": "Aciclovir-Mean-SVG",
       "test": "Expected Mass Balance Results",
-      "user": 0.03,
+      "user": 0,
       "system": 0,
       "real": 0.01,
       "results": [
@@ -538,8 +538,8 @@
       "file": "test-reports.R",
       "context": "Aciclovir-Mean-SVG",
       "test": "Expected Demography Results",
-      "user": 0.01,
-      "system": 0.02,
+      "user": 0.02,
+      "system": 0,
       "real": 0,
       "results": [
         {
@@ -554,9 +554,9 @@
       "file": "test-reports.R",
       "context": "Aciclovir-Population",
       "test": "Expected Files",
-      "user": 0,
-      "system": 0.01,
-      "real": 0.01,
+      "user": 0.01,
+      "system": 0,
+      "real": 0.02,
       "results": [
         {
           "test": "Expected Files",
@@ -570,8 +570,8 @@
       "file": "test-reports.R",
       "context": "Aciclovir-Population",
       "test": "Content of Report",
-      "user": 0.02,
-      "system": 0,
+      "user": 0,
+      "system": 0.01,
       "real": 0.03,
       "results": [
         {
@@ -586,9 +586,9 @@
       "file": "test-reports.R",
       "context": "Aciclovir-Population",
       "test": "Expected Plots",
-      "user": 10.98,
-      "system": 2.24,
-      "real": 13.25,
+      "user": 9.44,
+      "system": 1.56,
+      "real": 11.02,
       "results": [
         {
           "test": "Expected Plots",
@@ -740,9 +740,9 @@
       "file": "test-reports.R",
       "context": "Aciclovir-Population",
       "test": "Expected Simulation Results",
-      "user": 0.05,
-      "system": 0.01,
-      "real": 0.07,
+      "user": 0.09,
+      "system": 0.04,
+      "real": 0.11,
       "results": [
         {
           "test": "Expected Simulation Results",
@@ -762,9 +762,9 @@
       "file": "test-reports.R",
       "context": "Aciclovir-Population",
       "test": "Expected PK Analysis Results",
-      "user": 0,
-      "system": 0.02,
-      "real": 0.03,
+      "user": 0.02,
+      "system": 0,
+      "real": 0.02,
       "results": [
         {
           "test": "Expected PK Analysis Results",
@@ -784,9 +784,9 @@
       "file": "test-reports.R",
       "context": "Aciclovir-Population",
       "test": "Expected Sensitivity Results",
-      "user": 0.13,
-      "system": 0.07,
-      "real": 0.2,
+      "user": 0.18,
+      "system": 0.06,
+      "real": 0.26,
       "results": [
         {
           "test": "Expected Sensitivity Results",
@@ -908,9 +908,9 @@
       "file": "test-reports.R",
       "context": "Aciclovir-Population",
       "test": "Expected Goodness of Fit",
-      "user": 0,
+      "user": 0.02,
       "system": 0,
-      "real": 0.02,
+      "real": 0.03,
       "results": [
         {
           "test": "Expected Goodness of Fit",
@@ -930,9 +930,9 @@
       "file": "test-reports.R",
       "context": "Aciclovir-Population",
       "test": "Expected PK Parameter Tables",
-      "user": 0.02,
+      "user": 0.03,
       "system": 0.02,
-      "real": 0.04,
+      "real": 0.05,
       "results": [
         {
           "test": "Expected PK Parameter Tables",
@@ -990,7 +990,7 @@
       "test": "Expected Sensitivity Tables",
       "user": 0,
       "system": 0,
-      "real": 0.02,
+      "real": 0,
       "results": [
         {
           "test": "Expected Sensitivity Tables",
@@ -1004,9 +1004,9 @@
       "file": "test-reports.R",
       "context": "Aciclovir-Population",
       "test": "Expected Mass Balance Results",
-      "user": 0.02,
+      "user": 0.01,
       "system": 0,
-      "real": 0.02,
+      "real": 0.03,
       "results": [
         {
           "test": "Expected Mass Balance Results",
@@ -1020,9 +1020,9 @@
       "file": "test-reports.R",
       "context": "Aciclovir-Population",
       "test": "Expected Absorption Results",
-      "user": 0.01,
+      "user": 0.02,
       "system": 0,
-      "real": 0,
+      "real": 0.01,
       "results": [
         {
           "test": "Expected Absorption Results",
@@ -1036,9 +1036,9 @@
       "file": "test-reports.R",
       "context": "Aciclovir-Population",
       "test": "Expected Demography Results",
-      "user": 0,
+      "user": 0.01,
       "system": 0,
-      "real": 0,
+      "real": 0.02,
       "results": [
         {
           "test": "Expected Demography Results",
@@ -1052,9 +1052,9 @@
       "file": "test-reports.R",
       "context": "Raltegravir-Absorption",
       "test": "Expected Files",
-      "user": 0.03,
+      "user": 0.02,
       "system": 0,
-      "real": 0.03,
+      "real": 0.01,
       "results": [
         {
           "test": "Expected Files",
@@ -1068,9 +1068,9 @@
       "file": "test-reports.R",
       "context": "Raltegravir-Absorption",
       "test": "Content of Report",
-      "user": 0.02,
-      "system": 0.02,
-      "real": 0.03,
+      "user": 0.03,
+      "system": 0,
+      "real": 0.01,
       "results": [
         {
           "test": "Content of Report",
@@ -1084,8 +1084,8 @@
       "file": "test-reports.R",
       "context": "Raltegravir-Absorption",
       "test": "Expected Plots",
-      "user": 1.04,
-      "system": 0.11,
+      "user": 0.97,
+      "system": 0.17,
       "real": 1.14,
       "results": [
         {
@@ -1108,7 +1108,7 @@
       "test": "Expected Simulation Results",
       "user": 0,
       "system": 0,
-      "real": 0,
+      "real": 0.02,
       "results": [
         {
           "test": "Expected Simulation Results",
@@ -1124,7 +1124,7 @@
       "test": "Expected PK Analysis Results",
       "user": 0.01,
       "system": 0,
-      "real": 0.02,
+      "real": 0.01,
       "results": [
         {
           "test": "Expected PK Analysis Results",
@@ -1140,7 +1140,7 @@
       "test": "Expected Sensitivity Results",
       "user": 0,
       "system": 0,
-      "real": 0,
+      "real": 0.02,
       "results": [
         {
           "test": "Expected Sensitivity Results",
@@ -1154,9 +1154,9 @@
       "file": "test-reports.R",
       "context": "Raltegravir-Absorption",
       "test": "Expected Goodness of Fit",
-      "user": 0,
+      "user": 0.01,
       "system": 0,
-      "real": 0.02,
+      "real": 0.01,
       "results": [
         {
           "test": "Expected Goodness of Fit",
@@ -1188,7 +1188,7 @@
       "test": "Expected Sensitivity Tables",
       "user": 0,
       "system": 0,
-      "real": 0,
+      "real": 0.02,
       "results": [
         {
           "test": "Expected Sensitivity Tables",
@@ -1202,9 +1202,9 @@
       "file": "test-reports.R",
       "context": "Raltegravir-Absorption",
       "test": "Expected Mass Balance Results",
-      "user": 0.01,
+      "user": 0.02,
       "system": 0,
-      "real": 0.02,
+      "real": 0.01,
       "results": [
         {
           "test": "Expected Mass Balance Results",
@@ -1218,9 +1218,9 @@
       "file": "test-reports.R",
       "context": "Raltegravir-Absorption",
       "test": "Expected Absorption Results",
-      "user": 0,
-      "system": 0.03,
-      "real": 0.01,
+      "user": 0.02,
+      "system": 0,
+      "real": 0.02,
       "results": [
         {
           "test": "Expected Absorption Results",
@@ -1240,9 +1240,9 @@
       "file": "test-reports.R",
       "context": "Raltegravir-Absorption",
       "test": "Expected Demography Results",
-      "user": 0,
+      "user": 0.01,
       "system": 0,
-      "real": 0,
+      "real": 0.02,
       "results": [
         {
           "test": "Expected Demography Results",
@@ -1272,9 +1272,9 @@
       "file": "test-reports.R",
       "context": "Raltegravir-Mass-Balance",
       "test": "Content of Report",
-      "user": 0.01,
+      "user": 0.02,
       "system": 0,
-      "real": 0.03,
+      "real": 0.02,
       "results": [
         {
           "test": "Content of Report",
@@ -1288,9 +1288,9 @@
       "file": "test-reports.R",
       "context": "Raltegravir-Mass-Balance",
       "test": "Expected Plots",
-      "user": 4.78,
-      "system": 0.63,
-      "real": 5.45,
+      "user": 4.81,
+      "system": 0.59,
+      "real": 5.4,
       "results": [
         {
           "test": "Expected Plots",
@@ -1390,7 +1390,7 @@
       "file": "test-reports.R",
       "context": "Raltegravir-Mass-Balance",
       "test": "Expected Sensitivity Results",
-      "user": 0.02,
+      "user": 0,
       "system": 0,
       "real": 0,
       "results": [
@@ -1408,7 +1408,7 @@
       "test": "Expected Goodness of Fit",
       "user": 0,
       "system": 0,
-      "real": 0,
+      "real": 0.02,
       "results": [
         {
           "test": "Expected Goodness of Fit",
@@ -1422,9 +1422,9 @@
       "file": "test-reports.R",
       "context": "Raltegravir-Mass-Balance",
       "test": "Expected PK Parameter Tables",
-      "user": 0.01,
+      "user": 0,
       "system": 0,
-      "real": 0.02,
+      "real": 0,
       "results": [
         {
           "test": "Expected PK Parameter Tables",
@@ -1438,7 +1438,7 @@
       "file": "test-reports.R",
       "context": "Raltegravir-Mass-Balance",
       "test": "Expected Sensitivity Tables",
-      "user": 0,
+      "user": 0.02,
       "system": 0,
       "real": 0,
       "results": [
@@ -1454,9 +1454,9 @@
       "file": "test-reports.R",
       "context": "Raltegravir-Mass-Balance",
       "test": "Expected Mass Balance Results",
-      "user": 0.05,
+      "user": 0.03,
       "system": 0.02,
-      "real": 0.09,
+      "real": 0.04,
       "results": [
         {
           "test": "Expected Mass Balance Results",
@@ -1478,7 +1478,7 @@
       "test": "Expected Absorption Results",
       "user": 0,
       "system": 0,
-      "real": 0.02,
+      "real": 0.01,
       "results": [
         {
           "test": "Expected Absorption Results",
@@ -1493,8 +1493,8 @@
       "context": "Raltegravir-Mass-Balance",
       "test": "Expected Demography Results",
       "user": 0,
-      "system": 0.02,
-      "real": 0.01,
+      "system": 0,
+      "real": 0,
       "results": [
         {
           "test": "Expected Demography Results",
@@ -1524,9 +1524,9 @@
       "file": "test-reports.R",
       "context": "Test-NO7",
       "test": "Content of Report",
-      "user": 0.02,
-      "system": 0,
-      "real": 0.02,
+      "user": 0,
+      "system": 0.02,
+      "real": 0.03,
       "results": [
         {
           "test": "Content of Report",
@@ -1540,9 +1540,9 @@
       "file": "test-reports.R",
       "context": "Test-NO7",
       "test": "Expected Plots",
-      "user": 2.96,
-      "system": 0.62,
-      "real": 3.61,
+      "user": 3.27,
+      "system": 0.53,
+      "real": 3.86,
       "results": [
         {
           "test": "Expected Plots",
@@ -1598,9 +1598,9 @@
       "file": "test-reports.R",
       "context": "Test-NO7",
       "test": "Expected Simulation Results",
-      "user": 0.02,
+      "user": 0.01,
       "system": 0,
-      "real": 0,
+      "real": 0.02,
       "results": [
         {
           "test": "Expected Simulation Results",
@@ -1614,9 +1614,9 @@
       "file": "test-reports.R",
       "context": "Test-NO7",
       "test": "Expected PK Analysis Results",
-      "user": 0,
+      "user": 0.02,
       "system": 0,
-      "real": 0,
+      "real": 0.01,
       "results": [
         {
           "test": "Expected PK Analysis Results",
@@ -1630,9 +1630,9 @@
       "file": "test-reports.R",
       "context": "Test-NO7",
       "test": "Expected Sensitivity Results",
-      "user": 0,
+      "user": 0.01,
       "system": 0,
-      "real": 0.02,
+      "real": 0,
       "results": [
         {
           "test": "Expected Sensitivity Results",
@@ -1646,8 +1646,8 @@
       "file": "test-reports.R",
       "context": "Test-NO7",
       "test": "Expected Goodness of Fit",
-      "user": 0.01,
-      "system": 0,
+      "user": 0,
+      "system": 0.01,
       "real": 0.01,
       "results": [
         {
@@ -1669,7 +1669,7 @@
       "context": "Test-NO7",
       "test": "Expected PK Parameter Tables",
       "user": 0,
-      "system": 0,
+      "system": 0.02,
       "real": 0.02,
       "results": [
         {
@@ -1702,7 +1702,7 @@
       "test": "Expected Mass Balance Results",
       "user": 0,
       "system": 0,
-      "real": 0,
+      "real": 0.02,
       "results": [
         {
           "test": "Expected Mass Balance Results",
@@ -1718,7 +1718,7 @@
       "test": "Expected Absorption Results",
       "user": 0.02,
       "system": 0,
-      "real": 0.01,
+      "real": 0,
       "results": [
         {
           "test": "Expected Absorption Results",
@@ -1749,8 +1749,8 @@
       "context": "Test-NO8",
       "test": "Expected Files",
       "user": 0.02,
-      "system": 0,
-      "real": 0.03,
+      "system": 0.02,
+      "real": 0.02,
       "results": [
         {
           "test": "Expected Files",
@@ -1780,9 +1780,9 @@
       "file": "test-reports.R",
       "context": "Test-NO8",
       "test": "Expected Plots",
-      "user": 11.95,
-      "system": 1.86,
-      "real": 13.88,
+      "user": 14.68,
+      "system": 2.01,
+      "real": 16.75,
       "results": [
         {
           "test": "Expected Plots",
@@ -2004,8 +2004,8 @@
       "file": "test-reports.R",
       "context": "Test-NO8",
       "test": "Expected PK Analysis Results",
-      "user": 0,
-      "system": 0.01,
+      "user": 0.02,
+      "system": 0,
       "real": 0.02,
       "results": [
         {
@@ -2021,7 +2021,7 @@
       "context": "Test-NO8",
       "test": "Expected Sensitivity Results",
       "user": 0,
-      "system": 0,
+      "system": 0.02,
       "real": 0,
       "results": [
         {
@@ -2037,8 +2037,8 @@
       "context": "Test-NO8",
       "test": "Expected Goodness of Fit",
       "user": 0,
-      "system": 0,
-      "real": 0.01,
+      "system": 0.01,
+      "real": 0,
       "results": [
         {
           "test": "Expected Goodness of Fit",
@@ -2053,8 +2053,8 @@
       "context": "Test-NO8",
       "test": "Expected PK Parameter Tables",
       "user": 0.04,
-      "system": 0.03,
-      "real": 0.08,
+      "system": 0.02,
+      "real": 0.06,
       "results": [
         {
           "test": "Expected PK Parameter Tables",
@@ -2134,7 +2134,7 @@
       "file": "test-reports.R",
       "context": "Test-NO8",
       "test": "Expected Sensitivity Tables",
-      "user": 0.01,
+      "user": 0.02,
       "system": 0,
       "real": 0.02,
       "results": [
@@ -2166,9 +2166,9 @@
       "file": "test-reports.R",
       "context": "Test-NO8",
       "test": "Expected Absorption Results",
-      "user": 0,
+      "user": 0.01,
       "system": 0,
-      "real": 0.01,
+      "real": 0.02,
       "results": [
         {
           "test": "Expected Absorption Results",
@@ -2182,7 +2182,7 @@
       "file": "test-reports.R",
       "context": "Test-NO8",
       "test": "Expected Demography Results",
-      "user": 0.01,
+      "user": 0,
       "system": 0,
       "real": 0,
       "results": [
@@ -2198,9 +2198,9 @@
       "file": "test-reports.R",
       "context": "Test-NO9",
       "test": "Expected Files",
-      "user": 0.03,
+      "user": 0.01,
       "system": 0,
-      "real": 0.01,
+      "real": 0.02,
       "results": [
         {
           "test": "Expected Files",
@@ -2230,9 +2230,9 @@
       "file": "test-reports.R",
       "context": "Test-NO9",
       "test": "Expected Plots",
-      "user": 6.05,
-      "system": 1.12,
-      "real": 7.15,
+      "user": 6.98,
+      "system": 1.18,
+      "real": 8.23,
       "results": [
         {
           "test": "Expected Plots",
@@ -2360,9 +2360,9 @@
       "file": "test-reports.R",
       "context": "Test-NO9",
       "test": "Expected Simulation Results",
-      "user": 0.01,
-      "system": 0.02,
-      "real": 0.02,
+      "user": 0.03,
+      "system": 0,
+      "real": 0.03,
       "results": [
         {
           "test": "Expected Simulation Results",
@@ -2394,9 +2394,9 @@
       "file": "test-reports.R",
       "context": "Test-NO9",
       "test": "Expected PK Analysis Results",
-      "user": 0.04,
+      "user": 0.03,
       "system": 0,
-      "real": 0.02,
+      "real": 0.03,
       "results": [
         {
           "test": "Expected PK Analysis Results",
@@ -2428,7 +2428,7 @@
       "file": "test-reports.R",
       "context": "Test-NO9",
       "test": "Expected Sensitivity Results",
-      "user": 0,
+      "user": 0.02,
       "system": 0,
       "real": 0,
       "results": [
@@ -2444,8 +2444,8 @@
       "file": "test-reports.R",
       "context": "Test-NO9",
       "test": "Expected Goodness of Fit",
-      "user": 0,
-      "system": 0.01,
+      "user": 0.01,
+      "system": 0.02,
       "real": 0.03,
       "results": [
         {
@@ -2478,9 +2478,9 @@
       "file": "test-reports.R",
       "context": "Test-NO9",
       "test": "Expected PK Parameter Tables",
-      "user": 0.02,
+      "user": 0.04,
       "system": 0.01,
-      "real": 0.05,
+      "real": 0.04,
       "results": [
         {
           "test": "Expected PK Parameter Tables",
@@ -2524,8 +2524,8 @@
       "file": "test-reports.R",
       "context": "Test-NO9",
       "test": "Expected Sensitivity Tables",
-      "user": 0.01,
-      "system": 0,
+      "user": 0,
+      "system": 0.02,
       "real": 0.02,
       "results": [
         {
@@ -2540,7 +2540,7 @@
       "file": "test-reports.R",
       "context": "Test-NO9",
       "test": "Expected Mass Balance Results",
-      "user": 0.01,
+      "user": 0,
       "system": 0,
       "real": 0,
       "results": [
@@ -2574,7 +2574,7 @@
       "test": "Expected Demography Results",
       "user": 0,
       "system": 0,
-      "real": 0.01,
+      "real": 0.02,
       "results": [
         {
           "test": "Expected Demography Results",
@@ -2588,8 +2588,8 @@
       "file": "test-reports.R",
       "context": "Test-NO10",
       "test": "Expected Files",
-      "user": 0,
-      "system": 0.02,
+      "user": 0.03,
+      "system": 0,
       "real": 0.03,
       "results": [
         {
@@ -2605,8 +2605,8 @@
       "context": "Test-NO10",
       "test": "Content of Report",
       "user": 0.02,
-      "system": 0,
-      "real": 0.03,
+      "system": 0.02,
+      "real": 0.01,
       "results": [
         {
           "test": "Content of Report",
@@ -2620,9 +2620,9 @@
       "file": "test-reports.R",
       "context": "Test-NO10",
       "test": "Expected Plots",
-      "user": 137.98,
-      "system": 18.71,
-      "real": 158.36,
+      "user": 148.76,
+      "system": 23.61,
+      "real": 174.82,
       "results": [
         {
           "test": "Expected Plots",
@@ -4838,9 +4838,9 @@
       "file": "test-reports.R",
       "context": "Test-NO10",
       "test": "Expected Simulation Results",
-      "user": 0.03,
+      "user": 0.05,
       "system": 0,
-      "real": 0.02,
+      "real": 0.03,
       "results": [
         {
           "test": "Expected Simulation Results",
@@ -4872,9 +4872,9 @@
       "file": "test-reports.R",
       "context": "Test-NO10",
       "test": "Expected PK Analysis Results",
-      "user": 0.02,
-      "system": 0.01,
-      "real": 0.02,
+      "user": 0.03,
+      "system": 0,
+      "real": 0.01,
       "results": [
         {
           "test": "Expected PK Analysis Results",
@@ -4922,8 +4922,8 @@
       "file": "test-reports.R",
       "context": "Test-NO10",
       "test": "Expected Goodness of Fit",
-      "user": 0.01,
-      "system": 0,
+      "user": 0,
+      "system": 0.02,
       "real": 0.03,
       "results": [
         {
@@ -4956,9 +4956,9 @@
       "file": "test-reports.R",
       "context": "Test-NO10",
       "test": "Expected PK Parameter Tables",
-      "user": 0.02,
-      "system": 0.06,
-      "real": 0.07,
+      "user": 0.07,
+      "system": 0.01,
+      "real": 0.06,
       "results": [
         {
           "test": "Expected PK Parameter Tables",
@@ -5086,9 +5086,9 @@
       "file": "test-reports.R",
       "context": "Test-NO10",
       "test": "Expected Demography Results",
-      "user": 0,
-      "system": 0.02,
-      "real": 0.02,
+      "user": 0.01,
+      "system": 0,
+      "real": 0,
       "results": [
         {
           "test": "Expected Demography Results",
@@ -5102,9 +5102,9 @@
       "file": "test-reports.R",
       "context": "Test-NO11",
       "test": "Expected Files",
-      "user": 0.02,
+      "user": 0.01,
       "system": 0,
-      "real": 0.02,
+      "real": 0.01,
       "results": [
         {
           "test": "Expected Files",
@@ -5118,8 +5118,8 @@
       "file": "test-reports.R",
       "context": "Test-NO11",
       "test": "Content of Report",
-      "user": 0.03,
-      "system": 0,
+      "user": 0.02,
+      "system": 0.02,
       "real": 0.03,
       "results": [
         {
@@ -5134,9 +5134,9 @@
       "file": "test-reports.R",
       "context": "Test-NO11",
       "test": "Expected Plots",
-      "user": 3.09,
-      "system": 0.42,
-      "real": 3.53,
+      "user": 3.19,
+      "system": 0.43,
+      "real": 3.61,
       "results": [
         {
           "test": "Expected Plots",
@@ -5194,7 +5194,7 @@
       "test": "Expected Simulation Results",
       "user": 0,
       "system": 0,
-      "real": 0,
+      "real": 0.02,
       "results": [
         {
           "test": "Expected Simulation Results",
@@ -5210,7 +5210,7 @@
       "test": "Expected PK Analysis Results",
       "user": 0,
       "system": 0,
-      "real": 0.02,
+      "real": 0.01,
       "results": [
         {
           "test": "Expected PK Analysis Results",
@@ -5225,7 +5225,7 @@
       "context": "Test-NO11",
       "test": "Expected Sensitivity Results",
       "user": 0,
-      "system": 0,
+      "system": 0.01,
       "real": 0.02,
       "results": [
         {
@@ -5240,9 +5240,9 @@
       "file": "test-reports.R",
       "context": "Test-NO11",
       "test": "Expected Goodness of Fit",
-      "user": 0.01,
+      "user": 0,
       "system": 0,
-      "real": 0.01,
+      "real": 0.02,
       "results": [
         {
           "test": "Expected Goodness of Fit",
@@ -5264,7 +5264,7 @@
       "test": "Expected PK Parameter Tables",
       "user": 0.02,
       "system": 0,
-      "real": 0.02,
+      "real": 0.01,
       "results": [
         {
           "test": "Expected PK Parameter Tables",
@@ -5280,7 +5280,7 @@
       "test": "Expected Sensitivity Tables",
       "user": 0,
       "system": 0.02,
-      "real": 0.01,
+      "real": 0.02,
       "results": [
         {
           "test": "Expected Sensitivity Tables",
@@ -5294,9 +5294,9 @@
       "file": "test-reports.R",
       "context": "Test-NO11",
       "test": "Expected Mass Balance Results",
-      "user": 0.02,
+      "user": 0,
       "system": 0,
-      "real": 0.02,
+      "real": 0.01,
       "results": [
         {
           "test": "Expected Mass Balance Results",
@@ -5328,7 +5328,7 @@
       "test": "Expected Demography Results",
       "user": 0,
       "system": 0,
-      "real": 0.01,
+      "real": 0.02,
       "results": [
         {
           "test": "Expected Demography Results",
@@ -5342,9 +5342,9 @@
       "file": "test-reports.R",
       "context": "Test-NO12",
       "test": "Expected Files",
-      "user": 0.02,
+      "user": 0.01,
       "system": 0,
-      "real": 0.01,
+      "real": 0.03,
       "results": [
         {
           "test": "Expected Files",
@@ -5358,9 +5358,9 @@
       "file": "test-reports.R",
       "context": "Test-NO12",
       "test": "Content of Report",
-      "user": 0.04,
-      "system": 0,
-      "real": 0.03,
+      "user": 0.02,
+      "system": 0.02,
+      "real": 0.02,
       "results": [
         {
           "test": "Content of Report",
@@ -5374,9 +5374,9 @@
       "file": "test-reports.R",
       "context": "Test-NO12",
       "test": "Expected Plots",
-      "user": 4.48,
+      "user": 4.65,
       "system": 0.95,
-      "real": 5.44,
+      "real": 5.62,
       "results": [
         {
           "test": "Expected Plots",
@@ -5468,7 +5468,7 @@
       "file": "test-reports.R",
       "context": "Test-NO12",
       "test": "Expected Simulation Results",
-      "user": 0,
+      "user": 0.02,
       "system": 0,
       "real": 0,
       "results": [
@@ -5486,7 +5486,7 @@
       "test": "Expected PK Analysis Results",
       "user": 0,
       "system": 0,
-      "real": 0.02,
+      "real": 0.01,
       "results": [
         {
           "test": "Expected PK Analysis Results",
@@ -5502,7 +5502,7 @@
       "test": "Expected Sensitivity Results",
       "user": 0,
       "system": 0,
-      "real": 0.01,
+      "real": 0.02,
       "results": [
         {
           "test": "Expected Sensitivity Results",
@@ -5518,7 +5518,7 @@
       "test": "Expected Goodness of Fit",
       "user": 0,
       "system": 0.02,
-      "real": 0.02,
+      "real": 0.01,
       "results": [
         {
           "test": "Expected Goodness of Fit",
@@ -5538,9 +5538,9 @@
       "file": "test-reports.R",
       "context": "Test-NO12",
       "test": "Expected PK Parameter Tables",
-      "user": 0.01,
+      "user": 0,
       "system": 0,
-      "real": 0.01,
+      "real": 0.02,
       "results": [
         {
           "test": "Expected PK Parameter Tables",
@@ -5555,8 +5555,8 @@
       "context": "Test-NO12",
       "test": "Expected Sensitivity Tables",
       "user": 0,
-      "system": 0.01,
-      "real": 0.02,
+      "system": 0,
+      "real": 0.01,
       "results": [
         {
           "test": "Expected Sensitivity Tables",
@@ -5570,7 +5570,7 @@
       "file": "test-reports.R",
       "context": "Test-NO12",
       "test": "Expected Mass Balance Results",
-      "user": 0.02,
+      "user": 0.01,
       "system": 0,
       "real": 0.02,
       "results": [
@@ -5586,9 +5586,9 @@
       "file": "test-reports.R",
       "context": "Test-NO12",
       "test": "Expected Absorption Results",
-      "user": 0.01,
+      "user": 0,
       "system": 0,
-      "real": 0.01,
+      "real": 0,
       "results": [
         {
           "test": "Expected Absorption Results",
@@ -5604,7 +5604,7 @@
       "test": "Expected Demography Results",
       "user": 0,
       "system": 0,
-      "real": 0,
+      "real": 0.01,
       "results": [
         {
           "test": "Expected Demography Results",
