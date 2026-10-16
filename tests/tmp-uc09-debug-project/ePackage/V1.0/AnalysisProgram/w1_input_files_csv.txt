@@ -1,0 +1,3 @@
+fileName,fileType
+adults_csv.txt,population
+aciclovir.xml,model

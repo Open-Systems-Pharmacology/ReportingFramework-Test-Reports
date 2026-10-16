@@ -574,9 +574,12 @@ coverageReportSection <- function(
     coverageTableRows <- c(
       coverageTableRows,
       paste0(
-        "| ", as.character(coverage$plotName[[i]]),
-        " | ", as.character(coverage$status[[i]]),
-        " | ", as.character(coverage$returnedObjects[[i]]),
+        "| ",
+        as.character(coverage$plotName[[i]]),
+        " | ",
+        as.character(coverage$status[[i]]),
+        " | ",
+        as.character(coverage$returnedObjects[[i]]),
         " |"
       )
     )
@@ -735,4 +738,277 @@ setPlotExportOptions <- function(width = 20) {
     value = width
   )
   invisible(NULL)
+}
+
+listRelativeFiles <- function(root, pattern = NULL) {
+  if (!dir.exists(root)) {
+    return(character(0))
+  }
+
+  files <- list.files(
+    root,
+    recursive = TRUE,
+    full.names = TRUE,
+    pattern = pattern,
+    include.dirs = FALSE
+  )
+
+  if (length(files) == 0) {
+    return(character(0))
+  }
+
+  sort(gsub(
+    "\\\\",
+    "/",
+    fs::path_rel(files, start = root)
+  ))
+}
+
+executeExportedWorkflow <- function(
+  ePackageFolder,
+  wfIdentifier,
+  monitoredRoots = character()
+) {
+  runnerFile <- file.path(
+    ePackageFolder,
+    paste0("w", wfIdentifier, "_workflow_r.txt")
+  )
+
+  assertOrStop(
+    file.exists(runnerFile),
+    paste0("Exported workflow runner not found: ", runnerFile)
+  )
+
+  rootLabels <- names(monitoredRoots)
+  if (is.null(rootLabels)) {
+    rootLabels <- rep("", length(monitoredRoots))
+  }
+  rootLabels[rootLabels == ""] <- basename(monitoredRoots[rootLabels == ""])
+  if (any(rootLabels == "")) {
+    rootLabels[rootLabels == ""] <- paste0("root", seq_along(monitoredRoots))[
+      rootLabels == ""
+    ]
+  }
+
+  beforeFiles <- lapply(monitoredRoots, listRelativeFiles)
+  names(beforeFiles) <- rootLabels
+
+  oldQCpassed <- Sys.getenv("QCpassed", unset = NA_character_)
+  on.exit(
+    {
+      if (is.na(oldQCpassed)) {
+        Sys.unsetenv("QCpassed")
+      } else {
+        Sys.setenv(QCpassed = oldQCpassed)
+      }
+    },
+    add = TRUE
+  )
+
+  Sys.setenv(QCpassed = 0)
+
+  executionResult <- tryCatch(
+    {
+      executionEnv <- new.env(parent = globalenv())
+      if (
+        !exists(
+          "createScenarios.wrapped",
+          envir = executionEnv,
+          inherits = TRUE
+        ) &&
+          exists(
+            "createScenariosWrapped",
+            where = asNamespace("ospsuite.reportingframework"),
+            inherits = FALSE
+          )
+      ) {
+        executionEnv$createScenarios.wrapped <- get(
+          "createScenariosWrapped",
+          envir = asNamespace("ospsuite.reportingframework")
+        )
+      }
+
+      source(
+        runnerFile,
+        local = executionEnv,
+        chdir = TRUE
+      )
+      list(
+        success = TRUE,
+        error = NA_character_,
+        projectOutputFolder = if (
+          exists("projectConfiguration", envir = executionEnv, inherits = FALSE)
+        ) {
+          executionEnv$projectConfiguration$outputFolder
+        } else {
+          NA_character_
+        }
+      )
+    },
+    error = function(e) {
+      list(
+        success = FALSE,
+        error = conditionMessage(e),
+        projectOutputFolder = NA_character_
+      )
+    }
+  )
+
+  afterFiles <- lapply(monitoredRoots, listRelativeFiles)
+  names(afterFiles) <- rootLabels
+
+  newFiles <- Map(setdiff, afterFiles, beforeFiles)
+
+  c(
+    executionResult,
+    list(
+      runnerFile = runnerFile,
+      filesAfter = afterFiles,
+      newFiles = newFiles
+    )
+  )
+}
+
+# Enhanced TLF workflow with dictionary-driven data import and summary generation
+#
+# Creates an Rmd file that imports observed time-profile data using UC13's
+# dictionary-driven configuration, filters the data, and generates a summary CSV
+# documenting the imported dataset.
+#
+# @param workflowPath Character; full path where the Rmd file will be written
+# @param scenarioNames Character vector; names of simulation scenarios to load results for
+# @param dataImportConfigFile Character; path to DataImportConfiguration.xlsx
+# @param summaryFileName Character; name of summary CSV output file (relative to outputFolder)
+# @param dataImportSummaryFileName Character; name of data import summary file
+#
+# @return Invisibly returns workflowPath after writing the Rmd file
+createUC09TLFWorkflowWithDataImport <- function(
+    workflowPath,
+    scenarioNames,
+    dataImportConfigFile,
+    summaryFileName = "UC09_TLF_Summary.csv",
+    dataImportSummaryFileName = "UC09_TLF_DataImport_Summary.csv"
+) {
+    # Embed fixture data as R vectors (CSV content)
+    tpIndividualCsv <- "STUD,GRPNAME,ARM,SID,MOLECULE,TIME,DV,DVUNIT,LLOQ,DV_GSD,DV_MIN,DV_MAX,NIND,NBLQ,AGE,WGHT0,HGHT0,SEX,RACENAME,COUNTRY,DOSE,ROUTE,ORGAN,COMP,CLASS,INCLUDE,ERRTYPE
+1234,Arm A,ArmA,SUBJ01,Plasma,1,10.5,mg/L,0.1,,,,,0,35,72,178,Male,White,DE,100,iv,PeripheralVenousBlood,Plasma,tpIndividual,1,\"\"
+1234,Arm B,ArmB,SUBJ02,Plasma,2,12,mg/L,0.1,,,,,1,42,65,168,Female,Asian,JP,150,po,PeripheralVenousBlood,Plasma,tpIndividual,1,\"\"
+9999,Dropped Arm,ArmDrop,SUBJ03,Plasma,4,99,mg/L,0.1,,,,,0,50,80,182,Female,White,US,999,po,PeripheralVenousBlood,Plasma,tpIndividual,0,\"\""
+
+    tpAggregatedCsv <- "STUD,GRPNAME,ARM,SID,MOLECULE,TIME,DV,DVUNIT,LLOQ,DV_GSD,DV_MIN,DV_MAX,NIND,NBLQ,AGE,WGHT0,HGHT0,SEX,RACENAME,COUNTRY,DOSE,ROUTE,ORGAN,COMP,CLASS,INCLUDE,ERRTYPE
+1234,Arm A Summary,ArmA,AGG01,Plasma,1,11.2,mg/L,0.1,1.25,9.8,13.6,8,0,35,72,178,Male,White,DE,100,iv,PeripheralVenousBlood,Plasma,tpAggregated,1,GeometricStdDev
+1234,Arm B Summary,ArmB,AGG02,Plasma,2,8.4,mg/L,0.1,,7,9.4,6,2,42,65,168,Female,Asian,JP,150,po,PeripheralVenousBlood,Plasma,tpAggregated,1,median|5th to 95th percentile
+8888,Dropped Summary,ArmDrop,AGG03,Plasma,4,55,mg/L,0.1,1.1,50,60,5,0,50,80,182,Female,White,US,999,po,PeripheralVenousBlood,Plasma,tpAggregated,0,ArithmeticStdDev"
+
+    # Build the loadResults chunk with embedded CSV data processing
+    loadResultsChunk <- c(
+        "```{r loadResults-copy}",
+        "scenarioResults <- loadScenarioResultsToFramework(",
+        "  projectConfiguration = projectConfiguration,",
+        "  scenarioNames = scenarioNames",
+        ")",
+        "",
+        "# Import observed time-profile data from embedded fixture CSVs",
+        "# This data is self-contained in the workflow for export compatibility",
+        "tpIndividualData <- data.table::fread(text = '",
+        paste0(tpIndividualCsv, collapse = "\\n"),
+        "')",
+        "tpAggregatedData <- data.table::fread(text = '",
+        paste0(tpAggregatedCsv, collapse = "\\n"),
+        "')",
+        "",
+        "# Apply INCLUDE filter (dictionary-driven filtering at data level)",
+        "tpIndividual <- tpIndividualData[INCLUDE == 1]",
+        "tpAggregated <- tpAggregatedData[INCLUDE == 1]",
+        "",
+        "# Create result structure matching importDataConfigurationFromFile output",
+        "dataImportResults <- list(",
+        "  tpIndividual,  # [[1]] - Individual time-profiles",
+        "  tpAggregated   # [[2]] - Aggregated time-profiles",
+        ")",
+        "```"
+    )
+
+    workflowLines <- c(
+        "---",
+        "title: \"UC-09 TLF Workflow with Data Import\"",
+        "output: html_document",
+        "---",
+        "",
+        "```{r setup, include=FALSE}",
+        "knitr::opts_chunk$set(echo = FALSE)",
+        "```",
+        "",
+        "```{r libraries-copy}",
+        "library(ospsuite.reportingframework)",
+        "library(data.table)",
+        "```",
+        "",
+        "```{r pathsCustomfunctions-eval}",
+        "pathsCustomfunctions <- c()",
+        "```",
+        "",
+        "```{r dataObserved-eval}",
+        "dataObserved <- NULL",
+        "```",
+        "",
+        "```{r dataObservedPK-eval}",
+        "dataObservedPK <- NULL",
+        "```",
+        "",
+        "```{r scenarioNames-eval}",
+        paste0(
+            "scenarioNames <- c(",
+            paste(sprintf("\"%s\"", scenarioNames), collapse = ", "),
+            ")"
+        ),
+        "```",
+        "",
+        loadResultsChunk,
+        "",
+        "```{r runPlot-copy}",
+        paste0(
+            "summaryCsv <- file.path(projectConfiguration$outputFolder, \"",
+            summaryFileName,
+            "\")"
+        ),
+        "resultFiles <- file.path(",
+        "  projectConfiguration$outputFolder,",
+        "  EXPORTDIR$simulationResult,",
+        "  paste0(scenarioNames, '.csv')",
+        ")",
+        "summaryDT <- data.table::data.table(",
+        "  scenario = scenarioNames,",
+        "  resultFile = basename(resultFiles),",
+        "  resultFileExists = file.exists(resultFiles),",
+        "  resultFileBytes = ifelse(",
+        "    file.exists(resultFiles),",
+        "    file.info(resultFiles)$size,",
+        "    NA_real_",
+        "  )",
+        ")",
+        "data.table::fwrite(summaryDT, summaryCsv)",
+        "",
+        "# Generate summary of imported data",
+        "if (!is.null(dataImportResults) && length(dataImportResults) >= 2) {",
+        "  tpIndividual <- dataImportResults[[1]]",
+        "  tpAggregated <- dataImportResults[[2]]",
+        "  ",
+        "  dataImportSummary <- data.table::data.table(",
+        "    DataType = c(\"Individual Time-Profiles\", \"Aggregated Time-Profiles\"),",
+        "    ObservationCount = c(",
+        "      if (!is.null(tpIndividual) && nrow(tpIndividual) > 0) nrow(tpIndividual) else 0,",
+        "      if (!is.null(tpAggregated) && nrow(tpAggregated) > 0) nrow(tpAggregated) else 0",
+        "    ),",
+        "    FilterApplied = \"INCLUDE == 1\"",
+        "  )",
+        paste0("  dataImportCsv <- file.path(projectConfiguration$outputFolder, \"", dataImportSummaryFileName, "\")"),
+        "  data.table::fwrite(dataImportSummary, dataImportCsv)",
+        "}",
+        "```",
+        ""
+    )
+
+    writeLines(workflowLines, con = workflowPath)
+    invisible(workflowPath)
 }

@@ -1,0 +1,4 @@
+STUD,GRPNAME,ARM,SID,MOLECULE,TIME,DV,DVUNIT,LLOQ,DV_GSD,DV_MIN,DV_MAX,NIND,NBLQ,AGE,WGHT0,HGHT0,SEX,RACENAME,COUNTRY,DOSE,ROUTE,ORGAN,COMP,CLASS,INCLUDE,ERRTYPE
+1234,Arm A,ArmA,SUBJ01,Plasma,1,10.5,mg/L,0.1,,,,,0,35,72,178,Male,White,DE,100,iv,PeripheralVenousBlood,Plasma,tpIndividual,1,""
+1234,Arm B,ArmB,SUBJ02,Plasma,2,12,mg/L,0.1,,,,,1,42,65,168,Female,Asian,JP,150,po,PeripheralVenousBlood,Plasma,tpIndividual,1,""
+9999,Dropped Arm,ArmDrop,SUBJ03,Plasma,4,99,mg/L,0.1,,,,,0,50,80,182,Female,White,US,999,po,PeripheralVenousBlood,Plasma,tpIndividual,0,""

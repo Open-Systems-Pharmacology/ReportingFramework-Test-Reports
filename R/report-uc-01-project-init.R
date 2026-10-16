@@ -150,13 +150,19 @@ assertOrStop(
   "Add-on paths differ between original and restored configurations"
 )
 
+snapshotJsonPath <- file.path(
+  "Scripts",
+  "ReportingFramework",
+  "ProjectConfiguration.json"
+)
+
 reportLines <- c(
   "# UC-01 Full project initialisation round-trip",
   "",
   "## Summary",
   "",
-  "This scenario validates init/create/snapshot/restore workflow for project configuration.",
-  "It initialises a projectdirectory from scratch and restores it in another directory from the json file.",
+  "This scenario validates project initialization together with the snapshot and restore workflow for project configuration.",
+  "It creates a ReportingFramework project from scratch, snapshots the configuration to JSON, and restores the workbook in a second directory for version-control and recovery use cases.",
   "",
   "## Assertions",
   "",
@@ -171,7 +177,23 @@ reportLines <- c(
   paste0("- Restored configuration sheet name: ", restoredConfigSheets[[1]]),
   paste0("- RF version before restore: ", versionOriginal),
   paste0("- RF version after restore: ", versionRestored),
+  paste0("- Snapshot JSON path: ", snapshotJsonPath),
   "- Add-on names and relative paths are preserved.",
+  "",
+  "## Snapshot version-control workflow",
+  "",
+  "- Create an initialized project with ProjectConfiguration.xlsx and ProjectConfiguration.json.",
+  "- Capture the current configuration state with snapshotProjectConfigurationRF().",
+  "- Store the JSON snapshot in version control to review configuration changes over time.",
+  "- Restore the configuration into a fresh project directory with restoreProjectConfigurationRF().",
+  "- Use the restored workbook as a recovery checkpoint or a reproducible handoff artifact.",
+  "",
+  "## Snapshot JSON structure",
+  "",
+  "- projectConfiguration",
+  "- projectConfigurationAddons",
+  "- pKParameterFile",
+  "- reportsFile",
   "",
   "## Add-on paths (relative)",
   ""

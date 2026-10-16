@@ -1,0 +1,253 @@
+{
+  "ProjectConfiguration": {
+    "Scenarios": {
+      "column_names": ["Property", "Value", "Description"],
+      "rows": [
+        {
+          "Property": "modelFolder",
+          "Value": "../Models_w1",
+          "Description": "Path to the folder with pkml simulation files; relative to the location of this file"
+        },
+        {
+          "Property": "configurationsFolder",
+          "Value": ".",
+          "Description": "Path to the folder with excel files with parametrization; relative to the location of this file"
+        },
+        {
+          "Property": "modelParamsFile",
+          "Value": "ModelParameters.xlsx",
+          "Description": "Name of the excel file with global model parametrization. Must be located in the \"configurationsFolder\""
+        },
+        {
+          "Property": "individualsFile",
+          "Value": "Individuals.xlsx",
+          "Description": "Name of the excel file with individual-specific model parametrization. Must be located in the \"configurationsFolder\""
+        },
+        {
+          "Property": "populationsFile",
+          "Value": "Populations.xlsx",
+          "Description": "Name of the excel file with population information. Must be located in the \"configurationsFolder\""
+        },
+        {
+          "Property": "populationsFolder",
+          "Value": "../Models_w1/Populations",
+          "Description": "Name of the folder containing population defined in files"
+        },
+        {
+          "Property": "scenariosFile",
+          "Value": "Scenarios.xlsx",
+          "Description": "Name of the excel file with scenario definitions. Must be located in the \"configurationsFolder\""
+        },
+        {
+          "Property": "applicationsFile",
+          "Value": "Applications.xlsx",
+          "Description": "Name of the excel file scenario-specific parameters such as application protocol parameters. Must be located in the \"configurationsFolder\""
+        },
+        {
+          "Property": "outputFolder",
+          "Value": "../Outputs/ReportingFramework",
+          "Description": "Path to the folder where the results should be saved to; relative to the location of this file"
+        },
+        {
+          "Property": "dataFolder",
+          "Value": ".",
+          "Description": "Path to the folder where dataconfiguration file is saved"
+        },
+        {
+          "Property": "dataImporterConfigurationFile",
+          "Value": "DataImportConfiguration.xlsx",
+          "Description": "Name of data importer configuration file in xml format used to load the data. Must be located in the \"dataFolder\""
+        },
+        {
+          "Property": "plotsFile",
+          "Value": "Plots.xlsx",
+          "Description": "Name of the excel file with plot definitions. Must be located in the \"configurationsFolder\""
+        },
+        {
+          "Property": "pKParameterFile",
+          "Value": "PKParameter.xlsx",
+          "Description": "Name of the excel file with pk-Parameter information. Must be located in the \"configurationsFolder\""
+        },
+        {
+          "Property": "electronicPackageFolder",
+          "Value": "../ePackage/V1.0/AnalysisProgram",
+          "Description": "Path to the folder where electronic Package is saved"
+        },
+        {
+          "Property": "parameterIdentificationFile",
+          "Value": "ParameterIdentification.xlsx",
+          "Description": "Name of the excel file with parameter identification task definitions. Must be located in the configurationsFolder"
+        },
+        {
+          "Property": "dataFile",
+          "Value": null,
+          "Description": "Name of the excel file with experimental data. Must be located in the dataFolder"
+        },
+        {
+          "Property": "esqlabsRVersion",
+          "Value": null,
+          "Description": "Version of the esqlabsR package used to create this configuration"
+        }
+      ]
+    }
+  },
+  "Scenarios": {
+    "Scenarios": {
+      "column_names": ["Scenario_name", "IndividualId", "PopulationId", "ReadPopulationFromCSV", "ModelParameterSheets", "ApplicationProtocol", "SimulationTime", "SimulationTimeUnit", "SteadyState", "SteadyStateTime", "SteadyStateTimeUnit", "ModelFile", "OutputPathsIds"],
+      "rows": [
+        {
+          "Scenario_name": "UC09_Scenario1",
+          "IndividualId": "Indiv1",
+          "PopulationId": null,
+          "ReadPopulationFromCSV": "0",
+          "ModelParameterSheets": null,
+          "ApplicationProtocol": null,
+          "SimulationTime": "0, 24, 60",
+          "SimulationTimeUnit": "h",
+          "SteadyState": null,
+          "SteadyStateTime": null,
+          "SteadyStateTimeUnit": null,
+          "ModelFile": "aciclovir.pkml",
+          "OutputPathsIds": "Aciclovir_PVB"
+        },
+        {
+          "Scenario_name": "UC09_Scenario2",
+          "IndividualId": "Indiv1",
+          "PopulationId": null,
+          "ReadPopulationFromCSV": "0",
+          "ModelParameterSheets": null,
+          "ApplicationProtocol": null,
+          "SimulationTime": "0, 24, 60",
+          "SimulationTimeUnit": "h",
+          "SteadyState": null,
+          "SteadyStateTime": null,
+          "SteadyStateTimeUnit": null,
+          "ModelFile": "aciclovir.pkml",
+          "OutputPathsIds": "Aciclovir_PVB"
+        }
+      ]
+    },
+    "OutputPaths": {
+      "column_names": ["OutputPathId", "OutputPath"],
+      "rows": [
+        {
+          "OutputPathId": "Aciclovir_PVB",
+          "OutputPath": "Organism|PeripheralVenousBlood|Aciclovir|Plasma (Peripheral Venous Blood)"
+        },
+        {
+          "OutputPathId": "Aciclovir_fat_cell",
+          "OutputPath": "Organism|Fat|Intracellular|Aciclovir|Concentration in container"
+        }
+      ]
+    }
+  },
+  "Individuals": {
+    "Indiv1": {
+      "column_names": ["Container Path", "Parameter Name", "Value", "Units"],
+      "rows": [
+        {
+          "Container Path": "Organism|Kidney",
+          "Parameter Name": "GFR",
+          "Value": "90",
+          "Units": "ml/min"
+        }
+      ]
+    },
+    "IndividualBiometrics": {
+      "column_names": ["IndividualId", "Species", "Population", "Gender", "Weight [kg]", "Height [cm]", "Age [year(s)]", "Protein Ontogenies"],
+      "rows": [
+        {
+          "IndividualId": "Indiv1",
+          "Species": "Human",
+          "Population": "European_ICRP_2002",
+          "Gender": "MALE",
+          "Weight [kg]": "73",
+          "Height [cm]": "176",
+          "Age [year(s)]": "30",
+          "Protein Ontogenies": "CYP3A4:CYP3A4,CYP2D6:CYP2C8"
+        }
+      ]
+    }
+  },
+  "ModelParameters": {
+    "Global": {
+      "column_names": ["Container Path", "Parameter Name", "Value", "Units"],
+      "rows": [
+        {
+          "Container Path": "Organism|Liver",
+          "Parameter Name": "EHC continuous fraction",
+          "Value": "1",
+          "Units": null
+        }
+      ]
+    },
+    "Sheet, with comma": {
+      "column_names": ["Container Path", "Parameter Name", "Value", "Units"],
+      "rows": [
+        {
+          "Container Path": "Organism|Liver",
+          "Parameter Name": "EHC continuous fraction",
+          "Value": "1",
+          "Units": null
+        }
+      ]
+    },
+    "MissingParam": {
+      "column_names": ["Container Path", "Parameter Name", "Value", "Units"],
+      "rows": [
+        {
+          "Container Path": "foo",
+          "Parameter Name": "bar",
+          "Value": "2",
+          "Units": null
+        }
+      ]
+    },
+    "Aciclovir": {
+      "column_names": ["Container Path", "Parameter Name", "Value", "Units"],
+      "rows": [
+        {
+          "Container Path": "Aciclovir",
+          "Parameter Name": "Lipophilicity",
+          "Value": "-0.1",
+          "Units": "Log Units"
+        }
+      ]
+    }
+  },
+  "Applications": {
+    "Aciclovir_iv_250mg": {
+      "column_names": ["Container Path", "Parameter Name", "Value", "Units"],
+      "rows": [
+        {
+          "Container Path": "Events|IV 250mg 10min|Application_1|ProtocolSchemaItem",
+          "Parameter Name": "Dose",
+          "Value": "250",
+          "Units": "mg"
+        }
+      ]
+    },
+    "Protocol_250mg": {
+      "column_names": ["Container Path", "Parameter Name", "Value", "Units"],
+      "rows": [
+        {
+          "Container Path": "Events|IV 250mg 10min|Application_1|ProtocolSchemaItem",
+          "Parameter Name": "Dose",
+          "Value": "250",
+          "Units": "mg"
+        }
+      ]
+    },
+    "Protocol_500mg": {
+      "column_names": ["Container Path", "Parameter Name", "Value", "Units"],
+      "rows": [
+        {
+          "Container Path": "Events|IV 250mg 10min|Application_1|ProtocolSchemaItem",
+          "Parameter Name": "Dose",
+          "Value": "500",
+          "Units": "mg"
+        }
+      ]
+    }
+  }
+}

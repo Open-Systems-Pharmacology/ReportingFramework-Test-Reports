@@ -1,15 +1,17 @@
 #' @title report-uc-13-data-dictionary
 #' @description
-#' Integration scenario for UC-13 data dictionary operations (read and convert).
+#' Integration scenario for UC-13 dictionary-driven import coverage across
+#' time profiles, PK parameters, and numeric values.
 
 rm(list = ls())
+library(openxlsx)
 library(ospsuite.reportingframework)
 source("R/helpers-uc-shared.R")
 
 reportFolder <- file.path(
-    "tests",
-    "Reports",
-    "UC-13-Data-Dictionary-Operations"
+  "tests",
+  "Reports",
+  "UC-13-Data-Dictionary-Operations"
 )
 projectDir <- tempfile(pattern = "uc13_dict_")
 on.exit(unlink(projectDir, recursive = TRUE, force = TRUE), add = TRUE)
@@ -17,262 +19,718 @@ on.exit(unlink(projectDir, recursive = TRUE, force = TRUE), add = TRUE)
 unlink(reportFolder, recursive = TRUE, force = TRUE)
 dir.create(reportFolder, recursive = TRUE, showWarnings = FALSE)
 
-# Setup project with dictionary configuration
-tutorialDir <- system.file(
-    "extdata",
-    "Tutorial",
-    package = "ospsuite.reportingframework"
-)
+fixtureDir <- reportInputsPath("UC13_DataImport")
+fixtureWorkbook <- file.path(fixtureDir, "DataImportConfiguration.xlsx")
 
 assertOrStop(
-    nzchar(tutorialDir) && dir.exists(tutorialDir),
-    "Tutorial extdata directory not found in ospsuite.reportingframework"
+  dir.exists(fixtureDir),
+  paste0("UC-13 fixture folder not found: ", fixtureDir)
+)
+assertOrStop(
+  file.exists(fixtureWorkbook),
+  paste0("UC-13 fixture workbook not found: ", fixtureWorkbook)
 )
 
-# Copy dictionary and data configuration files
-filesToCopy <- c(
-    "DataImportConfiguration.xlsx",
-    "Individuals.xlsx",
-    "Scenarios.xlsx"
-)
+copyUC13DataImportFixtures <- function(projectConfiguration) {
+  file.copy(fixtureWorkbook, pc$configurationsFolder, overwrite = TRUE)
 
-for (fileName in filesToCopy) {
-    sourcePath <- file.path(tutorialDir, fileName)
-    destPath <- file.path(projectDir, fileName)
-    assertOrStop(
-        file.exists(sourcePath),
-        paste0("Tutorial file not found: ", sourcePath)
-    )
-    file.copy(sourcePath, destPath, overwrite = TRUE)
+  dataDir <- file.path(pc$configurationsFolder, '..', '..', 'Data')
+  dir.create(dataDir)
+  csvFiles <- list.files(fixtureDir, pattern = "\\.csv$", full.names = TRUE)
+
+  file.copy(
+    csvFiles,
+    file.path(dataDir, basename(csvFiles)),
+    overwrite = TRUE
+  )
+
+  assertOrStop(
+    all(file.exists(file.path(dataDir, basename(csvFiles)))),
+    "Failed to copy one or more UC-13 CSV fixtures"
+  )
+
+  copiedCsvFiles = basename(csvFiles)
 }
 
-# Copy data files to multiple locations for test compatibility
-dataDir <- file.path(projectDir, "Data")
-dir.create(dataDir, recursive = TRUE, showWarnings = FALSE)
-
-dataFiles <- c(
-    "timeprofiles_study1234_iv.csv",
-    "timeprofiles_study1234_po.csv"
-)
-
-for (dataFile in dataFiles) {
-    sourcePath <- file.path(tutorialDir, dataFile)
-    destPath <- file.path(dataDir, dataFile)
-    assertOrStop(
-        file.exists(sourcePath),
-        paste0("Tutorial data file not found: ", sourcePath)
-    )
-    file.copy(sourcePath, destPath, overwrite = TRUE)
+readConfigSheet <- function(workbookPath, sheetName) {
+  xlsxReadData(
+    wb = workbookPath,
+    sheetName = sheetName,
+    skipDescriptionRow = TRUE,
+    emptyAsNA = FALSE,
+    convertHeaders = FALSE
+  )
 }
 
-# Copy to temp directories for test framework expectations
-for (rootDir in unique(c(
-    tempdir(),
-    dirname(tempdir()),
-    dirname(dirname(tempdir())),
-    projectDir
-))) {
-    tempDataDir <- file.path(rootDir, "Data")
-    dir.create(tempDataDir, recursive = TRUE, showWarnings = FALSE)
-    srcFiles <- file.path(dataDir, dataFiles)
-    dstFiles <- file.path(tempDataDir, dataFiles)
-    if (
-        !all(
-            normalizePath(srcFiles, winslash = "/") ==
-                normalizePath(dstFiles, winslash = "/", mustWork = FALSE)
-        )
-    ) {
-        file.copy(from = srcFiles, to = dstFiles, overwrite = TRUE)
-    }
+safeSheetRows <- function(workbookPath, sheetName) {
+  dataTable <- tryCatch(
+    xlsxReadData(
+      wb = workbookPath,
+      sheetName = sheetName,
+      skipDescriptionRow = TRUE
+    ),
+    error = function(e) data.table::data.table()
+  )
+  nrow(dataTable)
 }
 
-# Test: Read data dictionary from configuration file
-dicconfigFile <- file.path(projectDir, "DataImportConfiguration.xlsx")
-wb <- openxlsx::loadWorkbook(dicconfigFile)
+countNonMissing <- function(values) {
+  if (is.character(values)) {
+    sum(!is.na(values) & nzchar(values))
+  } else {
+    sum(!is.na(values))
+  }
+}
 
-# Verify dictionary sheet exists
-dictionarySheetExists <- "Dictionary" %in% openxlsx::getSheetNames(wb)
-assertOrStop(
-    dictionarySheetExists,
-    "Dictionary sheet not found in DataImportConfiguration.xlsx"
-)
+stripOuterQuotes <- function(values) {
+  output <- as.character(values)
+  output[is.na(values)] <- NA_character_
+  sub('^"(.*)"$', '\\1', output)
+}
 
-# Read dictionary using xlsxReadData (internal helper, similar to readDataDictionary)
-dictionary <- xlsxReadData(
-    wb = wb,
-    sheetName = "Dictionary",
-    skipDescriptionRow = TRUE
-)
-
-assertOrStop(
-    nrow(dictionary) > 0,
-    "Dictionary is empty"
-)
-
-# Verify required dictionary columns
-requiredDictColumns <- c("columnName", "columnType", "unit")
-hasDictColumns <- all(requiredDictColumns %in% names(dictionary))
-assertOrStop(
-    hasDictColumns,
+assertColumnsPresent <- function(dataTable, expectedColumns, label) {
+  missingColumns <- setdiff(expectedColumns, names(dataTable))
+  assertOrStop(
+    length(missingColumns) == 0,
     paste0(
-        "Dictionary missing required columns: ",
-        paste(
-            requiredDictColumns[!requiredDictColumns %in% names(dictionary)],
-            collapse = ", "
-        )
+      label,
+      " is missing expected columns: ",
+      paste(missingColumns, collapse = ", ")
     )
+  )
+}
+
+assertPopulatedColumns <- function(dataTable, columns, label) {
+  emptyColumns <- vapply(
+    columns,
+    function(columnName) {
+      countNonMissing(dataTable[[columnName]]) == 0
+    },
+    logical(1)
+  )
+
+  assertOrStop(
+    !any(emptyColumns),
+    paste0(
+      label,
+      " has empty imported columns: ",
+      paste(columns[emptyColumns], collapse = ", ")
+    )
+  )
+}
+
+pc <- setupProject(projectDir)
+fixtureCopy <- copyUC13DataImportFixtures(pc)
+
+expectedSheets <- c(
+  "DataFiles",
+  "tpDictionary",
+  "pkDictionary",
+  "NumericValues"
+)
+sheetNames <- openxlsx::getSheetNames(pc$dataImporterConfigurationFile)
+assertOrStop(
+  all(expectedSheets %in% sheetNames),
+  paste0(
+    "Fixture workbook is missing required sheets: ",
+    paste(setdiff(expectedSheets, sheetNames), collapse = ", ")
+  )
 )
 
-dictionaryRowCount <- nrow(dictionary)
-
-# Test: Read and convert observed data using dictionary
-pc <- list(
-    dataImporterConfigurationFile = dicconfigFile,
-    projectConfigurationDirPath = tempdir(),
-    individualsFile = file.path(projectDir, "Individuals.xlsx"),
-    scenariosFile = file.path(projectDir, "Scenarios.xlsx"),
-    addOns = list(reportsFile = file.path(projectDir, "Plots.xlsx"))
+dataFilesConfig <- readConfigSheet(
+  pc$dataImporterConfigurationFile,
+  "DataFiles"
+)
+tpDictionary <- readConfigSheet(
+  pc$dataImporterConfigurationFile,
+  "tpDictionary"
+)
+pkDictionary <- readConfigSheet(
+  pc$dataImporterConfigurationFile,
+  "pkDictionary"
+)
+numericValuesConfig <- readConfigSheet(
+  pc$dataImporterConfigurationFile,
+  "NumericValues"
 )
 
-# Read observed data with dictionary transformations
-dataObserved <- suppressWarnings(readObservedDataByDictionary(
-    projectConfiguration = pc,
-    spreadData = FALSE
+assertOrStop(
+  identical(
+    names(dataFilesConfig),
+    c("FileIdentifier", "DataFile", "Dictionary", "DataFilter", "DataClass")
+  ),
+  "DataFiles sheet columns do not match the package template"
+)
+assertOrStop(
+  identical(
+    names(tpDictionary),
+    c(
+      "TargetColumn",
+      "Type",
+      "SourceColumn",
+      "SourceUnit",
+      "Filter",
+      "FilterValue",
+      "Description"
+    )
+  ),
+  "tpDictionary sheet columns do not match the package template"
+)
+assertOrStop(
+  identical(names(pkDictionary), names(tpDictionary)),
+  "pkDictionary sheet columns do not match the package template"
+)
+assertOrStop(
+  identical(
+    names(numericValuesConfig),
+    c("VariableName", "Value", "Unit", "Reference")
+  ),
+  "NumericValues sheet columns do not match the package template"
+)
+
+assertOrStop(
+  nrow(dataFilesConfig) == 5,
+  "UC-13 fixture should define 5 DataFiles rows"
+)
+assertOrStop(
+  nrow(tpDictionary) == 29,
+  "UC-13 fixture should define 29 tpDictionary rows"
+)
+assertOrStop(
+  nrow(pkDictionary) == 27,
+  "UC-13 fixture should define 27 pkDictionary rows"
+)
+assertOrStop(
+  nrow(numericValuesConfig) == 3,
+  "UC-13 fixture should define 3 numeric values"
+)
+
+expectedFileIds <- c(
+  "tp_individual",
+  "tp_aggregated",
+  "pk_individual",
+  "pk_aggregated",
+  "numeric_values"
+)
+assertOrStop(
+  identical(as.character(dataFilesConfig$FileIdentifier), expectedFileIds),
+  "UC-13 fixture FileIdentifier values do not match expected coverage rows"
+)
+assertOrStop(
+  identical(
+    as.character(dataFilesConfig$DataClass),
+    c(
+      DATACLASS$tpIndividual,
+      DATACLASS$tpAggregated,
+      DATACLASS$pkIndividual,
+      DATACLASS$pkAggregated,
+      DATACLASS$numericValues
+    )
+  ),
+  "UC-13 fixture DataClass rows do not cover the expected import classes"
+)
+
+tpObserved <- suppressWarnings(readObservedDataByDictionary(
+  projectConfiguration = pc,
+  spreadData = FALSE,
+  dataClassType = "timeprofile"
+))
+pkObserved <- suppressWarnings(readObservedDataByDictionary(
+  projectConfiguration = pc,
+  spreadData = FALSE,
+  dataClassType = "pkParameter"
+))
+numericValues <- suppressWarnings(readObservedDataByDictionary(
+  projectConfiguration = pc,
+  spreadData = FALSE,
+  dataClassType = "numericValues"
 ))
 
 assertOrStop(
-    data.table::is.data.table(dataObserved),
-    "Observed data is not a data.table"
+  data.table::is.data.table(tpObserved),
+  "Time-profile import did not return a data.table"
 )
-
-observedRowCount <- nrow(dataObserved)
-observedColCount <- ncol(dataObserved)
+assertOrStop(
+  data.table::is.data.table(pkObserved),
+  "PK import did not return a data.table"
+)
+assertOrStop(
+  data.table::is.data.table(numericValues),
+  "NumericValues import did not return a data.table"
+)
 
 assertOrStop(
-    observedRowCount > 0,
-    "Observed data is empty after dictionary conversion"
+  nrow(tpObserved) == 4,
+  "Time-profile import should return 4 filtered rows"
+)
+assertOrStop(nrow(pkObserved) == 4, "PK import should return 4 filtered rows")
+assertOrStop(
+  nrow(numericValues) == 3,
+  "NumericValues import should return 3 rows"
+)
+
+expectedTpColumns <- c(
+  unique(tpDictionary$TargetColumn),
+  "xUnit",
+  "dataClass",
+  "dataType"
+)
+expectedPkColumns <- c(
+  unique(pkDictionary$TargetColumn),
+  "dataClass",
+  "dataType"
+)
+expectedNumericColumns <- c("variableName", "value", "unit", "reference")
+
+assertColumnsPresent(tpObserved, expectedTpColumns, "Time-profile import")
+assertColumnsPresent(pkObserved, expectedPkColumns, "PK import")
+assertColumnsPresent(
+  numericValues,
+  expectedNumericColumns,
+  "NumericValues import"
+)
+
+tpGeneralColumns <- c(
+  "studyId",
+  "studyArm",
+  "subjectId",
+  "individualId",
+  "group",
+  "outputPathId",
+  "xValues",
+  "yValues",
+  "yUnit",
+  "lloq",
+  "age",
+  "weight",
+  "height",
+  "gender",
+  "population",
+  "species",
+  "country",
+  "dose",
+  "route",
+  "molecule",
+  "organ",
+  "compartment",
+  "xUnit",
+  "dataClass",
+  "dataType"
+)
+pkGeneralColumns <- c(
+  "studyId",
+  "studyArm",
+  "subjectId",
+  "individualId",
+  "group",
+  "outputPathId",
+  "pkParameter",
+  "values",
+  "unit",
+  "age",
+  "weight",
+  "height",
+  "gender",
+  "population",
+  "species",
+  "country",
+  "dose",
+  "route",
+  "molecule",
+  "organ",
+  "compartment",
+  "dataClass",
+  "dataType"
+)
+
+assertPopulatedColumns(tpObserved, tpGeneralColumns, "Time-profile import")
+assertPopulatedColumns(pkObserved, pkGeneralColumns, "PK import")
+assertPopulatedColumns(
+  numericValues,
+  expectedNumericColumns,
+  "NumericValues import"
+)
+
+tpIndividualObserved <- tpObserved[
+  tpObserved[["dataClass"]] == DATACLASS$tpIndividual,
+]
+tpAggregatedObserved <- tpObserved[
+  tpObserved[["dataClass"]] == DATACLASS$tpAggregated,
+]
+pkIndividualObserved <- pkObserved[
+  pkObserved[["dataClass"]] == DATACLASS$pkIndividual,
+]
+pkAggregatedObserved <- pkObserved[
+  pkObserved[["dataClass"]] == DATACLASS$pkAggregated,
+]
+
+assertOrStop(
+  nrow(tpIndividualObserved) == 2,
+  "Time-profile individual fixture rows were not imported as expected"
+)
+assertOrStop(
+  nrow(tpAggregatedObserved) == 2,
+  "Time-profile aggregated fixture rows were not imported as expected"
+)
+assertOrStop(
+  nrow(pkIndividualObserved) == 2,
+  "PK individual fixture rows were not imported as expected"
+)
+assertOrStop(
+  nrow(pkAggregatedObserved) == 2,
+  "PK aggregated fixture rows were not imported as expected"
 )
 
 assertOrStop(
-    observedColCount > 0,
-    "Observed data has no columns after dictionary conversion"
+  identical(sort(unique(tpObserved[["studyId"]])), "1234"),
+  "Time-profile DataFiles filters did not remove the excluded study rows"
 )
-
-# Verify data type conversions applied correctly
-# Check that numeric columns have appropriate data types
-numericColumns <- dictionary$columnName[dictionary$columnType == "numeric"]
-if (length(numericColumns) > 0) {
-    numericColsInData <- intersect(numericColumns, names(dataObserved))
-    if (length(numericColsInData) > 0) {
-        for (col in numericColsInData) {
-            isNumeric <- is.numeric(dataObserved[[col]]) ||
-                is.double(dataObserved[[col]])
-            assertOrStop(
-                isNumeric,
-                paste0(
-                    "Column ",
-                    col,
-                    " should be numeric but is ",
-                    class(dataObserved[[col]])[1]
-                )
-            )
-        }
-    }
-}
-
-# Test: Verify unit conversion metadata available
-# Check if unit information was preserved in data attributes
-unitConversionApplied <- any(!is.na(dataObserved$yUnit))
-# Note: Unit presence depends on data structure; this is informational
-
-# Test: Verify data filtering works correctly
-dataFilesConfig <- xlsxReadData(
-    wb = wb,
-    sheetName = "DataFiles",
-    skipDescriptionRow = TRUE
-)
-
-fileIds <- unique(as.character(dataFilesConfig$fileIdentifier))
-fileIdsCount <- length(fileIds)
 assertOrStop(
-    fileIdsCount >= 1,
-    "No file identifiers found in DataFiles sheet"
+  identical(sort(unique(pkObserved[["studyId"]])), "1234"),
+  "PK DataFiles filters did not remove the excluded study rows"
 )
 
-# Filter by first file ID if multiple files exist
-if (fileIdsCount > 1) {
-    filteredData <- suppressWarnings(readObservedDataByDictionary(
-        projectConfiguration = pc,
-        spreadData = FALSE,
-        fileIds = fileIds[1]
-    ))
-
-    filteredRowCount <- nrow(filteredData)
-    assertOrStop(
-        filteredRowCount < observedRowCount,
-        "Filtering by fileId did not reduce row count"
+assertOrStop(
+  setequal(
+    unique(tpObserved[["group"]]),
+    c(
+      "1234_ArmA_tpIndividual",
+      "1234_ArmB_tpIndividual",
+      "1234_ArmA_tpAggregated",
+      "1234_ArmB_tpAggregated"
     )
-} else {
-    filteredRowCount <- observedRowCount
-}
-
-# Test: Verify error handling for invalid file IDs
-invalidFileIdError <- tryCatch(
-    {
-        readObservedDataByDictionary(
-            projectConfiguration = pc,
-            fileIds = "INVALID_FILE_ID_XYZ"
-        )
-        FALSE
-    },
-    error = function(e) {
-        TRUE
-    }
+  ),
+  "Time-profile group mappings do not match the dictionary FilterValue definitions"
+)
+assertOrStop(
+  setequal(
+    unique(pkObserved[["group"]]),
+    c(
+      "1234_ArmA_pkIndividual",
+      "1234_ArmB_pkIndividual",
+      "1234_ArmA_pkAggregated",
+      "1234_ArmB_pkAggregated"
+    )
+  ),
+  "PK group mappings do not match the dictionary FilterValue definitions"
 )
 
 assertOrStop(
-    isTRUE(invalidFileIdError),
-    "Invalid fileId should trigger an error but did not"
+  setequal(
+    unique(tpObserved[["population"]]),
+    c("European_ICRP_2002", "Asian_Tanaka_1996")
+  ),
+  "Time-profile population filter rows were not both exercised"
+)
+assertOrStop(
+  setequal(
+    unique(pkObserved[["population"]]),
+    c("European_ICRP_2002", "Asian_Tanaka_1996")
+  ),
+  "PK population filter rows were not both exercised"
 )
 
-# Generate report
+assertOrStop(
+  identical(sort(unique(tpObserved[["species"]])), "Human"),
+  "Time-profile species FilterValue mapping did not produce the expected value"
+)
+assertOrStop(
+  identical(sort(unique(pkObserved[["species"]])), "Human"),
+  "PK species FilterValue mapping did not produce the expected value"
+)
+assertOrStop(
+  setequal(unique(tpObserved[["route"]]), c("iv", "po")),
+  "Time-profile route values were not imported from the dictionary source column"
+)
+assertOrStop(
+  setequal(unique(pkObserved[["route"]]), c("iv", "po")),
+  "PK route values were not imported from the dictionary source column"
+)
+assertOrStop(
+  identical(sort(unique(tpObserved[["molecule"]])), "Plasma"),
+  "Time-profile molecule values were not imported from the dictionary source column"
+)
+assertOrStop(
+  identical(sort(unique(pkObserved[["molecule"]])), "Plasma"),
+  "PK molecule values were not imported from the dictionary source column"
+)
+assertOrStop(
+  identical(sort(unique(tpObserved[["organ"]])), "PeripheralVenousBlood"),
+  "Time-profile organ values were not imported from the dictionary source column"
+)
+assertOrStop(
+  identical(sort(unique(pkObserved[["organ"]])), "PeripheralVenousBlood"),
+  "PK organ values were not imported from the dictionary source column"
+)
+assertOrStop(
+  identical(sort(unique(tpObserved[["compartment"]])), "Plasma"),
+  "Time-profile compartment values were not imported from the dictionary source column"
+)
+assertOrStop(
+  identical(sort(unique(pkObserved[["compartment"]])), "Plasma"),
+  "PK compartment values were not imported from the dictionary source column"
+)
+
+assertOrStop(
+  countNonMissing(tpAggregatedObserved[["yMin"]]) == 2,
+  "Time-profile aggregated yMin values were not imported for both aggregated rows"
+)
+assertOrStop(
+  countNonMissing(tpAggregatedObserved[["yMax"]]) == 2,
+  "Time-profile aggregated yMax values were not imported for both aggregated rows"
+)
+assertOrStop(
+  countNonMissing(tpAggregatedObserved[["numberOfIndividuals"]]) == 2,
+  "Time-profile aggregated numberOfIndividuals values were not imported for both aggregated rows"
+)
+assertOrStop(
+  countNonMissing(tpAggregatedObserved[["nBelowLLOQ"]]) == 2,
+  "Time-profile aggregated nBelowLLOQ values were not imported for both aggregated rows"
+)
+assertOrStop(
+  countNonMissing(tpAggregatedObserved[["yErrorValues"]]) == 1,
+  "Time-profile aggregated yErrorValues coverage does not match the fixture design"
+)
+assertOrStop(
+  setequal(
+    na.omit(stripOuterQuotes(tpAggregatedObserved[["yErrorType"]])),
+    c("GeometricStdDev", "median|5th to 95th percentile")
+  ),
+  "Time-profile aggregated yErrorType values do not match the fixture definitions"
+)
+
+assertOrStop(
+  countNonMissing(pkAggregatedObserved[["minValue"]]) == 2,
+  "PK aggregated minValue values were not imported for both aggregated rows"
+)
+assertOrStop(
+  countNonMissing(pkAggregatedObserved[["maxValue"]]) == 2,
+  "PK aggregated maxValue values were not imported for both aggregated rows"
+)
+assertOrStop(
+  countNonMissing(pkAggregatedObserved[["numberOfIndividuals"]]) == 2,
+  "PK aggregated numberOfIndividuals values were not imported for both aggregated rows"
+)
+assertOrStop(
+  countNonMissing(pkAggregatedObserved[["errorValues"]]) == 1,
+  "PK aggregated errorValues coverage does not match the fixture design"
+)
+assertOrStop(
+  setequal(
+    na.omit(stripOuterQuotes(pkAggregatedObserved[["errorType"]])),
+    c("GeometricStdDev", "median|5th to 95th percentile")
+  ),
+  "PK aggregated errorType values do not match the fixture definitions"
+)
+
+tpFilteredIndividual <- suppressWarnings(readObservedDataByDictionary(
+  projectConfiguration = pc,
+  spreadData = FALSE,
+  dataClassType = "timeprofile",
+  fileIds = "tp_individual"
+))
+tpFilteredAggregated <- suppressWarnings(readObservedDataByDictionary(
+  projectConfiguration = pc,
+  spreadData = FALSE,
+  dataClassType = "timeprofile",
+  fileIds = "tp_aggregated"
+))
+pkFilteredIndividual <- suppressWarnings(readObservedDataByDictionary(
+  projectConfiguration = pc,
+  spreadData = FALSE,
+  dataClassType = "pkParameter",
+  fileIds = "pk_individual"
+))
+pkFilteredAggregated <- suppressWarnings(readObservedDataByDictionary(
+  projectConfiguration = pc,
+  spreadData = FALSE,
+  dataClassType = "pkParameter",
+  fileIds = "pk_aggregated"
+))
+
+assertOrStop(
+  nrow(tpFilteredIndividual) == 2,
+  "fileIds filtering for tp_individual should return 2 rows"
+)
+assertOrStop(
+  nrow(tpFilteredAggregated) == 2,
+  "fileIds filtering for tp_aggregated should return 2 rows"
+)
+assertOrStop(
+  nrow(pkFilteredIndividual) == 2,
+  "fileIds filtering for pk_individual should return 2 rows"
+)
+assertOrStop(
+  nrow(pkFilteredAggregated) == 2,
+  "fileIds filtering for pk_aggregated should return 2 rows"
+)
+assertOrStop(
+  identical(
+    unique(tpFilteredIndividual[["dataClass"]]),
+    DATACLASS$tpIndividual
+  ),
+  "fileIds filtering for tp_individual returned the wrong data class"
+)
+assertOrStop(
+  identical(
+    unique(tpFilteredAggregated[["dataClass"]]),
+    DATACLASS$tpAggregated
+  ),
+  "fileIds filtering for tp_aggregated returned the wrong data class"
+)
+assertOrStop(
+  identical(
+    unique(pkFilteredIndividual[["dataClass"]]),
+    DATACLASS$pkIndividual
+  ),
+  "fileIds filtering for pk_individual returned the wrong data class"
+)
+assertOrStop(
+  identical(
+    unique(pkFilteredAggregated[["dataClass"]]),
+    DATACLASS$pkAggregated
+  ),
+  "fileIds filtering for pk_aggregated returned the wrong data class"
+)
+
+invalidFileIdError <- tryCatch(
+  {
+    readObservedDataByDictionary(
+      projectConfiguration = pc,
+      spreadData = FALSE,
+      dataClassType = "timeprofile",
+      fileIds = "invalid_file_id"
+    )
+    FALSE
+  },
+  error = function(e) {
+    TRUE
+  }
+)
+assertOrStop(
+  isTRUE(invalidFileIdError),
+  "Invalid fileIds input should trigger an error"
+)
+
+assertOrStop(
+  identical(
+    sort(numericValues[["variableName"]]),
+    sort(c("Dose", "InfusionDuration", "LowerLimit"))
+  ),
+  "NumericValues variable names do not match the fixture rows"
+)
+assertOrStop(
+  length(unique(numericValues[["variableName"]])) == nrow(numericValues),
+  "NumericValues variable names should be unique"
+)
+assertOrStop(
+  identical(
+    numericValues[numericValues[["variableName"]] == "Dose", ][["value"]],
+    100
+  ),
+  "NumericValues did not return the expected Dose value"
+)
+assertOrStop(
+  identical(
+    numericValues[numericValues[["variableName"]] == "InfusionDuration", ][[
+      "unit"
+    ]],
+    "h"
+  ),
+  "NumericValues did not return the expected InfusionDuration unit"
+)
+assertOrStop(
+  identical(
+    numericValues[numericValues[["variableName"]] == "LowerLimit", ][[
+      "reference"
+    ]],
+    "Bioanalytical report"
+  ),
+  "NumericValues did not return the expected LowerLimit reference"
+)
+
+individualBiometricsRowsBefore <- safeSheetRows(
+  pc[["individualsFile"]],
+  "IndividualBiometrics"
+)
+suppressWarnings(readObservedDataByDictionary(
+  projectConfiguration = pc,
+  spreadData = TRUE,
+  dataClassType = "timeprofile"
+))
+individualBiometricsRowsAfter <- safeSheetRows(
+  pc[["individualsFile"]],
+  "IndividualBiometrics"
+)
+
+assertOrStop(
+  individualBiometricsRowsAfter > individualBiometricsRowsBefore,
+  "spreadData = TRUE did not populate Individuals.xlsx / IndividualBiometrics"
+)
+
 reportLines <- c(
-    "# UC-13 Data Dictionary Operations",
-    "",
-    "## Summary",
-    "",
-    "This scenario validates data dictionary reading and observed-data conversion using dictionary transformations.",
-    "",
-    "## Assertions",
-    "",
-    "- Dictionary sheet parsed successfully",
-    paste0("- Dictionary contains ", dictionaryRowCount, " column definitions"),
-    "- Required dictionary columns present: columnName, columnType, unit",
-    paste0(
-        "- Observed data loaded and converted: ",
-        observedRowCount,
-        " rows × ",
-        observedColCount,
-        " columns"
-    ),
-    "- Data type conversions applied (numeric columns verified)",
-    "- Unit metadata available in loaded data",
-    paste0(
-        "- File filtering by ID working (",
-        fileIdsCount,
-        " file IDs found)"
-    ),
-    if (fileIdsCount > 1) {
-        paste0(
-            "  - Filtered data: ",
-            filteredRowCount,
-            " rows (< ",
-            observedRowCount,
-            " original)"
-        )
-    },
-    "- Invalid file ID triggers expected error",
-    ""
+  "# UC-13 Data Dictionary Operations",
+  "",
+  "## Summary",
+  "",
+  "This scenario validates dictionary-driven observed-data import for time profiles and PK parameters in both individual and aggregated forms, plus NumericValues. It uses a repo-local workbook fixture generated from the installed package template and verifies DataFiles filtering, dictionary Filter/FilterValue mappings, and spreadData propagation into Individuals.xlsx.",
+  "",
+  "## Assertions",
+  "",
+  "- Fixture workbook sheets present: DataFiles, tpDictionary, pkDictionary, NumericValues.",
+  paste0("- DataFiles rows configured: ", nrow(dataFilesConfig), "."),
+  paste0(
+    "- Dictionary rows configured: tpDictionary=",
+    nrow(tpDictionary),
+    ", pkDictionary=",
+    nrow(pkDictionary),
+    ", NumericValues=",
+    nrow(numericValuesConfig),
+    "."
+  ),
+  paste0(
+    "- Time-profile import returned ",
+    nrow(tpObserved),
+    " rows across data classes: ",
+    paste(sort(unique(tpObserved[["dataClass"]])), collapse = ", "),
+    "."
+  ),
+  paste0(
+    "- PK import returned ",
+    nrow(pkObserved),
+    " rows across data classes: ",
+    paste(sort(unique(pkObserved[["dataClass"]])), collapse = ", "),
+    "."
+  ),
+  paste0(
+    "- NumericValues import returned ",
+    nrow(numericValues),
+    " rows: ",
+    paste(numericValues[["variableName"]], collapse = ", "),
+    "."
+  ),
+  "- DataFiles filters removed the excluded source rows from TP and PK imports (only studyId 1234 remains after import).",
+  "- Dictionary Filter/FilterValue rows populated individualId, group, population, species, and metadata columns for TP and PK imports.",
+  "- Aggregated TP rows imported yErrorType/yErrorValues/yMin/yMax/numberOfIndividuals/nBelowLLOQ from source fixtures rather than deriving them in the UC.",
+  "- Aggregated PK rows imported errorType/errorValues/minValue/maxValue/numberOfIndividuals from source fixtures rather than deriving them in the UC.",
+  "- fileIds filtering isolated TP and PK individual versus aggregated fixture rows.",
+  "- Invalid fileIds triggered the expected import error.",
+  paste0(
+    "- spreadData = TRUE expanded Individuals.xlsx / IndividualBiometrics from ",
+    individualBiometricsRowsBefore,
+    " to ",
+    individualBiometricsRowsAfter,
+    " rows."
+  ),
+  "",
+  "## Result files",
+  "- ReportInputs/UC13_DataImport/DataImportConfiguration.xlsx - dedicated UC-13 import configuration workbook",
+  "- ReportInputs/UC13_DataImport/tp_individual.csv - individual time-profile source data",
+  "- ReportInputs/UC13_DataImport/tp_aggregated.csv - aggregated time-profile source data",
+  "- ReportInputs/UC13_DataImport/pk_individual.csv - individual PK source data",
+  "- ReportInputs/UC13_DataImport/pk_aggregated.csv - aggregated PK source data",
+  "- ReportInputs/refresh-uc13-data-import-fixtures.R - fixture refresh script for the UC-13 import matrix",
+  ""
 )
 
 writeLines(reportLines, con = file.path(reportFolder, "Report.md"))
