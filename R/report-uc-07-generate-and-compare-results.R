@@ -23,7 +23,8 @@ scenarioNames <- c(
   "school_children_iv",
   "school_children_po",
   "toddler_iv",
-  "toddler_po"
+  "toddler_po",
+  "meanModel_po"
 )
 
 compareResultTableData <- function(actualDT, expectedDT, tolerance = 1e-6) {
@@ -395,8 +396,8 @@ updateUC7Project(
 
 scenarioList <- createScenariosWrapped(pc, scenarioNames = scenarioNames)
 assertOrStop(
-  length(scenarioList) == length(scenarioNames),
-  "UC-07 requires 10 scenarios"
+  length(scenarioList) == 11,
+  "UC-07 requires 11 scenarios"
 )
 
 scenarioResults <- runAndSaveScenarios(pc, scenarioList)

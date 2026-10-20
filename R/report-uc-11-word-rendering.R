@@ -1,13 +1,13 @@
-#' @title report-uc-14-word-rendering
+#' @title report-uc-11-word-rendering
 #' @description
-#' Integration scenario for UC-14 word document rendering from Quarto markdown.
+#' Integration scenario for UC-11 word document rendering from Quarto markdown.
 
 rm(list = ls())
 library(ospsuite.reportingframework)
 source("R/helpers-uc-shared.R")
 
-reportFolder <- file.path("tests", "Reports", "UC-14-Word-Report-Rendering")
-projectDir <- tempfile(pattern = "uc14_word_")
+reportFolder <- file.path("tests", "Reports", "UC-11-Word-Report-Rendering")
+projectDir <- tempfile(pattern = "uc11_word_")
 on.exit(unlink(projectDir, recursive = TRUE, force = TRUE), add = TRUE)
 
 unlink(reportFolder, recursive = TRUE, force = TRUE)
@@ -44,7 +44,7 @@ if (!qmdFilesFound) {
     testQmdPath <- file.path(projectDir, "test_report.qmd")
     qmdContent <- c(
         "---",
-        "title: 'UC-14 Test Report'",
+        "title: 'UC-11 Test Report'",
         "format: docx",
         "---",
         "",
@@ -138,7 +138,7 @@ wordRenderingTested <- renderWordResult
 
 # Generate report documenting the Word rendering capability
 reportLines <- c(
-    "# UC-14 Word Report Rendering",
+    "# UC-11 Word Report Rendering",
     "",
     "## Summary",
     "",

@@ -80,13 +80,13 @@
     "Reference": false
   },
   {
-    "Script": "report-uc-09-epackage-export",
-    "Report": "UC-09-EPackage-Export",
+    "Script": "report-uc-08-sensitivity-analysis",
+    "Report": "UC-08-Sensitivity-Analysis",
     "Reference": true
   },
   {
-    "Script": "report-uc-10-sensitivity-analysis",
-    "Report": "UC-10-Sensitivity-Analysis",
+    "Script": "report-uc-09-epackage-export",
+    "Report": "UC-09-EPackage-Export",
     "Reference": true
   },
   {
@@ -95,33 +95,18 @@
     "Reference": true
   },
   {
-    "Script": "report-uc-13-data-dictionary",
-    "Report": "UC-13-Data-Dictionary-Operations",
+    "Script": "report-uc-10-data-dictionary",
+    "Report": "UC-10-Data-Dictionary-Operations",
     "Reference": false
   },
   {
-    "Script": "report-uc-14-word-rendering",
-    "Report": "UC-14-Word-Report-Rendering",
-    "Reference": false
-  },
-  {
-    "Script": "report-uc-15-project-upgrade",
-    "Report": "UC-15-Legacy-Project-Upgrade",
+    "Script": "report-uc-11-word-rendering",
+    "Report": "UC-11-Word-Report-Rendering",
     "Reference": false
   },
   {
     "Script": "report-uc-16-calc-methods-scenarios",
     "Report": "UC-16-Calculation-Methods-Scenarios",
-    "Reference": false
-  },
-  {
-    "Script": "report-uc-17-per-scenario-pk",
-    "Report": "UC-17-Per-Scenario-PK-Loading",
-    "Reference": false
-  },
-  {
-    "Script": "report-uc-18-excel-io-edges",
-    "Report": "UC-18-Excel-IO-Edge-Cases",
     "Reference": false
   }
 ]

@@ -19,8 +19,8 @@ on:
         - UC-07B-Plot-PKBoxwhisker
         - UC-07C-Plot-PKForest
         - UC-07D-Plot-Demographics
+        - UC-08-Sensitivity-Analysis
         - UC-09-EPackage-Export
-        - UC-10-Sensitivity-Analysis
 
 permissions: write-all
 

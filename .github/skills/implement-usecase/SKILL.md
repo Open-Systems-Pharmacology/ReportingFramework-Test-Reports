@@ -63,7 +63,6 @@ Available from `helpers-uc-shared.R`:
 | `copyModelFile(pc, modelFile)` | Copy test model from Models/ to project model folder |
 | `makeDefaultScenarioTable(names, indivId, outputId, modelFile)` | Create standard scenario configuration data.table |
 | `setupPKPlasmaSheet(pkFile, outputId, extraRows)` | Configure PK parameters |
-| `configureOutputsSheet(pc)` | Fill missing output display names/units |
 | `assertOrStop(condition, message)` | Validate condition, stop if false |
 
 ### 4. Test Data Organization
@@ -106,8 +105,8 @@ Add entry to the JSON array with the following structure:
 **Example (new UC without reference):**
 ```json
 {
-  "Script": "report-uc-18-excel-io-edges",
-  "Report": "UC-18-Excel-IO-Edge-Cases",
+  "Script": "report-uc-nn-descriptive-name",
+  "Report": "UC-NN-Descriptive-Name",
   "Reference": false
 }
 ```
@@ -123,7 +122,7 @@ Add row to the test report summary table in the "Using Reports and Scripts as te
 
 **Example:**
 ```markdown
-| [UC-18-Excel-IO-Edge-Cases](./Reports/UC-18-Excel-IO-Edge-Cases) | [UC-18-Excel-IO-Edge-Cases](./tests/Reports/UC-18-Excel-IO-Edge-Cases/Report.md) | [report-uc-18-excel-io-edges.R](./R/report-uc-18-excel-io-edges.R) | NA |
+| [UC-NN-Descriptive-Name](./Reports/UC-NN-Descriptive-Name) | [UC-NN-Descriptive-Name](./tests/Reports/UC-NN-Descriptive-Name/Report.md) | [report-uc-nn-descriptive-name.R](./R/report-uc-nn-descriptive-name.R) | NA |
 ```
 
 ### 6. Create Report Markdown
@@ -243,7 +242,7 @@ assertOrStop(length(plotFiles) > 0, "No plots were generated")
 
 ## Best Practices
 
-1. **Numbering**: Use zero-padded sequential numbers (UC-01, UC-02, ..., UC-18)
+1. **Numbering**: Use zero-padded sequential numbers (UC-01, UC-02, ...)
 2. **Naming**: Use kebab-case descriptive names: `report-uc-07b-plot-pk-boxwhisker`
 3. **Cleanup**: Always use `on.exit()` for temporary directory cleanup
 4. **Assertions**: Make them specific and measurable, not vague

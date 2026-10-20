@@ -1,5 +1,5 @@
 #!/usr/bin/env Rscript
-# Prepare UC09 data import fixtures from UC13
+# Prepare UC09 data import fixtures from UC10
 # Copy time-profile CSVs and trim DataImportConfiguration.xlsx to TP only
 
 rm(list = ls())
@@ -8,7 +8,7 @@ library(openxlsx)
 library(ospsuite.reportingframework)
 
 # Paths
-uc13Dir <- "ReportInputs/UC13_DataImport"
+uc10Dir <- "ReportInputs/UC10_DataImport"
 uc09Dir <- "ReportInputs/UC09_DataImport"
 
 # Create UC09 directory
@@ -19,14 +19,14 @@ cat("=== UC09 Data Import Fixtures Preparation ===\n\n")
 # 1. Copy time-profile CSVs
 cat("1. Copying time-profile CSVs...\n")
 file.copy(
-    from = file.path(uc13Dir, "tp_individual.csv"),
+    from = file.path(uc10Dir, "tp_individual.csv"),
     to = file.path(uc09Dir, "tp_individual.csv"),
     overwrite = TRUE
 )
 cat("   ✓ tp_individual.csv copied\n")
 
 file.copy(
-    from = file.path(uc13Dir, "tp_aggregated.csv"),
+    from = file.path(uc10Dir, "tp_aggregated.csv"),
     to = file.path(uc09Dir, "tp_aggregated.csv"),
     overwrite = TRUE
 )
@@ -37,7 +37,7 @@ cat("\n2. Trimming DataImportConfiguration.xlsx...\n")
 
 # Copy template
 file.copy(
-    from = file.path(uc13Dir, "DataImportConfiguration.xlsx"),
+    from = file.path(uc10Dir, "DataImportConfiguration.xlsx"),
     to = file.path(uc09Dir, "DataImportConfiguration.xlsx"),
     overwrite = TRUE
 )
@@ -60,7 +60,7 @@ dataFiles <- xlsxReadData(
 dataFilesTrimmed <- dataFiles[1:2, ]
 
 cat("   DataFiles sheet trimmed to:\n")
-for (i in 1:nrow(dataFilesTrimmed)) {
+for (i in seq_len(nrow(dataFilesTrimmed))) {
     cat("     -", dataFilesTrimmed[[i, 1]], "\n")
 }
 
@@ -92,7 +92,11 @@ writeData(
 cat("   ✓ DataFiles sheet updated\n")
 
 # Save the trimmed workbook
-saveWorkbook(wb, file.path(uc09Dir, "DataImportConfiguration.xlsx"), overwrite = TRUE)
+saveWorkbook(
+    wb,
+    file.path(uc09Dir, "DataImportConfiguration.xlsx"),
+    overwrite = TRUE
+)
 
 cat("\n=== Preparation Complete ===\n")
 cat("✓ UC09_DataImport folder created at:", uc09Dir, "\n")

@@ -1,4 +1,4 @@
-# UC-10 Sensitivity Analysis
+# UC-08 Sensitivity Analysis
 
 ## Summary
 
@@ -30,10 +30,10 @@ and understanding model behavior.
 
 ## Project Configuration
 
-- Project Directory: C:\Users\17fec1a5\AppData\Local\Temp\2\RtmpGeatJ9\uc10_sensitivity_2e1019131dce
-- Configuration Path: C:\Users\17fec1a5\AppData\Local\Temp\2\RtmpGeatJ9\uc10_sensitivity_2e1019131dce/Scripts/ReportingFramework/ProjectConfiguration.xlsx
+- Project Directory: C:\Users\17fec1a5\AppData\Local\Temp\2\RtmpGeatJ9\uc08_sensitivity_2e1019131dce
+- Configuration Path: C:\Users\17fec1a5\AppData\Local\Temp\2\RtmpGeatJ9\uc08_sensitivity_2e1019131dce/Scripts/ReportingFramework/ProjectConfiguration.xlsx
 - Model File: Aciclovir.pkml
-- Model Path: C:/Users/17fec1a5/AppData/Local/Temp/2/RtmpGeatJ9/uc10_sensitivity_2e1019131dce/Models/Aciclovir.pkml
+- Model Path: C:/Users/17fec1a5/AppData/Local/Temp/2/RtmpGeatJ9/uc08_sensitivity_2e1019131dce/Models/Aciclovir.pkml
 - Sensitivity Results: 
 
 ## Validations Performed

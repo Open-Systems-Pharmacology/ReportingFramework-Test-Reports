@@ -3,8 +3,7 @@
 #' Integration scenario for UC-09 electronic package (ePackage) export.
 
 rm(list = ls())
-#library(ospsuite.reportingframework)
-pkgload::load_all(path = file.path('..', 'OSPSuite.ReportingFramework'))
+library(ospsuite.reportingframework)
 source("R/helpers-uc-shared.R")
 
 createUC09TLFWorkflow <- function(
@@ -123,39 +122,41 @@ baseScenarioName <- "UC09_Scenario1"
 populationScenarioName <- "UC09_PopulationScenario"
 populationSourceName <- "adults"
 
-# # Test ePackage export functionality
-# ePackageFolderPath <- pc$addOns$electronicPackageFolder
-# assertOrStop(
-#   !is.null(ePackageFolderPath),
-#   "ePackage folder path not set in project configuration"
-# )
+# Test ePackage export functionality
+ePackageFolderPath <- pc$addOns$electronicPackageFolder
+assertOrStop(
+  !is.null(ePackageFolderPath),
+  "ePackage folder path not set in project configuration"
+)
 
-# # Verify ePackage folder exists or can be created
-# dir.create(ePackageFolderPath, recursive = TRUE, showWarnings = FALSE)
-# assertOrStop(
-#     dir.exists(ePackageFolderPath),
-#     paste0("Failed to create ePackage folder at: ", ePackageFolderPath)
-# )
+# Verify ePackage folder exists or can be created
+dir.create(ePackageFolderPath, recursive = TRUE, showWarnings = FALSE)
+assertOrStop(
+  dir.exists(ePackageFolderPath),
+  paste0("Failed to create ePackage folder at: ", ePackageFolderPath)
+)
 
-# # Verify exportSimulationWorkflowToEPackage function exists
-# assertOrStop(
-#   exists("exportSimulationWorkflowToEPackage"),
-#   "exportSimulationWorkflowToEPackage function not found"
-# )
+# Verify exportSimulationWorkflowToEPackage function exists
+assertOrStop(
+  exists("exportSimulationWorkflowToEPackage"),
+  "exportSimulationWorkflowToEPackage function not found"
+)
 
-# # Verify exportTLFWorkflowToEPackage function exists
-# assertOrStop(
-#   exists("exportTLFWorkflowToEPackage"),
-#   "exportTLFWorkflowToEPackage function not found"
-# )
+# Verify exportTLFWorkflowToEPackage function exists
+assertOrStop(
+  exists("exportTLFWorkflowToEPackage"),
+  "exportTLFWorkflowToEPackage function not found"
+)
 
-# # Verify openEPackageTemplate function exists
-# assertOrStop(
-#   exists("openEPackageTemplate"),
-#   "openEPackageTemplate function not found"
-# )
+# Verify openEPackageTemplate function exists
+assertOrStop(
+  exists("openEPackageTemplate"),
+  "openEPackageTemplate function not found"
+)
 
-# Step 1: Create scenarios for ePackage export
+# ENHANCEMENT: Add real workflow execution
+
+# Step 1: Create and run scenarios for ePackage export
 wbScenarios <- openxlsx::loadWorkbook(pc$scenariosFile)
 scenariosConfig <- xlsxReadData(wbScenarios, sheetName = "Scenarios")
 scenarioOutputs <- xlsxReadData(wbScenarios, sheetName = "OutputPaths")
@@ -176,12 +177,22 @@ scenarioSetup <- data.table::rbindlist(
     makeDefaultScenarioTable(
       populationScenarioName,
       outputPathId = defaultOutputPathId,
-      populationId = populationSourceName,
       modelFile = modelFile
     )
   ),
   use.names = TRUE
 )
+scenarioSetup[
+  scenario_name == populationScenarioName,
+  populationId := populationSourceName
+]
+scenarioSetup[,
+  readPopulationFromCSV := ifelse(
+    scenario_name == populationScenarioName,
+    "TRUE",
+    "FALSE"
+  )
+]
 
 xlsxWriteData(wbScenarios, sheetName = "Scenarios", scenarioSetup)
 openxlsx::saveWorkbook(wbScenarios, pc$scenariosFile, overwrite = TRUE)
@@ -190,14 +201,19 @@ openxlsx::saveWorkbook(wbScenarios, pc$scenariosFile, overwrite = TRUE)
 scenarioList <- createScenariosWrapped(pc, scenarioNames = NULL)
 scenarioNames <- names(scenarioList)
 
-# # Run scenarios to generate results for export
-# scenarioResults <- runAndSaveScenarios(pc, scenarioList)
-# scenarioResultsCount <- length(scenarioResults)
-#
-# assertOrStop(
-#   scenarioResultsCount > 0,
-#   "No scenario results generated for ePackage export"
-# )
+assertOrStop(
+  length(scenarioList) >= 2,
+  "Failed to create scenarios for ePackage export"
+)
+
+# Run scenarios to generate results for export
+scenarioResults <- runAndSaveScenarios(pc, scenarioList)
+scenarioResultsCount <- length(scenarioResults)
+
+assertOrStop(
+  scenarioResultsCount > 0,
+  "No scenario results generated for ePackage export"
+)
 
 # Step 2: Attempt to export simulation workflow to ePackage
 simulationExportResult <- tryCatch(
@@ -205,8 +221,7 @@ simulationExportResult <- tryCatch(
     exportSimulationWorkflowToEPackage(
       projectConfiguration = pc,
       wfIdentifier = 1,
-      scenarioNames = scenarioNames,
-      fileNameReplacements = c('Aciclovir.pkml', 'acyclovir.pkml')
+      scenarioNames = scenarioNames
     )
     list(success = TRUE, error = NA_character_)
   },
@@ -227,15 +242,12 @@ simulationResultFiles <- file.path(
   EXPORTDIR$simulationResult,
   paste0(scenarioNames, ".csv")
 )
-# simulationFilesToRemove <- unique(c(
-#   simulationResultFiles,
-#   populationScenarioResultFiles
-# ))
+simulationFilesToRemove <- unique(c(
+  simulationResultFiles,
+  populationScenarioResultFiles
+))
 
-# removeExistingFiles(simulationFilesToRemove)
-
-ePackageFolderPath <- pc$addOns$electronicPackageFolder
-
+removeExistingFiles(simulationFilesToRemove)
 simulationWorkflowRun <- executeExportedWorkflow(
   ePackageFolder = ePackageFolderPath,
   wfIdentifier = 1,

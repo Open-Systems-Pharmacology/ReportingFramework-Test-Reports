@@ -1,6 +1,6 @@
-#' @title report-uc-13-data-dictionary
+#' @title report-uc-10-data-dictionary
 #' @description
-#' Integration scenario for UC-13 dictionary-driven import coverage across
+#' Integration scenario for UC-10 dictionary-driven import coverage across
 #' time profiles, PK parameters, and numeric values.
 
 rm(list = ls())
@@ -11,27 +11,27 @@ source("R/helpers-uc-shared.R")
 reportFolder <- file.path(
   "tests",
   "Reports",
-  "UC-13-Data-Dictionary-Operations"
+  "UC-10-Data-Dictionary-Operations"
 )
-projectDir <- tempfile(pattern = "uc13_dict_")
+projectDir <- tempfile(pattern = "uc10_dict_")
 on.exit(unlink(projectDir, recursive = TRUE, force = TRUE), add = TRUE)
 
 unlink(reportFolder, recursive = TRUE, force = TRUE)
 dir.create(reportFolder, recursive = TRUE, showWarnings = FALSE)
 
-fixtureDir <- reportInputsPath("UC13_DataImport")
+fixtureDir <- reportInputsPath("UC10_DataImport")
 fixtureWorkbook <- file.path(fixtureDir, "DataImportConfiguration.xlsx")
 
 assertOrStop(
   dir.exists(fixtureDir),
-  paste0("UC-13 fixture folder not found: ", fixtureDir)
+  paste0("UC-10 fixture folder not found: ", fixtureDir)
 )
 assertOrStop(
   file.exists(fixtureWorkbook),
-  paste0("UC-13 fixture workbook not found: ", fixtureWorkbook)
+  paste0("UC-10 fixture workbook not found: ", fixtureWorkbook)
 )
 
-copyUC13DataImportFixtures <- function(projectConfiguration) {
+copyUC10DataImportFixtures <- function(projectConfiguration) {
   file.copy(fixtureWorkbook, pc$configurationsFolder, overwrite = TRUE)
 
   dataDir <- file.path(pc$configurationsFolder, '..', '..', 'Data')
@@ -46,10 +46,10 @@ copyUC13DataImportFixtures <- function(projectConfiguration) {
 
   assertOrStop(
     all(file.exists(file.path(dataDir, basename(csvFiles)))),
-    "Failed to copy one or more UC-13 CSV fixtures"
+    "Failed to copy one or more UC-10 CSV fixtures"
   )
 
-  copiedCsvFiles = basename(csvFiles)
+  basename(csvFiles)
 }
 
 readConfigSheet <- function(workbookPath, sheetName) {
@@ -120,7 +120,7 @@ assertPopulatedColumns <- function(dataTable, columns, label) {
 }
 
 pc <- setupProject(projectDir)
-fixtureCopy <- copyUC13DataImportFixtures(pc)
+copyUC10DataImportFixtures(pc)
 
 expectedSheets <- c(
   "DataFiles",
@@ -190,19 +190,19 @@ assertOrStop(
 
 assertOrStop(
   nrow(dataFilesConfig) == 5,
-  "UC-13 fixture should define 5 DataFiles rows"
+  "UC-10 fixture should define 5 DataFiles rows"
 )
 assertOrStop(
   nrow(tpDictionary) == 29,
-  "UC-13 fixture should define 29 tpDictionary rows"
+  "UC-10 fixture should define 29 tpDictionary rows"
 )
 assertOrStop(
   nrow(pkDictionary) == 27,
-  "UC-13 fixture should define 27 pkDictionary rows"
+  "UC-10 fixture should define 27 pkDictionary rows"
 )
 assertOrStop(
   nrow(numericValuesConfig) == 3,
-  "UC-13 fixture should define 3 numeric values"
+  "UC-10 fixture should define 3 numeric values"
 )
 
 expectedFileIds <- c(
@@ -214,7 +214,7 @@ expectedFileIds <- c(
 )
 assertOrStop(
   identical(as.character(dataFilesConfig$FileIdentifier), expectedFileIds),
-  "UC-13 fixture FileIdentifier values do not match expected coverage rows"
+  "UC-10 fixture FileIdentifier values do not match expected coverage rows"
 )
 assertOrStop(
   identical(
@@ -227,7 +227,7 @@ assertOrStop(
       DATACLASS$numericValues
     )
   ),
-  "UC-13 fixture DataClass rows do not cover the expected import classes"
+  "UC-10 fixture DataClass rows do not cover the expected import classes"
 )
 
 tpObserved <- suppressWarnings(readObservedDataByDictionary(
@@ -669,7 +669,7 @@ assertOrStop(
 )
 
 reportLines <- c(
-  "# UC-13 Data Dictionary Operations",
+  "# UC-10 Data Dictionary Operations",
   "",
   "## Summary",
   "",
@@ -724,12 +724,12 @@ reportLines <- c(
   ),
   "",
   "## Result files",
-  "- ReportInputs/UC13_DataImport/DataImportConfiguration.xlsx - dedicated UC-13 import configuration workbook",
-  "- ReportInputs/UC13_DataImport/tp_individual.csv - individual time-profile source data",
-  "- ReportInputs/UC13_DataImport/tp_aggregated.csv - aggregated time-profile source data",
-  "- ReportInputs/UC13_DataImport/pk_individual.csv - individual PK source data",
-  "- ReportInputs/UC13_DataImport/pk_aggregated.csv - aggregated PK source data",
-  "- ReportInputs/refresh-uc13-data-import-fixtures.R - fixture refresh script for the UC-13 import matrix",
+  "- ReportInputs/UC10_DataImport/DataImportConfiguration.xlsx - dedicated UC-10 import configuration workbook",
+  "- ReportInputs/UC10_DataImport/tp_individual.csv - individual time-profile source data",
+  "- ReportInputs/UC10_DataImport/tp_aggregated.csv - aggregated time-profile source data",
+  "- ReportInputs/UC10_DataImport/pk_individual.csv - individual PK source data",
+  "- ReportInputs/UC10_DataImport/pk_aggregated.csv - aggregated PK source data",
+  "- ReportInputs/refresh-uc10-data-import-fixtures.R - fixture refresh script for the UC-10 import matrix",
   ""
 )
 

@@ -5,7 +5,7 @@ library(openxlsx)
 library(ospsuite.reportingframework)
 source("R/helpers-uc-shared.R")
 
-fixtureDir <- reportInputsPath("UC13_DataImport")
+fixtureDir <- reportInputsPath("UC10_DataImport")
 dir.create(fixtureDir, recursive = TRUE, showWarnings = FALSE)
 
 replaceSheetTable <- function(wb, sheetName, dataTable) {
@@ -377,7 +377,7 @@ saveWorkbook(wb, workbookPath, overwrite = TRUE)
 
 cat(
   paste(
-    "Refreshed UC-13 data-import fixtures:",
+    "Refreshed UC-10 data-import fixtures:",
     paste("- Workbook:", workbookPath),
     paste("- tp_individual rows:", nrow(tpIndividual)),
     paste("- tp_aggregated rows:", nrow(tpAggregated)),

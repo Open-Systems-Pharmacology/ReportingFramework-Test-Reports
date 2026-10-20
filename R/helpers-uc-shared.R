@@ -101,46 +101,6 @@ setupPKPlasmaSheet <- function(
   invisible(NULL)
 }
 
-# Fills missing displayName / displayUnit in the Outputs sheet with sensible defaults.
-configureOutputsSheet <- function(pc) {
-  wbReports <- openxlsx::loadWorkbook(pc$addOns$reportsFile)
-  outputsSheet <- xlsxReadData(
-    wbReports,
-    sheetName = "Outputs",
-    skipDescriptionRow = FALSE
-  )
-  missingDisplayNames <- is.na(outputsSheet$displayName) |
-    trimws(as.character(outputsSheet$displayName)) == ""
-  outputsSheet$displayName[missingDisplayNames] <-
-    paste(as.character(outputsSheet$outputPathId[missingDisplayNames]), "disp")
-  missingDisplayUnits <- is.na(outputsSheet$displayUnit) |
-    trimws(as.character(outputsSheet$displayUnit)) == ""
-  outputsSheet$displayUnit[missingDisplayUnits] <- "µg/l"
-  xlsxWriteData(wbReports, sheetName = "Outputs", outputsSheet)
-  openxlsx::saveWorkbook(wbReports, pc$addOns$reportsFile, overwrite = TRUE)
-  invisible(NULL)
-}
-
-# Normalizes the copied UC07 PK_Plasma sheet to the molar units used by the
-# checked-in PKAnalysisResults fixtures, avoiding model-based MW conversion.
-configureUC7PKPlasmaSheet <- function(pc) {
-  wbPk <- openxlsx::loadWorkbook(pc$addOns$pKParameterFile)
-  pkSheet <- xlsxReadData(
-    wbPk,
-    sheetName = "PK_Plasma",
-    skipDescriptionRow = FALSE
-  )
-
-  pkSheet$displayUnit[pkSheet$name == "C_max"] <- "µmol/l"
-  pkSheet$displayUnit[pkSheet$name == "t_max"] <- "h"
-  pkSheet$displayUnit[pkSheet$name == "AUC_tEnd"] <- "µmol*min/l"
-
-  xlsxWriteData(wbPk, sheetName = "PK_Plasma", pkSheet)
-  openxlsx::saveWorkbook(wbPk, pc$addOns$pKParameterFile, overwrite = TRUE)
-  invisible(NULL)
-}
-
-
 updateUC7Project <- function(pc, scenarioNames, copyPK, copySimResult) {
   copyModelFiles(pc, c("iv_1_mg_5_min.pkml", "po_3_mg_solution.pkml"))
 
@@ -161,8 +121,6 @@ updateUC7Project <- function(pc, scenarioNames, copyPK, copySimResult) {
     overwrite = TRUE
   )
 
-  configureUC7PKPlasmaSheet(pc)
-
   if (copyPK) {
     filesToCopy <- paste0(scenarioNames, ".csv")
     copyPKAnalysisResults(pc, pkResultsFiles = filesToCopy)
@@ -173,7 +131,8 @@ updateUC7Project <- function(pc, scenarioNames, copyPK, copySimResult) {
   }
 
   popFilesToCopy <- paste0(
-    unique(gsub('_po', '', gsub('_iv$', '', scenarioNames))),
+    unique(gsub('_po', '', gsub('_iv$', '', scenarioNames))) |>
+      setdiff('meanModel'),
     '.csv'
   )
   copyPopulations(pc, files = popFilesToCopy)
@@ -871,7 +830,7 @@ executeExportedWorkflow <- function(
 
 # Enhanced TLF workflow with dictionary-driven data import and summary generation
 #
-# Creates an Rmd file that imports observed time-profile data using UC13's
+# Creates an Rmd file that imports observed time-profile data using UC10's
 # dictionary-driven configuration, filters the data, and generates a summary CSV
 # documenting the imported dataset.
 #
@@ -883,132 +842,136 @@ executeExportedWorkflow <- function(
 #
 # @return Invisibly returns workflowPath after writing the Rmd file
 createUC09TLFWorkflowWithDataImport <- function(
-    workflowPath,
-    scenarioNames,
-    dataImportConfigFile,
-    summaryFileName = "UC09_TLF_Summary.csv",
-    dataImportSummaryFileName = "UC09_TLF_DataImport_Summary.csv"
+  workflowPath,
+  scenarioNames,
+  dataImportConfigFile,
+  summaryFileName = "UC09_TLF_Summary.csv",
+  dataImportSummaryFileName = "UC09_TLF_DataImport_Summary.csv"
 ) {
-    # Embed fixture data as R vectors (CSV content)
-    tpIndividualCsv <- "STUD,GRPNAME,ARM,SID,MOLECULE,TIME,DV,DVUNIT,LLOQ,DV_GSD,DV_MIN,DV_MAX,NIND,NBLQ,AGE,WGHT0,HGHT0,SEX,RACENAME,COUNTRY,DOSE,ROUTE,ORGAN,COMP,CLASS,INCLUDE,ERRTYPE
+  # Embed fixture data as R vectors (CSV content)
+  tpIndividualCsv <- "STUD,GRPNAME,ARM,SID,MOLECULE,TIME,DV,DVUNIT,LLOQ,DV_GSD,DV_MIN,DV_MAX,NIND,NBLQ,AGE,WGHT0,HGHT0,SEX,RACENAME,COUNTRY,DOSE,ROUTE,ORGAN,COMP,CLASS,INCLUDE,ERRTYPE
 1234,Arm A,ArmA,SUBJ01,Plasma,1,10.5,mg/L,0.1,,,,,0,35,72,178,Male,White,DE,100,iv,PeripheralVenousBlood,Plasma,tpIndividual,1,\"\"
 1234,Arm B,ArmB,SUBJ02,Plasma,2,12,mg/L,0.1,,,,,1,42,65,168,Female,Asian,JP,150,po,PeripheralVenousBlood,Plasma,tpIndividual,1,\"\"
 9999,Dropped Arm,ArmDrop,SUBJ03,Plasma,4,99,mg/L,0.1,,,,,0,50,80,182,Female,White,US,999,po,PeripheralVenousBlood,Plasma,tpIndividual,0,\"\""
 
-    tpAggregatedCsv <- "STUD,GRPNAME,ARM,SID,MOLECULE,TIME,DV,DVUNIT,LLOQ,DV_GSD,DV_MIN,DV_MAX,NIND,NBLQ,AGE,WGHT0,HGHT0,SEX,RACENAME,COUNTRY,DOSE,ROUTE,ORGAN,COMP,CLASS,INCLUDE,ERRTYPE
+  tpAggregatedCsv <- "STUD,GRPNAME,ARM,SID,MOLECULE,TIME,DV,DVUNIT,LLOQ,DV_GSD,DV_MIN,DV_MAX,NIND,NBLQ,AGE,WGHT0,HGHT0,SEX,RACENAME,COUNTRY,DOSE,ROUTE,ORGAN,COMP,CLASS,INCLUDE,ERRTYPE
 1234,Arm A Summary,ArmA,AGG01,Plasma,1,11.2,mg/L,0.1,1.25,9.8,13.6,8,0,35,72,178,Male,White,DE,100,iv,PeripheralVenousBlood,Plasma,tpAggregated,1,GeometricStdDev
 1234,Arm B Summary,ArmB,AGG02,Plasma,2,8.4,mg/L,0.1,,7,9.4,6,2,42,65,168,Female,Asian,JP,150,po,PeripheralVenousBlood,Plasma,tpAggregated,1,median|5th to 95th percentile
 8888,Dropped Summary,ArmDrop,AGG03,Plasma,4,55,mg/L,0.1,1.1,50,60,5,0,50,80,182,Female,White,US,999,po,PeripheralVenousBlood,Plasma,tpAggregated,0,ArithmeticStdDev"
 
-    # Build the loadResults chunk with embedded CSV data processing
-    loadResultsChunk <- c(
-        "```{r loadResults-copy}",
-        "scenarioResults <- loadScenarioResultsToFramework(",
-        "  projectConfiguration = projectConfiguration,",
-        "  scenarioNames = scenarioNames",
-        ")",
-        "",
-        "# Import observed time-profile data from embedded fixture CSVs",
-        "# This data is self-contained in the workflow for export compatibility",
-        "tpIndividualData <- data.table::fread(text = '",
-        paste0(tpIndividualCsv, collapse = "\\n"),
-        "')",
-        "tpAggregatedData <- data.table::fread(text = '",
-        paste0(tpAggregatedCsv, collapse = "\\n"),
-        "')",
-        "",
-        "# Apply INCLUDE filter (dictionary-driven filtering at data level)",
-        "tpIndividual <- tpIndividualData[INCLUDE == 1]",
-        "tpAggregated <- tpAggregatedData[INCLUDE == 1]",
-        "",
-        "# Create result structure matching importDataConfigurationFromFile output",
-        "dataImportResults <- list(",
-        "  tpIndividual,  # [[1]] - Individual time-profiles",
-        "  tpAggregated   # [[2]] - Aggregated time-profiles",
-        ")",
-        "```"
-    )
+  # Build the loadResults chunk with embedded CSV data processing
+  loadResultsChunk <- c(
+    "```{r loadResults-copy}",
+    "scenarioResults <- loadScenarioResultsToFramework(",
+    "  projectConfiguration = projectConfiguration,",
+    "  scenarioNames = scenarioNames",
+    ")",
+    "",
+    "# Import observed time-profile data from embedded fixture CSVs",
+    "# This data is self-contained in the workflow for export compatibility",
+    "tpIndividualData <- data.table::fread(text = '",
+    paste0(tpIndividualCsv, collapse = "\\n"),
+    "')",
+    "tpAggregatedData <- data.table::fread(text = '",
+    paste0(tpAggregatedCsv, collapse = "\\n"),
+    "')",
+    "",
+    "# Apply INCLUDE filter (dictionary-driven filtering at data level)",
+    "tpIndividual <- tpIndividualData[INCLUDE == 1]",
+    "tpAggregated <- tpAggregatedData[INCLUDE == 1]",
+    "",
+    "# Create result structure matching importDataConfigurationFromFile output",
+    "dataImportResults <- list(",
+    "  tpIndividual,  # [[1]] - Individual time-profiles",
+    "  tpAggregated   # [[2]] - Aggregated time-profiles",
+    ")",
+    "```"
+  )
 
-    workflowLines <- c(
-        "---",
-        "title: \"UC-09 TLF Workflow with Data Import\"",
-        "output: html_document",
-        "---",
-        "",
-        "```{r setup, include=FALSE}",
-        "knitr::opts_chunk$set(echo = FALSE)",
-        "```",
-        "",
-        "```{r libraries-copy}",
-        "library(ospsuite.reportingframework)",
-        "library(data.table)",
-        "```",
-        "",
-        "```{r pathsCustomfunctions-eval}",
-        "pathsCustomfunctions <- c()",
-        "```",
-        "",
-        "```{r dataObserved-eval}",
-        "dataObserved <- NULL",
-        "```",
-        "",
-        "```{r dataObservedPK-eval}",
-        "dataObservedPK <- NULL",
-        "```",
-        "",
-        "```{r scenarioNames-eval}",
-        paste0(
-            "scenarioNames <- c(",
-            paste(sprintf("\"%s\"", scenarioNames), collapse = ", "),
-            ")"
-        ),
-        "```",
-        "",
-        loadResultsChunk,
-        "",
-        "```{r runPlot-copy}",
-        paste0(
-            "summaryCsv <- file.path(projectConfiguration$outputFolder, \"",
-            summaryFileName,
-            "\")"
-        ),
-        "resultFiles <- file.path(",
-        "  projectConfiguration$outputFolder,",
-        "  EXPORTDIR$simulationResult,",
-        "  paste0(scenarioNames, '.csv')",
-        ")",
-        "summaryDT <- data.table::data.table(",
-        "  scenario = scenarioNames,",
-        "  resultFile = basename(resultFiles),",
-        "  resultFileExists = file.exists(resultFiles),",
-        "  resultFileBytes = ifelse(",
-        "    file.exists(resultFiles),",
-        "    file.info(resultFiles)$size,",
-        "    NA_real_",
-        "  )",
-        ")",
-        "data.table::fwrite(summaryDT, summaryCsv)",
-        "",
-        "# Generate summary of imported data",
-        "if (!is.null(dataImportResults) && length(dataImportResults) >= 2) {",
-        "  tpIndividual <- dataImportResults[[1]]",
-        "  tpAggregated <- dataImportResults[[2]]",
-        "  ",
-        "  dataImportSummary <- data.table::data.table(",
-        "    DataType = c(\"Individual Time-Profiles\", \"Aggregated Time-Profiles\"),",
-        "    ObservationCount = c(",
-        "      if (!is.null(tpIndividual) && nrow(tpIndividual) > 0) nrow(tpIndividual) else 0,",
-        "      if (!is.null(tpAggregated) && nrow(tpAggregated) > 0) nrow(tpAggregated) else 0",
-        "    ),",
-        "    FilterApplied = \"INCLUDE == 1\"",
-        "  )",
-        paste0("  dataImportCsv <- file.path(projectConfiguration$outputFolder, \"", dataImportSummaryFileName, "\")"),
-        "  data.table::fwrite(dataImportSummary, dataImportCsv)",
-        "}",
-        "```",
-        ""
-    )
+  workflowLines <- c(
+    "---",
+    "title: \"UC-09 TLF Workflow with Data Import\"",
+    "output: html_document",
+    "---",
+    "",
+    "```{r setup, include=FALSE}",
+    "knitr::opts_chunk$set(echo = FALSE)",
+    "```",
+    "",
+    "```{r libraries-copy}",
+    "library(ospsuite.reportingframework)",
+    "library(data.table)",
+    "```",
+    "",
+    "```{r pathsCustomfunctions-eval}",
+    "pathsCustomfunctions <- c()",
+    "```",
+    "",
+    "```{r dataObserved-eval}",
+    "dataObserved <- NULL",
+    "```",
+    "",
+    "```{r dataObservedPK-eval}",
+    "dataObservedPK <- NULL",
+    "```",
+    "",
+    "```{r scenarioNames-eval}",
+    paste0(
+      "scenarioNames <- c(",
+      paste(sprintf("\"%s\"", scenarioNames), collapse = ", "),
+      ")"
+    ),
+    "```",
+    "",
+    loadResultsChunk,
+    "",
+    "```{r runPlot-copy}",
+    paste0(
+      "summaryCsv <- file.path(projectConfiguration$outputFolder, \"",
+      summaryFileName,
+      "\")"
+    ),
+    "resultFiles <- file.path(",
+    "  projectConfiguration$outputFolder,",
+    "  EXPORTDIR$simulationResult,",
+    "  paste0(scenarioNames, '.csv')",
+    ")",
+    "summaryDT <- data.table::data.table(",
+    "  scenario = scenarioNames,",
+    "  resultFile = basename(resultFiles),",
+    "  resultFileExists = file.exists(resultFiles),",
+    "  resultFileBytes = ifelse(",
+    "    file.exists(resultFiles),",
+    "    file.info(resultFiles)$size,",
+    "    NA_real_",
+    "  )",
+    ")",
+    "data.table::fwrite(summaryDT, summaryCsv)",
+    "",
+    "# Generate summary of imported data",
+    "if (!is.null(dataImportResults) && length(dataImportResults) >= 2) {",
+    "  tpIndividual <- dataImportResults[[1]]",
+    "  tpAggregated <- dataImportResults[[2]]",
+    "  ",
+    "  dataImportSummary <- data.table::data.table(",
+    "    DataType = c(\"Individual Time-Profiles\", \"Aggregated Time-Profiles\"),",
+    "    ObservationCount = c(",
+    "      if (!is.null(tpIndividual) && nrow(tpIndividual) > 0) nrow(tpIndividual) else 0,",
+    "      if (!is.null(tpAggregated) && nrow(tpAggregated) > 0) nrow(tpAggregated) else 0",
+    "    ),",
+    "    FilterApplied = \"INCLUDE == 1\"",
+    "  )",
+    paste0(
+      "  dataImportCsv <- file.path(projectConfiguration$outputFolder, \"",
+      dataImportSummaryFileName,
+      "\")"
+    ),
+    "  data.table::fwrite(dataImportSummary, dataImportCsv)",
+    "}",
+    "```",
+    ""
+  )
 
-    writeLines(workflowLines, con = workflowPath)
-    invisible(workflowPath)
+  writeLines(workflowLines, con = workflowPath)
+  invisible(workflowPath)
 }

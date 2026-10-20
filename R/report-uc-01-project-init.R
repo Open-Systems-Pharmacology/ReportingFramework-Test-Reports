@@ -188,7 +188,7 @@ reportLines <- c(
   "- Restore the configuration into a fresh project directory with restoreProjectConfigurationRF().",
   "- Use the restored workbook as a recovery checkpoint or a reproducible handoff artifact.",
   "",
-  "## Snapshot JSON structure",
+  "## Snapshot JSON structure contains:",
   "",
   "- projectConfiguration",
   "- projectConfigurationAddons",

@@ -1,4 +1,4 @@
-# UC-13 Data Dictionary Operations
+# UC-10 Data Dictionary Operations
 
 ## Summary
 This scenario validates dictionary-driven observed-data import for time profiles and PK parameters in both individual and aggregated forms, plus NumericValues. It uses a dedicated repo-local workbook fixture generated from the installed package template and verifies DataFiles filtering, dictionary Filter and FilterValue mappings, and `spreadData = TRUE` propagation into `Individuals.xlsx`.
@@ -18,9 +18,9 @@ This scenario validates dictionary-driven observed-data import for time profiles
 - `spreadData = TRUE` populates `Individuals.xlsx` / `IndividualBiometrics` in the installed package version used by this repo.
 
 ## Result files
-- `ReportInputs/UC13_DataImport/DataImportConfiguration.xlsx` - dedicated UC-13 import configuration workbook
-- `ReportInputs/UC13_DataImport/tp_individual.csv` - individual time-profile source data
-- `ReportInputs/UC13_DataImport/tp_aggregated.csv` - aggregated time-profile source data
-- `ReportInputs/UC13_DataImport/pk_individual.csv` - individual PK source data
-- `ReportInputs/UC13_DataImport/pk_aggregated.csv` - aggregated PK source data
-- `ReportInputs/refresh-uc13-data-import-fixtures.R` - fixture refresh script for the UC-13 import matrix
+- `ReportInputs/UC10_DataImport/DataImportConfiguration.xlsx` - dedicated UC-10 import configuration workbook
+- `ReportInputs/UC10_DataImport/tp_individual.csv` - individual time-profile source data
+- `ReportInputs/UC10_DataImport/tp_aggregated.csv` - aggregated time-profile source data
+- `ReportInputs/UC10_DataImport/pk_individual.csv` - individual PK source data
+- `ReportInputs/UC10_DataImport/pk_aggregated.csv` - aggregated PK source data
+- `ReportInputs/refresh-uc10-data-import-fixtures.R` - fixture refresh script for the UC-10 import matrix

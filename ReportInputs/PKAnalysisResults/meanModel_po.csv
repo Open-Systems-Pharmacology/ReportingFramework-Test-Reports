@@ -1,0 +1,15 @@
+﻿"IndividualId","QuantityPath","Parameter","Value","Unit"
+0,"Organism|PeripheralVenousBlood|DrugX|Plasma (Peripheral Venous Blood)","C_max",10.235925,µg/l
+0,"Organism|PeripheralVenousBlood|DrugX|Plasma (Peripheral Venous Blood)","C_max_norm",249074.17,mg/l
+0,"Organism|PeripheralVenousBlood|DrugX|Plasma (Peripheral Venous Blood)","t_max",0.71666664,h
+0,"Organism|PeripheralVenousBlood|DrugX|Plasma (Peripheral Venous Blood)","C_tEnd",0.0001419685,µmol/l
+0,"Organism|PeripheralVenousBlood|DrugX|Plasma (Peripheral Venous Blood)","AUC_tEnd",30.387232,µg*h/l
+0,"Organism|PeripheralVenousBlood|DrugX|Plasma (Peripheral Venous Blood)","AUC_tEnd_norm",4.436536E+10,µg*min/l
+0,"Organism|PeripheralVenousBlood|DrugX|Plasma (Peripheral Venous Blood)","AUC_inf",5.682182,µmol*min/l
+0,"Organism|PeripheralVenousBlood|DrugX|Plasma (Peripheral Venous Blood)","AUC_inf_norm",4.5044433E+10,µg*min/l
+0,"Organism|PeripheralVenousBlood|DrugX|Plasma (Peripheral Venous Blood)","MRT",3.985972,h
+0,"Organism|PeripheralVenousBlood|DrugX|Plasma (Peripheral Venous Blood)","Thalf",6.970658,h
+0,"Organism|PeripheralVenousBlood|DrugX|Plasma (Peripheral Venous Blood)","FractionAucLastToInf",0.015075664,
+0,"Organism|PeripheralVenousBlood|DrugX|Plasma (Peripheral Venous Blood)","CL",22.200302,ml/min/kg
+0,"Organism|PeripheralVenousBlood|DrugX|Plasma (Peripheral Venous Blood)","Vss",5309.386,ml/kg
+0,"Organism|PeripheralVenousBlood|DrugX|Plasma (Peripheral Venous Blood)","Vd",13395.484,ml/kg
