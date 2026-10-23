@@ -131,10 +131,12 @@ updateUC7Project <- function(pc, scenarioNames, copyPK, copySimResult) {
   }
 
   popFilesToCopy <- paste0(
-    unique(gsub('_po', '', gsub('_iv$', '', scenarioNames))) |>
-      setdiff('meanModel'),
+    unique(gsub('_po', '', gsub('_iv$', '', scenarioNames))),
     '.csv'
   )
+
+  popFilesToCopy <- setdiff(popFilesToCopy, 'meanModel.csv')
+
   copyPopulations(pc, files = popFilesToCopy)
 
   return(invisible())
@@ -238,6 +240,10 @@ copySimulationResults <- function(
 
 # Helper function to copy Populations from ospsuite.reportingframework
 copyPopulations <- function(pc, files, populationDir = NULL) {
+  if (length(files) == 0) {
+    return(invisible())
+  }
+
   if (is.null(populationDir)) {
     populationDir <- reportInputsPath("Populations")
   }
@@ -280,6 +286,83 @@ copyPopulations <- function(pc, files, populationDir = NULL) {
   openxlsx::saveWorkbook(wbPopulations, pc$populationsFile, overwrite = TRUE)
 
   invisible(popFolder)
+}
+
+#' Read, adjust, and save a sensitivity worksheet for UC scripts.
+#'
+#' @param sensitivityFile Path to the sensitivity workbook.
+#' @param sheetName Name of the worksheet to adjust.
+#' @param parameterPattern Optional regex applied to the `parameter` column.
+#' @param parameterPathPattern Optional regex applied to the `parameterPath` column.
+#' @param keepTopN Optional integer limiting the filtered rows.
+#' @param normalizeParameterPattern Optional regex to match parameter labels to normalize.
+#' @param normalizeParameterValue Replacement label for normalized parameters.
+#'
+#' @return A list containing `rawDataRows`, `adjustedDataRows`, and `sheetForWrite`.
+#' @keywords internal
+#' @noRd
+adjustSensitivitySheetWorkbookForUC <- function(
+  sensitivityFile,
+  sheetName,
+  parameterPattern = NULL,
+  parameterPathPattern = NULL,
+  keepTopN = NULL,
+  normalizeParameterPattern = NULL,
+  normalizeParameterValue = NULL
+) {
+  wb <- openxlsx::loadWorkbook(sensitivityFile)
+  dt <- xlsxReadData(wb, sheetName = sheetName)
+
+  assertOrStop(
+    nrow(dt) >= 1,
+    "Sensitivity sheet is empty"
+  )
+
+  descriptionRow <- dt[1]
+  rawDataRows <- dt[-1]
+  adjustedDataRows <- data.table::copy(rawDataRows)
+
+  if (!is.null(parameterPattern)) {
+    adjustedDataRows <- adjustedDataRows[grep(parameterPattern, parameter)]
+  }
+
+  if (!is.null(parameterPathPattern)) {
+    adjustedDataRows <- adjustedDataRows[
+      grepl(parameterPathPattern, parameterPath)
+    ]
+  }
+
+  if (!is.null(keepTopN)) {
+    keepTopN <- max(0, as.integer(keepTopN))
+    adjustedDataRows <- adjustedDataRows[
+      seq_len(min(keepTopN, nrow(adjustedDataRows)))
+    ]
+  }
+
+  if (
+    !is.null(normalizeParameterPattern) &&
+      !is.null(normalizeParameterValue)
+  ) {
+    adjustedDataRows[
+      grep(normalizeParameterPattern, parameter),
+      parameter := normalizeParameterValue
+    ]
+  }
+
+  sheetForWrite <- rbind(descriptionRow, adjustedDataRows, fill = TRUE)
+
+  xlsxWriteData(
+    wb,
+    sheetName = sheetName,
+    dt = sheetForWrite
+  )
+  openxlsx::saveWorkbook(wb, file = sensitivityFile, overwrite = TRUE)
+
+  list(
+    rawDataRows = rawDataRows,
+    adjustedDataRows = adjustedDataRows,
+    sheetForWrite = sheetForWrite
+  )
 }
 
 

@@ -1,20 +1,30 @@
-#' @title report-uc-08-sensitivity-analysis
+#' @title report-uc-08b-sensitivity-analysis
 #' @description
-#' Integration scenario for UC-08 sensitivity analysis plot generation.
+#' Integration scenario for UC-08B representative sensitivity analysis using
+#' population scenarios.
 
 rm(list = ls())
 library(ospsuite.reportingframework)
 pkgload::load_all(path = file.path('..', 'OSPSuite.ReportingFramework'))
 source("R/helpers-uc-shared.R")
 
-reportFolder <- file.path("tests", "Reports", "UC-08-Sensitivity-Analysis")
-projectDir <- tempfile(pattern = "uc08_sensitivity_")
+reportFolder <- file.path(
+  "tests",
+  "Reports",
+  "UC-08B-Sensitivity-Analysis"
+)
+projectDir <- tempfile(pattern = "uc08b_sensitivity_representative_")
 on.exit(unlink(projectDir, recursive = TRUE, force = TRUE), add = TRUE)
 
-scenarioName <- "meanModel_po"
-plotConfigSheet <- "UC08_SensitivityPlots"
+selectedScenarioNames <- c(
+  "adolescents_po",
+  "children_po",
+  "school_children_po",
+  "toddler_po"
+)
+plotConfigSheet <- "UC08b_SensitivityPlots"
 sensitivitySheet <- "UC08"
-qmdName <- "UC08_Sensitivity"
+qmdName <- "UC08B_Sensitivity_Representatives"
 
 unlink(reportFolder, recursive = TRUE, force = TRUE)
 dir.create(reportFolder, recursive = TRUE, showWarnings = FALSE)
@@ -22,20 +32,11 @@ dir.create(reportFolder, recursive = TRUE, showWarnings = FALSE)
 # Initialize project
 pc <- setupProject(projectDir)
 
-file.copy(
-  from = reportInputsPath("Scenarios_UC07.xlsx"),
-  to = pc$scenariosFile,
-  overwrite = TRUE
-)
-file.copy(
-  from = reportInputsPath("PKParameter_UC07.xlsx"),
-  to = pc$addOns$pKParameterFile,
-  overwrite = TRUE
-)
-file.copy(
-  from = reportInputsPath("Reports_UC07.xlsx"),
-  to = pc$addOns$reportsFile,
-  overwrite = TRUE
+updateUC7Project(
+  pc,
+  scenarioNames = selectedScenarioNames,
+  copyPK = TRUE,
+  copySimResult = TRUE
 )
 
 # Copy model file required by the workbook-defined mean model scenario.
@@ -54,18 +55,20 @@ assertOrStop(
   )
 )
 
-# Step 1: Validate workbook-driven scenario and normalize the copied UC08 plot row.
+# Step 1: Validate workbook-driven scenarios and normalize the copied UC08 plot rows.
 wbScenarios <- openxlsx::loadWorkbook(pc$scenariosFile)
 scenariosConfigSheet <- xlsxReadData(wbScenarios, sheetName = "Scenarios")
-assertOrStop(
-  scenarioName %in% scenariosConfigSheet$scenario_name,
-  paste0("Scenario not found in Scenarios_UC07.xlsx: ", scenarioName)
+missingScenarios <- setdiff(
+  selectedScenarioNames,
+  scenariosConfigSheet$scenario_name
 )
-scenarioRow <- scenariosConfigSheet[
-  scenariosConfigSheet$scenario_name == scenarioName,
-]
-outputPathId <- as.character(scenarioRow$outputPathsIds[[1]])
-modelFile <- as.character(scenarioRow$modelFile[[1]])
+assertOrStop(
+  length(missingScenarios) == 0,
+  paste0(
+    "Scenario(s) not found in Scenarios_UC07.xlsx: ",
+    paste(missingScenarios, collapse = ", ")
+  )
+)
 
 wbReports <- openxlsx::loadWorkbook(pc$addOns$reportsFile)
 assertOrStop(
@@ -74,14 +77,17 @@ assertOrStop(
 )
 
 # Create scenarios
-scenarioList <- createScenariosWrapped(pc, scenarioNames = scenarioName)
-scenarioNames <- names(scenarioList)
+scenarioList <- createScenariosWrapped(
+  pc,
+  scenarioNames = selectedScenarioNames
+)
+createdScenarioNames <- names(scenarioList)
 
 assertOrStop(
-  identical(scenarioNames, scenarioName),
+  setequal(createdScenarioNames, selectedScenarioNames),
   paste0(
-    "Failed to create the expected scenario. Created: ",
-    paste(scenarioNames, collapse = ", ")
+    "Failed to create the expected scenarios. Created: ",
+    paste(createdScenarioNames, collapse = ", ")
   )
 )
 
@@ -92,11 +98,17 @@ addSensitivityTable(
   sheetName = sensitivitySheet
 )
 
-wb <- openxlsx::loadWorkbook(pc$addOns$sensitivityFile)
-dt <- xlsxReadData(wb, sheetName = sensitivitySheet)
+sensitivitySheetData <- adjustSensitivitySheetWorkbookForUC(
+  sensitivityFile = pc$addOns$sensitivityFile,
+  sheetName = sensitivitySheet,
+  parameterPattern = "^DrugX-CYP3A4",
+  keepTopN = 6
+)
+dtDataAll <- sensitivitySheetData$rawDataRows
+dtData <- sensitivitySheetData$adjustedDataRows
 
-uniqueParameterPathCount <- dt[-1, uniqueN(parameterPath)]
-uniqueParameterCountInitial <- dt[-1, uniqueN(parameter)]
+uniqueParameterPathCount <- dtDataAll[, uniqueN(parameterPath)]
+uniqueParameterCountInitial <- dtDataAll[, uniqueN(parameter)]
 
 assertOrStop(
   identical(uniqueParameterCountInitial, uniqueParameterPathCount) &
@@ -106,44 +118,58 @@ assertOrStop(
   )
 )
 
-# use only a selection (keep description line 1)
-dt <- dt[unique(c(1, grep('CYP3A4', parameter))), ]
+# use only top-level CYP3A4 entries that are stable across scenarios
+assertOrStop(
+  nrow(dtData) > 0,
+  "No top-level CYP3A4 sensitivity parameters found for UC08B selection"
+)
 
-
-# test multi match mode
-dt[
-  grep('CYP3A4 Fraction expressed intracellular', parameter),
-  parameter := 'CYP3A4 Fraction expressed intracellular'
-]
-
-uniqueParameterNames <- sort(unique(dt[-1]$parameter))
+uniqueParameterNames <- sort(unique(dtData$parameter))
 uniqueParameterCount <- length(uniqueParameterNames)
-expectedSensitivityRows <- uniqueParameterCount * 3
+expectedSensitivityFiles <- paste0(
+  selectedScenarioNames,
+  "_",
+  sensitivitySheet,
+  "_representatives.csv"
+)
 
-xlsxWriteData(wb, sheetName = sensitivitySheet, dt = dt)
-openxlsx::saveWorkbook(wb, file = pc$addOns$sensitivityFile, overwrite = TRUE)
-
-
-runSensitivityAnalysisForScenarios(
+runRepresentativeSensitivityAnalysisForScenarios(
   projectConfiguration = pc,
   scenarioList = scenarioList,
-  scenarioNames = scenarioName,
+  scenarioNames = selectedScenarioNames,
   sensitivitysheet = sensitivitySheet
 )
 
-
-sensitivityResults <- fread(file.path(
-  pc$outputFolder,
-  EXPORTDIR$sensitivityResults,
-  paste0(scenarioName, '_', sensitivitySheet, '.csv')
-))
-
 sensitivityDataFiles <- list.files(
   sensitivityResultsPath,
-  pattern = "\\.csv$",
+  pattern = paste0("_", sensitivitySheet, "_representatives\\.csv$"),
   full.names = TRUE
 )
-sensitivityDataCount <- length(sensitivityDataFiles)
+sensitivityDataBasenames <- basename(sensitivityDataFiles)
+
+missingSensitivityFiles <- setdiff(
+  expectedSensitivityFiles,
+  sensitivityDataBasenames
+)
+assertOrStop(
+  length(missingSensitivityFiles) == 0,
+  paste0(
+    "Representative sensitivity output file(s) missing: ",
+    paste(missingSensitivityFiles, collapse = ", ")
+  )
+)
+
+sensitivityResults <- data.table::rbindlist(
+  lapply(
+    expectedSensitivityFiles,
+    function(fileName) {
+      data.table::fread(file.path(sensitivityResultsPath, fileName))
+    }
+  ),
+  idcol = "scenarioIndex"
+)
+
+sensitivityDataCount <- length(expectedSensitivityFiles)
 uniquePkParameters <- sort(unique(sensitivityResults$PKParameter))
 sensitivityResultColumns <- colnames(sensitivityResults)
 parameterPreviewCount <- min(8, uniqueParameterCount)
@@ -152,19 +178,27 @@ parameterLabelPreview <- paste(
   collapse = ", "
 )
 remainingParameterCount <- uniqueParameterCount - parameterPreviewCount
-expectedPkParameterCount <- length(uniquePkParameters)
-
+expectedRepresentativeColumns <- c(
+  "RepresentativeQuantile",
+  "RepresentativeIndividualId"
+)
 
 assertOrStop(
-  nrow(sensitivityResults) == expectedSensitivityRows,
+  nrow(sensitivityResults) > 0,
+  "Representative sensitivity analysis did not produce any result rows"
+)
+
+assertOrStop(
+  all(expectedRepresentativeColumns %in% sensitivityResultColumns),
   paste0(
-    "Failed to create the expected number of results. Expected ",
-    expectedSensitivityRows,
-    " rows based on 3 PK parameters per model parameter, got ",
-    nrow(sensitivityResults),
-    "."
+    "Missing representative sensitivity columns: ",
+    paste(
+      setdiff(expectedRepresentativeColumns, sensitivityResultColumns),
+      collapse = ", "
+    )
   )
 )
+
 
 # Step 2: Generate sensitivity plots from calculated sensitivity CSVs
 
@@ -283,24 +317,23 @@ qmdRenderResult <- renderQmdToMarkdown(
 )
 
 reportLines <- c(
-  "# UC-08 Sensitivity Analysis",
+  "# UC-08B Representative Sensitivity Analysis",
   "",
   "## Summary",
   "",
-  "This scenario validates sensitivity analysis figure creation with runPlot() and report generation from calculated sensitivity outputs.",
+  "This scenario validates representative-individual sensitivity analysis and figure generation for population scenarios.",
   "",
   "## Approach",
   "",
-  "- Reuses UC07 scenario and report workbooks from ReportInputs to configure sensitivity execution.",
-  "- Creates the UC08 sensitivity parameter sheet with addSensitivityTable() for the selected scenario.",
-  "- Updates and normalizes sensitivity parameter definitions, including many-to-one parameter label mapping.",
-  "- Executes runSensitivityAnalysisForScenarios() with scenario and sensitivity sheet inputs, then validates generated CSV row counts.",
-  "- Generates sensitivity figures with runPlot(nameOfplotFunction = 'plotSensitivity') per plotName for coverage.",
-  "- Exports figures and renders UC08_Sensitivity.qmd into markdown content with captions and references.",
+  "- Reuses UC07 scenario/report workbooks and PK fixtures from ReportInputs to configure population scenario execution.",
+  "- Creates the UC08 sensitivity parameter sheet with addSensitivityTable(), then keeps a focused parameter subset.",
+  "- Executes runRepresentativeSensitivityAnalysisForScenarios() for population scenarios with representative quantiles.",
+  "- Verifies scenario-level representative CSV outputs and required representative columns.",
+  "- Generates sensitivity figures with runPlot(nameOfplotFunction = 'plotSensitivity') and renders UC08B_Sensitivity_Representatives.qmd.",
   "",
   "## Assertions",
   "",
-  paste0("- Scenario created: ", paste(scenarioNames, collapse = ", ")),
+  paste0("- Scenarios created: ", paste(createdScenarioNames, collapse = ", ")),
   "- Project setup workbooks copied: Scenarios_UC07.xlsx, PKParameter_UC07.xlsx, Reports_UC07.xlsx.",
   paste0(
     "- Sensitivity parameter workbook created: ",
@@ -330,20 +363,14 @@ reportLines <- c(
     paste(uniquePkParameters, collapse = ", ")
   ),
   paste0(
-    "- Expected sensitivity rows: ",
-    uniqueParameterCount,
-    " labels x ",
-    expectedPkParameterCount,
-    " PK parameters = ",
-    expectedSensitivityRows,
-    "; actual rows: ",
+    "- Representative sensitivity rows generated: ",
     nrow(sensitivityResults),
     "."
   ),
   paste0(
-    "- runSensitivityAnalysisForScenarios() executed for scenario ",
-    scenarioName,
-    " and sensitivity sheet ",
+    "- runRepresentativeSensitivityAnalysisForScenarios() executed for ",
+    length(selectedScenarioNames),
+    " scenarios and sensitivity sheet ",
     sensitivitySheet,
     "."
   ),
@@ -378,15 +405,23 @@ reportLines <- c(
     "- Sensitivity CSV columns detected: ",
     paste(sensitivityResultColumns, collapse = ", ")
   ),
+  "- Combined multi-scenario representative plot generated from representative sensitivity outputs.",
   qmdRenderAssertionLine(
     qmdRenderResult,
-    assertionPrefix = "UC08_Sensitivity.qmd"
+    assertionPrefix = "UC08B_Sensitivity_Representatives.qmd"
   ),
+  "",
+  "## Combined Multi-Scenario Representative Plot",
+  "",
+  "Scenario is encoded by color and representative quantile is encoded by point symbol.",
+  "",
+  "![](UC08B_Sensitivity_MultiScenario.png)",
+  "",
   coverageReportSection(coverage, plotConfigSheet),
   qmdRenderContentSection(
     qmdRenderResult,
     sectionTitle = "Generated Sensitivity Report",
-    sectionDescription = "The following content is from the auto-generated UC08_Sensitivity.qmd with exported sensitivity figures and captions:"
+    sectionDescription = "The following content is from the auto-generated UC08B_Sensitivity_Representatives.qmd with exported sensitivity figures and captions:"
   ),
   ""
 )
@@ -407,5 +442,5 @@ assertOrStop(
 )
 
 cat(
-  "UC-08 sensitivity analysis functionality validation completed successfully!\n"
+  "UC-08B representative sensitivity analysis functionality validation completed successfully!\n"
 )

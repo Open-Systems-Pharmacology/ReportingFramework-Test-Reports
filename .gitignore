@@ -55,3 +55,6 @@ rsconnect/
 # Temporary test report output (regenerated on each test run)
 tests/Reports/
 
+# Base R plot output artifact
+Rplots.pdf
+

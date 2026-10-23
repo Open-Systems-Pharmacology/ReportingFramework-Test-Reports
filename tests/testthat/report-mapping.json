@@ -80,9 +80,14 @@
     "Reference": false
   },
   {
-    "Script": "report-uc-08-sensitivity-analysis",
-    "Report": "UC-08-Sensitivity-Analysis",
+    "Script": "report-uc-08a-sensitivity-analysis",
+    "Report": "UC-08A-Sensitivity-Analysis",
     "Reference": true
+  },
+  {
+    "Script": "report-uc-08b-sensitivity-analysis",
+    "Report": "UC-08B-Sensitivity-Analysis",
+    "Reference": false
   },
   {
     "Script": "report-uc-09-epackage-export",
