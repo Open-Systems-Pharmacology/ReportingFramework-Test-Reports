@@ -8,7 +8,8 @@ library(openxlsx)
 library(ospsuite.reportingframework)
 
 # Paths
-uc10Dir <- "ReportInputs/UC10_DataImport"
+uc10DataDir <- "ReportInputs/dataFiles"
+uc10Workbook <- "ReportInputs/DataImportConfiguration_UC10.xlsx"
 uc09Dir <- "ReportInputs/UC09_DataImport"
 
 # Create UC09 directory
@@ -19,14 +20,14 @@ cat("=== UC09 Data Import Fixtures Preparation ===\n\n")
 # 1. Copy time-profile CSVs
 cat("1. Copying time-profile CSVs...\n")
 file.copy(
-    from = file.path(uc10Dir, "tp_individual.csv"),
+    from = file.path(uc10DataDir, "tp_individual.csv"),
     to = file.path(uc09Dir, "tp_individual.csv"),
     overwrite = TRUE
 )
 cat("   ✓ tp_individual.csv copied\n")
 
 file.copy(
-    from = file.path(uc10Dir, "tp_aggregated.csv"),
+    from = file.path(uc10DataDir, "tp_aggregated.csv"),
     to = file.path(uc09Dir, "tp_aggregated.csv"),
     overwrite = TRUE
 )
@@ -37,7 +38,7 @@ cat("\n2. Trimming DataImportConfiguration.xlsx...\n")
 
 # Copy template
 file.copy(
-    from = file.path(uc10Dir, "DataImportConfiguration.xlsx"),
+    from = uc10Workbook,
     to = file.path(uc09Dir, "DataImportConfiguration.xlsx"),
     overwrite = TRUE
 )

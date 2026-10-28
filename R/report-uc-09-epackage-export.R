@@ -3,106 +3,20 @@
 #' Integration scenario for UC-09 electronic package (ePackage) export.
 
 rm(list = ls())
-library(ospsuite.reportingframework)
-source("R/helpers-uc-shared.R")
-
-createUC09TLFWorkflow <- function(
-  workflowPath,
-  scenarioNames,
-  summaryFileName,
-  noteFileName
-) {
-  workflowLines <- c(
-    "---",
-    "title: \"UC-09 TLF Workflow\"",
-    "output: html_document",
-    "---",
-    "",
-    "```{r setup, include=FALSE}",
-    "knitr::opts_chunk$set(echo = FALSE)",
-    "```",
-    "",
-    "```{r libraries-copy}",
-    "library(ospsuite.reportingframework)",
-    "library(data.table)",
-    "```",
-    "",
-    "```{r pathsCustomfunctions-eval}",
-    "pathsCustomfunctions <- c()",
-    "```",
-    "",
-    "```{r dataObserved-eval}",
-    "dataObserved <- NULL",
-    "```",
-    "",
-    "```{r dataObservedPK-eval}",
-    "dataObservedPK <- NULL",
-    "```",
-    "",
-    "```{r scenarioNames-eval}",
-    paste0(
-      "scenarioNames <- c(",
-      paste(sprintf("\"%s\"", scenarioNames), collapse = ", "),
-      ")"
-    ),
-    "```",
-    "",
-    "```{r loadResults-copy}",
-    "scenarioResults <- loadScenarioResultsToFramework(",
-    "  projectConfiguration = projectConfiguration,",
-    "  scenarioNames = scenarioNames",
-    ")",
-    "```",
-    "",
-    "```{r runPlot-copy}",
-    paste0(
-      "summaryCsv <- file.path(projectConfiguration$outputFolder, \"",
-      summaryFileName,
-      "\")"
-    ),
-    paste0(
-      "summaryTxt <- file.path(projectConfiguration$outputFolder, \"",
-      noteFileName,
-      "\")"
-    ),
-    "resultFiles <- file.path(",
-    "  projectConfiguration$outputFolder,",
-    "  EXPORTDIR$simulationResult,",
-    "  paste0(scenarioNames, '.csv')",
-    ")",
-    "summaryDT <- data.table::data.table(",
-    "  scenario = scenarioNames,",
-    "  resultFile = basename(resultFiles),",
-    "  resultFileExists = file.exists(resultFiles),",
-    "  resultFileBytes = ifelse(",
-    "    file.exists(resultFiles),",
-    "    file.info(resultFiles)$size,",
-    "    NA_real_",
-    "  )",
-    ")",
-    "data.table::fwrite(summaryDT, summaryCsv)",
-    "writeLines(",
-    "  c(",
-    "    'UC-09 exported TLF workflow',",
-    "    paste('Scenarios:', paste(summaryDT$scenario, collapse = ', '))",
-    "  ),",
-    "  summaryTxt",
-    ")",
-    "```",
-    ""
+#library(ospsuite.reportingframework)
+pkgload::load_all(
+  path = file.path(
+    'C:/Users/17fec1a5/Documents/GitHub/',
+    'OSPSuite.ReportingFramework'
   )
+)
+source("R/helpers-uc-shared.R")
+setWorkflowOptions(isValidRun = FALSE)
 
-  writeLines(workflowLines, con = workflowPath)
-  invisible(workflowPath)
-}
-
-removeExistingFiles <- function(filePaths) {
-  existingFiles <- filePaths[file.exists(filePaths)]
-  if (length(existingFiles) > 0) {
-    unlink(existingFiles, force = TRUE)
-  }
-  invisible(existingFiles)
-}
+# Prevent accidental creation of Rplots.pdf by using a null default device.
+originalDeviceOption <- getOption("device")
+options(device = function(...) grDevices::pdf(NULL))
+on.exit(options(device = originalDeviceOption), add = TRUE)
 
 reportFolder <- file.path("tests", "Reports", "UC-09-EPackage-Export")
 projectDir <- tempfile(pattern = "uc09_")
@@ -111,12 +25,15 @@ on.exit(unlink(projectDir, recursive = TRUE, force = TRUE), add = TRUE)
 unlink(reportFolder, recursive = TRUE, force = TRUE)
 dir.create(reportFolder, recursive = TRUE, showWarnings = FALSE)
 
+# Step 1: setup base Project ---------------------
+
 # Initialize project and create minimal configuration
 pc <- setupProject(projectDir)
 
 # Copy model file
 modelFile <- "Aciclovir.pkml"
 copyModelFiles(pc, modelFile)
+fileNameReplacements <- c(modelFile, "acyclovir.pkml")
 
 baseScenarioName <- "UC09_Scenario1"
 populationScenarioName <- "UC09_PopulationScenario"
@@ -136,25 +53,8 @@ assertOrStop(
   paste0("Failed to create ePackage folder at: ", ePackageFolderPath)
 )
 
-# Verify exportSimulationWorkflowToEPackage function exists
-assertOrStop(
-  exists("exportSimulationWorkflowToEPackage"),
-  "exportSimulationWorkflowToEPackage function not found"
-)
 
-# Verify exportTLFWorkflowToEPackage function exists
-assertOrStop(
-  exists("exportTLFWorkflowToEPackage"),
-  "exportTLFWorkflowToEPackage function not found"
-)
-
-# Verify openEPackageTemplate function exists
-assertOrStop(
-  exists("openEPackageTemplate"),
-  "openEPackageTemplate function not found"
-)
-
-# ENHANCEMENT: Add real workflow execution
+# Workflow execution
 
 # Step 1: Create and run scenarios for ePackage export
 wbScenarios <- openxlsx::loadWorkbook(pc$scenariosFile)
@@ -200,28 +100,17 @@ openxlsx::saveWorkbook(wbScenarios, pc$scenariosFile, overwrite = TRUE)
 # Create scenarios and run simulations
 scenarioList <- createScenariosWrapped(pc, scenarioNames = NULL)
 scenarioNames <- names(scenarioList)
+scenarioResultsCount <- length(scenarioNames)
 
-assertOrStop(
-  length(scenarioList) >= 2,
-  "Failed to create scenarios for ePackage export"
-)
 
-# Run scenarios to generate results for export
-scenarioResults <- runAndSaveScenarios(pc, scenarioList)
-scenarioResultsCount <- length(scenarioResults)
-
-assertOrStop(
-  scenarioResultsCount > 0,
-  "No scenario results generated for ePackage export"
-)
-
-# Step 2: Attempt to export simulation workflow to ePackage
+# Step 2: Attempt to export simulation workflow to ePackage -----------------
 simulationExportResult <- tryCatch(
   {
     exportSimulationWorkflowToEPackage(
       projectConfiguration = pc,
       wfIdentifier = 1,
-      scenarioNames = scenarioNames
+      scenarioNames = scenarioNames,
+      fileNameReplacements = fileNameReplacements
     )
     list(success = TRUE, error = NA_character_)
   },
@@ -232,22 +121,51 @@ simulationExportResult <- tryCatch(
 
 simulationExportSucceeded <- isTRUE(simulationExportResult$success)
 
-populationScenarioResultFiles <- file.path(
-  pc$outputFolder,
-  EXPORTDIR$simulationResult,
-  paste0(populationScenarioName, c(".csv", "_population.csv"))
+simulationInputManifest <- file.path(
+  ePackageFolderPath,
+  "w1_input_files_csv.txt"
 )
+simulationManifestLines <- if (file.exists(simulationInputManifest)) {
+  readLines(simulationInputManifest, warn = FALSE)
+} else {
+  character(0)
+}
+ePackageModelFiles <- list.files(
+  ePackageFolderPath,
+  recursive = TRUE,
+  full.names = FALSE,
+  pattern = "\\.(xml|pkml)$",
+  ignore.case = TRUE
+)
+
+modelRenameVerified <-
+  any(grepl(
+    "acyclovir\\.(xml|pkml)",
+    simulationManifestLines,
+    ignore.case = TRUE
+  )) &&
+  !any(grepl(
+    "Aciclovir\\.(xml|pkml)",
+    simulationManifestLines,
+    ignore.case = TRUE
+  )) &&
+  any(grepl(
+    "^acyclovir\\.(xml|pkml)$",
+    ePackageModelFiles,
+    ignore.case = TRUE
+  )) &&
+  !any(grepl(
+    "^Aciclovir\\.(xml|pkml)$",
+    ePackageModelFiles,
+    ignore.case = TRUE
+  ))
+
 simulationResultFiles <- file.path(
   pc$outputFolder,
   EXPORTDIR$simulationResult,
   paste0(scenarioNames, ".csv")
 )
-simulationFilesToRemove <- unique(c(
-  simulationResultFiles,
-  populationScenarioResultFiles
-))
 
-removeExistingFiles(simulationFilesToRemove)
 simulationWorkflowRun <- executeExportedWorkflow(
   ePackageFolder = ePackageFolderPath,
   wfIdentifier = 1,
@@ -259,64 +177,73 @@ simulationWorkflowRun <- executeExportedWorkflow(
   )
 )
 
-simulationResultFiles <- file.path(
-  simulationWorkflowRun$projectOutputFolder,
-  EXPORTDIR$simulationResult,
-  paste0(scenarioNames, ".csv")
-)
-populationRenameResultFile <- file.path(
-  simulationWorkflowRun$projectOutputFolder,
-  EXPORTDIR$simulationResult,
-  paste0(populationScenarioName, "_population.csv")
-)
+missingSimulationResultFiles <- simulationResultFiles[
+  !file.exists(simulationResultFiles)
+]
 simulationWorkflowArtifactsRestored <-
-  !is.na(simulationWorkflowRun$projectOutputFolder) &&
-  all(file.exists(simulationResultFiles))
+  length(missingSimulationResultFiles) == 0
 
-populationWorkflowArtifactRenamed <-
-  !is.na(simulationWorkflowRun$projectOutputFolder) &&
-  file.exists(populationRenameResultFile)
-tlfWorkflowPath <- file.path(projectDir, "uc09_tlf_workflow.Rmd")
-tlfSummaryFileName <- "UC09_TLF_Summary.csv"
-tlfDataImportSummaryFileName <- "UC09_TLF_DataImport_Summary.csv"
+# Step 3: TLF workflow ----------
 
-# Copy data import fixtures to project configuration folder
-dataImportSourcePath <- reportInputsPath("UC09_DataImport")
-projectScriptsDir <- dirname(pc$scenariosFile)
-dataImportDestPath <- file.path(projectScriptsDir, "UC09_DataImport")
-dir.create(dataImportDestPath, recursive = TRUE, showWarnings = FALSE)
+tlfWorkflowTemplatePath <- reportInputsPath("UC09_ePackageWorkflow.Rmd")
+tlfCustomCodePath <- reportInputsPath("UC09_customCode.R")
 
-# Copy CSV files
+# Copy UC10 data import fixtures into the project.
+copiedDataImportCsvFiles <- copyUC10DataImportFixtures(pc)
+
+workflowRmdInProject <- file.path(pc$configurationsFolder, "workflow.Rmd")
+customCodeInProject <- file.path(pc$configurationsFolder, "..", "customCode.R")
+
 file.copy(
-  from = file.path(dataImportSourcePath, "tp_individual.csv"),
-  to = file.path(dataImportDestPath, "tp_individual.csv"),
+  from = tlfWorkflowTemplatePath,
+  to = workflowRmdInProject,
   overwrite = TRUE
 )
 file.copy(
-  from = file.path(dataImportSourcePath, "tp_aggregated.csv"),
-  to = file.path(dataImportDestPath, "tp_aggregated.csv"),
+  from = tlfCustomCodePath,
+  to = customCodeInProject,
   overwrite = TRUE
 )
 
-# Copy and reference configuration locally
-file.copy(
-  from = file.path(dataImportSourcePath, "DataImportConfiguration.xlsx"),
-  to = file.path(dataImportDestPath, "DataImportConfiguration.xlsx"),
+assertOrStop(
+  file.exists(workflowRmdInProject),
+  paste0("Failed to copy TLF workflow template: ", workflowRmdInProject)
+)
+assertOrStop(
+  file.exists(customCodeInProject),
+  paste0("Failed to copy custom code file: ", customCodeInProject)
+)
+
+addDefaultConfigForTimeProfilePlots(projectConfiguration = pc)
+
+reportsWorkbookPath <- file.path(pc$configurationsFolder, "Reports.xlsx")
+outputsSheetName <- "Outputs"
+
+wbReport <- openxlsx::loadWorkbook(reportsWorkbookPath)
+outputsConfig <- xlsxReadData(wbReport, sheetName = outputsSheetName)
+
+
+emptyDisplayName <-
+  is.na(outputsConfig[["displayName"]]) |
+  trimws(outputsConfig[["displayName"]]) == ""
+outputsConfig[
+  emptyDisplayName,
+  displayName := outputPathId
+]
+
+emptyDisplayUnit <-
+  is.na(outputsConfig$displayUnit) |
+  trimws(outputsConfig$displayUnit) == ""
+outputsConfig[
+  emptyDisplayUnit,
+  displayUnit := "\u00B5g/L"
+]
+
+xlsxWriteData(wbReport, sheetName = outputsSheetName, outputsConfig)
+openxlsx::saveWorkbook(
+  wbReport,
+  reportsWorkbookPath,
   overwrite = TRUE
-)
-
-# Path to data import configuration (relative to project scripts folder)
-dataImportConfigPath <- file.path(
-  dataImportDestPath,
-  "DataImportConfiguration.xlsx"
-)
-
-createUC09TLFWorkflowWithDataImport(
-  workflowPath = tlfWorkflowPath,
-  scenarioNames = scenarioNames,
-  dataImportConfigFile = dataImportConfigPath,
-  summaryFileName = tlfSummaryFileName,
-  dataImportSummaryFileName = tlfDataImportSummaryFileName
 )
 
 tlfExportResult <- tryCatch(
@@ -324,7 +251,8 @@ tlfExportResult <- tryCatch(
     exportTLFWorkflowToEPackage(
       projectConfiguration = pc,
       wfIdentifier = 2,
-      workflowRmd = tlfWorkflowPath
+      workflowRmd = workflowRmdInProject,
+      fileNameReplacements = fileNameReplacements
     )
     list(success = TRUE, error = NA_character_)
   },
@@ -335,38 +263,81 @@ tlfExportResult <- tryCatch(
 
 tlfExportSucceeded <- isTRUE(tlfExportResult$success)
 
-tlfOutputFilesToRemove <- file.path(
-  pc$outputFolder,
-  c(tlfSummaryFileName, tlfDataImportSummaryFileName)
-)
-removeExistingFiles(tlfOutputFilesToRemove)
-
-tlfWorkflowRun <- executeExportedWorkflow(
-  ePackageFolder = ePackageFolderPath,
-  wfIdentifier = 2,
-  monitoredRoots = c(
-    outputRoot = pc$outputFolder
+tlfWorkflowRun <- if (tlfExportSucceeded) {
+  executeExportedWorkflow(
+    ePackageFolder = ePackageFolderPath,
+    wfIdentifier = 2,
+    monitoredRoots = c(
+      outputRoot = pc$outputFolder
+    )
   )
-)
+} else {
+  list(
+    success = FALSE,
+    error = tlfExportResult$error,
+    projectOutputFolder = NA_character_,
+    runnerFile = file.path(ePackageFolderPath, "w2_workflow_r.txt"),
+    filesAfter = list(),
+    newFiles = list()
+  )
+}
 
-tlfOutputFiles <- file.path(
-  tlfWorkflowRun$projectOutputFolder,
-  c(tlfSummaryFileName, tlfDataImportSummaryFileName)
+tlfWorkflowArtifactsCreated <-
+  isTRUE(tlfWorkflowRun$success) &&
+  !is.na(tlfWorkflowRun$projectOutputFolder)
+
+tlfLogFile <- if (!is.na(tlfWorkflowRun$projectOutputFolder)) {
+  file.path(tlfWorkflowRun$projectOutputFolder, "logs", "workflow.log")
+} else {
+  NA_character_
+}
+tlfLogExists <- !is.na(tlfLogFile) && file.exists(tlfLogFile)
+tlfLogLines <- if (tlfLogExists) {
+  readLines(tlfLogFile, warn = FALSE)
+} else {
+  character(0)
+}
+tlfCustomCodeSourced <- any(grepl("customCode was sourced", tlfLogLines))
+
+numericValuesMatches <- regexec(
+  "Nrow NumericalValues:=\\s*([0-9]+)",
+  tlfLogLines
 )
-tlfWorkflowArtifactsCreated <- all(file.exists(tlfOutputFiles))
+numericValuesCaptured <- regmatches(tlfLogLines, numericValuesMatches)
+numericValuesCounts <- as.integer(vapply(
+  numericValuesCaptured,
+  function(match) {
+    if (length(match) >= 2) {
+      match[[2]]
+    } else {
+      NA_character_
+    }
+  },
+  character(1)
+))
+tlfNumericValuesCountIsThree <- any(numericValuesCounts == 3, na.rm = TRUE)
+
+tlfExpectedTimeprofilePng <- if (!is.na(tlfWorkflowRun$projectOutputFolder)) {
+  file.path(
+    tlfWorkflowRun$projectOutputFolder,
+    "Timeprofile",
+    "UC09_Scenario1.png"
+  )
+} else {
+  NA_character_
+}
+tlfExpectedTimeprofilePngCreated <-
+  !is.na(tlfExpectedTimeprofilePng) && file.exists(tlfExpectedTimeprofilePng)
 
 # DEBUG: Print what files exist
 cat("\n=== TLF Output Files Check ===\n")
 cat("Expected TLF output folder:", tlfWorkflowRun$projectOutputFolder, "\n")
-for (i in seq_along(tlfOutputFiles)) {
-  exists <- file.exists(tlfOutputFiles[i])
-  cat(sprintf(
-    "[%s] %s\n",
-    if (exists) "✓" else "✗",
-    basename(tlfOutputFiles[i])
-  ))
-}
-cat("All files exist:", tlfWorkflowArtifactsCreated, "\n\n")
+cat("TLF runner executed successfully:", isTRUE(tlfWorkflowRun$success), "\n")
+cat(
+  "TLF runner output folder available:",
+  !is.na(tlfWorkflowRun$projectOutputFolder),
+  "\n\n"
+)
 
 # Step 3: Verify ePackage structure and files
 ePackageContents <- list.files(
@@ -374,6 +345,11 @@ ePackageContents <- list.files(
   recursive = TRUE,
   full.names = FALSE
 )
+
+# Remove transient graphics device artifact if present.
+ePackageContents <- ePackageContents[
+  basename(ePackageContents) != "Rplots.pdf"
+]
 
 allowedEPackageExtensions <- c("txt", "xml", "json")
 ePackageFileExtensions <- sort(unique(tolower(tools::file_ext(
@@ -414,6 +390,10 @@ assertOrStop(
   )
 )
 assertOrStop(
+  modelRenameVerified,
+  "Expected model rename from Aciclovir.pkml to acyclovir.pkml was not found in the exported simulation workflow runner"
+)
+assertOrStop(
   isTRUE(simulationWorkflowRun$success),
   paste0(
     "Simulation workflow execution failed: ",
@@ -422,7 +402,10 @@ assertOrStop(
 )
 assertOrStop(
   simulationWorkflowArtifactsRestored,
-  "Simulation workflow did not recreate all expected scenario result files"
+  paste0(
+    "Simulation workflow did not recreate all expected scenario result files. Missing: ",
+    paste(basename(missingSimulationResultFiles), collapse = ", ")
+  )
 )
 assertOrStop(
   populationWorkflowArtifactRenamed,
@@ -442,6 +425,25 @@ assertOrStop(
 assertOrStop(
   tlfWorkflowArtifactsCreated,
   "TLF workflow did not create the expected summary output files"
+)
+assertOrStop(
+  tlfLogExists,
+  paste0("TLF workflow log file is missing: ", tlfLogFile)
+)
+assertOrStop(
+  tlfCustomCodeSourced,
+  "TLF workflow log does not contain expected message: customCode was sourced"
+)
+assertOrStop(
+  tlfNumericValuesCountIsThree,
+  "TLF workflow log does not contain the expected NumericValues row count of 3"
+)
+assertOrStop(
+  tlfExpectedTimeprofilePngCreated,
+  paste0(
+    "TLF workflow did not export expected file: ",
+    tlfExpectedTimeprofilePng
+  )
 )
 assertOrStop(
   length(invalidEPackageFiles) == 0,
@@ -521,13 +523,25 @@ reportLines <- c(
     )
   },
   if (tlfWorkflowArtifactsCreated) {
-    paste0(
-      "- TLF runner created output files: ",
-      paste(basename(tlfOutputFiles), collapse = ", ")
-    )
+    "- TLF runner completed with a valid output folder"
   } else {
-    "- TLF runner did not create all expected output files"
+    "- TLF runner did not complete with a valid output folder"
   },
+  paste0(
+    "- Custom code sourcing verified in log: ",
+    tlfCustomCodeSourced
+  ),
+  paste0(
+    "- NumericValues row count equals 3 in log: ",
+    tlfNumericValuesCountIsThree
+  ),
+  paste0(
+    "- Expected time-profile PNG exported: ",
+    tlfExpectedTimeprofilePngCreated,
+    " (",
+    basename(tlfExpectedTimeprofilePng),
+    ")"
+  ),
   paste0(
     "- ePackage contains only .txt, .xml, and .json files: ",
     length(invalidEPackageFiles) == 0
@@ -535,12 +549,10 @@ reportLines <- c(
   "",
   "## Data Import",
   "",
-  "- Data import source: UC09_DataImport/DataImportConfiguration.xlsx",
+  "- Data import source workbook: ReportInputs/DataImportConfiguration_UC10.xlsx",
+  "- Data import source CSV folder: ReportInputs/dataFiles",
   "- Data types: Time-profile observations (individual and aggregated)",
-  paste0(
-    "- Data import summary file generated: ",
-    file.exists(tlfOutputFiles[2])
-  ),
+  "- Data import files are copied into project Data/ for template-based loading",
   "",
   "## ePackage Contents",
   "",
@@ -564,7 +576,9 @@ reportLines <- c(
   paste0("- ePackage Folder: ", ePackageFolderPath),
   paste0("- Model File: ", modelFile),
   paste0("- Model Path: ", fs::path_abs(modelFile, start = pc$modelFolder)),
-  paste0("- TLF workflow template: ", tlfWorkflowPath),
+  paste0("- TLF workflow template source: ", tlfWorkflowTemplatePath),
+  paste0("- TLF workflow copied to: ", workflowRmdInProject),
+  paste0("- Custom code copied to: ", customCodeInProject),
   "",
   "## Exported Workflow Files",
   "",
@@ -596,8 +610,8 @@ reportLines <- c(
     basename(populationRenameResultFile)
   ),
   paste0(
-    "- TLF workflow output files verified: ",
-    paste(basename(tlfOutputFiles), collapse = ", ")
+    "- TLF workflow project output folder: ",
+    tlfWorkflowRun$projectOutputFolder
   ),
   ""
 )

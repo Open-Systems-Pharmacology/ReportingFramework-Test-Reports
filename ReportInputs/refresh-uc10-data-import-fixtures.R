@@ -5,7 +5,7 @@ library(openxlsx)
 library(ospsuite.reportingframework)
 source("R/helpers-uc-shared.R")
 
-fixtureDir <- reportInputsPath("UC10_DataImport")
+fixtureDir <- reportInputsPath("dataFiles")
 dir.create(fixtureDir, recursive = TRUE, showWarnings = FALSE)
 
 replaceSheetTable <- function(wb, sheetName, dataTable) {
@@ -182,7 +182,7 @@ fwrite(tpAggregated, file.path(fixtureDir, "tp_aggregated.csv"))
 fwrite(pkIndividual, file.path(fixtureDir, "pk_individual.csv"))
 fwrite(pkAggregated, file.path(fixtureDir, "pk_aggregated.csv"))
 
-workbookPath <- file.path(fixtureDir, "DataImportConfiguration.xlsx")
+workbookPath <- reportInputsPath("DataImportConfiguration_UC10.xlsx")
 file.copy(
   from = system.file(
     "templates",
@@ -383,7 +383,7 @@ cat(
     paste("- tp_aggregated rows:", nrow(tpAggregated)),
     paste("- pk_individual rows:", nrow(pkIndividual)),
     paste("- pk_aggregated rows:", nrow(pkAggregated)),
-    paste("- numeric values:", nrow(numericValues)),
+    "DataImportConfiguration_UC10.xlsx",
     sep = "\n"
   ),
   "\n"

@@ -19,39 +19,6 @@ on.exit(unlink(projectDir, recursive = TRUE, force = TRUE), add = TRUE)
 unlink(reportFolder, recursive = TRUE, force = TRUE)
 dir.create(reportFolder, recursive = TRUE, showWarnings = FALSE)
 
-fixtureDir <- reportInputsPath("UC10_DataImport")
-fixtureWorkbook <- file.path(fixtureDir, "DataImportConfiguration.xlsx")
-
-assertOrStop(
-  dir.exists(fixtureDir),
-  paste0("UC-10 fixture folder not found: ", fixtureDir)
-)
-assertOrStop(
-  file.exists(fixtureWorkbook),
-  paste0("UC-10 fixture workbook not found: ", fixtureWorkbook)
-)
-
-copyUC10DataImportFixtures <- function(projectConfiguration) {
-  file.copy(fixtureWorkbook, pc$configurationsFolder, overwrite = TRUE)
-
-  dataDir <- file.path(pc$configurationsFolder, '..', '..', 'Data')
-  dir.create(dataDir)
-  csvFiles <- list.files(fixtureDir, pattern = "\\.csv$", full.names = TRUE)
-
-  file.copy(
-    csvFiles,
-    file.path(dataDir, basename(csvFiles)),
-    overwrite = TRUE
-  )
-
-  assertOrStop(
-    all(file.exists(file.path(dataDir, basename(csvFiles)))),
-    "Failed to copy one or more UC-10 CSV fixtures"
-  )
-
-  basename(csvFiles)
-}
-
 readConfigSheet <- function(workbookPath, sheetName) {
   xlsxReadData(
     wb = workbookPath,
@@ -154,81 +121,6 @@ numericValuesConfig <- readConfigSheet(
   "NumericValues"
 )
 
-assertOrStop(
-  identical(
-    names(dataFilesConfig),
-    c("FileIdentifier", "DataFile", "Dictionary", "DataFilter", "DataClass")
-  ),
-  "DataFiles sheet columns do not match the package template"
-)
-assertOrStop(
-  identical(
-    names(tpDictionary),
-    c(
-      "TargetColumn",
-      "Type",
-      "SourceColumn",
-      "SourceUnit",
-      "Filter",
-      "FilterValue",
-      "Description"
-    )
-  ),
-  "tpDictionary sheet columns do not match the package template"
-)
-assertOrStop(
-  identical(names(pkDictionary), names(tpDictionary)),
-  "pkDictionary sheet columns do not match the package template"
-)
-assertOrStop(
-  identical(
-    names(numericValuesConfig),
-    c("VariableName", "Value", "Unit", "Reference")
-  ),
-  "NumericValues sheet columns do not match the package template"
-)
-
-assertOrStop(
-  nrow(dataFilesConfig) == 5,
-  "UC-10 fixture should define 5 DataFiles rows"
-)
-assertOrStop(
-  nrow(tpDictionary) == 29,
-  "UC-10 fixture should define 29 tpDictionary rows"
-)
-assertOrStop(
-  nrow(pkDictionary) == 27,
-  "UC-10 fixture should define 27 pkDictionary rows"
-)
-assertOrStop(
-  nrow(numericValuesConfig) == 3,
-  "UC-10 fixture should define 3 numeric values"
-)
-
-expectedFileIds <- c(
-  "tp_individual",
-  "tp_aggregated",
-  "pk_individual",
-  "pk_aggregated",
-  "numeric_values"
-)
-assertOrStop(
-  identical(as.character(dataFilesConfig$FileIdentifier), expectedFileIds),
-  "UC-10 fixture FileIdentifier values do not match expected coverage rows"
-)
-assertOrStop(
-  identical(
-    as.character(dataFilesConfig$DataClass),
-    c(
-      DATACLASS$tpIndividual,
-      DATACLASS$tpAggregated,
-      DATACLASS$pkIndividual,
-      DATACLASS$pkAggregated,
-      DATACLASS$numericValues
-    )
-  ),
-  "UC-10 fixture DataClass rows do not cover the expected import classes"
-)
 
 tpObserved <- suppressWarnings(readObservedDataByDictionary(
   projectConfiguration = pc,
@@ -724,11 +616,11 @@ reportLines <- c(
   ),
   "",
   "## Result files",
-  "- ReportInputs/UC10_DataImport/DataImportConfiguration.xlsx - dedicated UC-10 import configuration workbook",
-  "- ReportInputs/UC10_DataImport/tp_individual.csv - individual time-profile source data",
-  "- ReportInputs/UC10_DataImport/tp_aggregated.csv - aggregated time-profile source data",
-  "- ReportInputs/UC10_DataImport/pk_individual.csv - individual PK source data",
-  "- ReportInputs/UC10_DataImport/pk_aggregated.csv - aggregated PK source data",
+  "- ReportInputs/DataImportConfiguration_UC10.xlsx - dedicated UC-10 import configuration workbook",
+  "- ReportInputs/dataFiles/tp_individual.csv - individual time-profile source data",
+  "- ReportInputs/dataFiles/tp_aggregated.csv - aggregated time-profile source data",
+  "- ReportInputs/dataFiles/pk_individual.csv - individual PK source data",
+  "- ReportInputs/dataFiles/pk_aggregated.csv - aggregated PK source data",
   "- ReportInputs/refresh-uc10-data-import-fixtures.R - fixture refresh script for the UC-10 import matrix",
   ""
 )

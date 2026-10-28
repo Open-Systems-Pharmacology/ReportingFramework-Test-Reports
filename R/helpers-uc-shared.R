@@ -178,6 +178,56 @@ copyFilesToDir <- function(
   invisible(targetDir)
 }
 
+#' Copies UC10 data import fixtures into a project configuration.
+#'
+#' @param pc ProjectConfiguration object.
+#' @param fixtureDir Character; source fixture folder.
+#' @return Character vector of copied CSV file names.
+#' @keywords internal
+#' @noRd
+copyUC10DataImportFixtures <- function(
+  pc,
+  fixtureDir = reportInputsPath("dataFiles"),
+  fixtureWorkbook = reportInputsPath("DataImportConfiguration_UC10.xlsx")
+) {
+  assertOrStop(
+    dir.exists(fixtureDir),
+    paste0("UC-10 data-files folder not found: ", fixtureDir)
+  )
+  assertOrStop(
+    file.exists(fixtureWorkbook),
+    paste0("UC-10 fixture workbook not found: ", fixtureWorkbook)
+  )
+
+  file.copy(
+    from = fixtureWorkbook,
+    to = pc$dataImporterConfigurationFile,
+    overwrite = TRUE
+  )
+
+  dataDir <- file.path(pc$configurationsFolder, "..", "..", "Data")
+  dir.create(dataDir, recursive = TRUE, showWarnings = FALSE)
+
+  csvFiles <- list.files(fixtureDir, pattern = "\\.csv$", full.names = TRUE)
+  assertOrStop(
+    length(csvFiles) > 0,
+    paste0("No data import CSV files were found in ", fixtureDir)
+  )
+
+  file.copy(
+    csvFiles,
+    file.path(dataDir, basename(csvFiles)),
+    overwrite = TRUE
+  )
+
+  assertOrStop(
+    all(file.exists(file.path(dataDir, basename(csvFiles)))),
+    "Failed to copy one or more UC-10 CSV fixtures"
+  )
+
+  basename(csvFiles)
+}
+
 # Copies model files from modelsDir into the project's model folder.
 copyModelFiles <- function(pc, modelFiles) {
   modelsDir <- reportInputsPath("Models")
