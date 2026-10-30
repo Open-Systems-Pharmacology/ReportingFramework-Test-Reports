@@ -25,11 +25,6 @@
     "Reference": true
   },
   {
-    "Script": "report-uc-06-utilities-data-integration",
-    "Report": "UC-06-Utilities-Data-Integration",
-    "Reference": true
-  },
-  {
     "Script": "report-uc-07a-plot-timeprofiles",
     "Report": "UC-07A-Plot-TimeProfiles",
     "Reference": true

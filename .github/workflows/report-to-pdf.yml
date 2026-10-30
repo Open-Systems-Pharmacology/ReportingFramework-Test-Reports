@@ -14,7 +14,6 @@ on:
         - UC-03-Scenario-Results-RoundTrip
         - UC-04-PK-Parameter-Loading
         - UC-05-Population-Export
-        - UC-06-Utilities-Data-Integration
         - UC-07A-Plot-TimeProfiles
         - UC-07B-Plot-PKBoxwhisker
         - UC-07C-Plot-PKForest
