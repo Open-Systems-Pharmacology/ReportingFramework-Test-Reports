@@ -7,6 +7,11 @@ library(ospsuite.reportingframework)
 
 source("R/helpers-uc-shared.R")
 
+# Prevent accidental creation of Rplots.pdf by using a null default device.
+originalDeviceOption <- getOption("device")
+options(device = function(...) grDevices::pdf(NULL))
+on.exit(options(device = originalDeviceOption), add = TRUE)
+
 reportFolder <- file.path(
   "tests",
   "Reports",
@@ -59,33 +64,28 @@ coverage <- loadAndFilterConfigSheet(
 for (i in seq_len(nrow(coverage))) {
   plotName <- coverage$plotName[[i]]
 
-  histCall <- tryCatch(
-    {
-      runPlot(
-        projectConfiguration = pc,
-        nameOfplotFunction = "plotHistograms",
-        configTableSheet = qmdName,
-        qmdName = qmdName,
-        plotNames = plotName,
-        theme = themeToUse,
-        inputs = list(
-          scenarioList = scenarioList,
-          pkParameterDT = pkParameterDT
-        )
+  histCall <- runStepWithResult(
+    runPlot(
+      projectConfiguration = pc,
+      nameOfplotFunction = "plotHistograms",
+      configTableSheet = qmdName,
+      qmdName = qmdName,
+      plotNames = plotName,
+      theme = themeToUse,
+      inputs = list(
+        scenarioList = scenarioList,
+        pkParameterDT = pkParameterDT
       )
-    },
-    error = function(e) {
-      e
-    }
+    )
   )
 
-  if (inherits(histCall, "error")) {
+  if (!isTRUE(histCall$success)) {
     coverage$status[[i]] <- "FAIL"
-    coverage$errorMessage[[i]] <- histCall$message
+    coverage$errorMessage[[i]] <- histCall$error
     next
   }
 
-  coverage$returnedObjects[[i]] <- length(histCall)
+  coverage$returnedObjects[[i]] <- length(histCall$result)
   if (coverage$returnedObjects[[i]] == 0) {
     coverage$status[[i]] <- "FAIL"
     coverage$errorMessage[[i]] <- "runPlot returned no plot objects"
@@ -93,8 +93,11 @@ for (i in seq_len(nrow(coverage))) {
 }
 
 assertOrStop(
-  !inherits(histCall, "error"),
-  paste0("runPlot(plotHistograms) failed: ", histCall$message)
+  !any(coverage$status == "FAIL"),
+  paste0(
+    "UC-07G plot failures: ",
+    paste(coverage$plotName[coverage$status == "FAIL"], collapse = ", ")
+  )
 )
 returnedPlots <-
   sum(as.double(unlist(coverage$returnedObjects)), na.rm = TRUE)

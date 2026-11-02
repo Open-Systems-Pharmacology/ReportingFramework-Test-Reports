@@ -7,6 +7,48 @@ assertOrStop <- function(condition, message) {
   invisible(NULL)
 }
 
+#' Wraps a workflow step and captures errors without stopping immediately.
+#' @param stepExpr Expression to evaluate inside a try/catch block.
+#' @return List with fields `success` (logical) and `error` (character).
+#' @keywords internal
+#' @noRd
+runStep <- function(stepExpr) {
+  tryCatch(
+    {
+      force(stepExpr)
+      list(success = TRUE, error = NA_character_)
+    },
+    error = function(e) {
+      list(success = FALSE, error = e$message)
+    }
+  )
+}
+
+#' Wraps a workflow step and captures its result plus any error message.
+#' @param stepExpr Expression to evaluate inside a try/catch block.
+#' @return List with fields `success` (logical), `error` (character), and
+#'   `result` (expression output or NULL when failed).
+#' @keywords internal
+#' @noRd
+runStepWithResult <- function(stepExpr) {
+  tryCatch(
+    {
+      list(
+        success = TRUE,
+        error = NA_character_,
+        result = force(stepExpr)
+      )
+    },
+    error = function(e) {
+      list(
+        success = FALSE,
+        error = e$message,
+        result = NULL
+      )
+    }
+  )
+}
+
 resolveReportInputsRoot <- function() {
   baseCandidates <- c(".", "..")
   rootDir <- "ReportInputs"
@@ -188,7 +230,7 @@ copyFilesToDir <- function(
 copyUC10DataImportFixtures <- function(
   pc,
   fixtureDir = reportInputsPath("dataFiles"),
-  fixtureWorkbook = reportInputsPath("DataImportConfiguration_UC10.xlsx")
+  fixtureWorkbook = reportInputsPath("DataImportMap_UC10.xlsx")
 ) {
   assertOrStop(
     dir.exists(fixtureDir),
@@ -199,9 +241,11 @@ copyUC10DataImportFixtures <- function(
     paste0("UC-10 fixture workbook not found: ", fixtureWorkbook)
   )
 
+  targetWorkbook <- file.path(pc$configurationsFolder, "DataImportMap.xlsx")
+
   file.copy(
     from = fixtureWorkbook,
-    to = pc$dataImporterConfigurationFile,
+    to = targetWorkbook,
     overwrite = TRUE
   )
 
@@ -214,11 +258,11 @@ copyUC10DataImportFixtures <- function(
     paste0("No data import CSV files were found in ", fixtureDir)
   )
 
-  file.copy(
+  invisible(file.copy(
     csvFiles,
     file.path(dataDir, basename(csvFiles)),
     overwrite = TRUE
-  )
+  ))
 
   assertOrStop(
     all(file.exists(file.path(dataDir, basename(csvFiles)))),
@@ -969,7 +1013,7 @@ executeExportedWorkflow <- function(
 #
 # @param workflowPath Character; full path where the Rmd file will be written
 # @param scenarioNames Character vector; names of simulation scenarios to load results for
-# @param dataImportConfigFile Character; path to DataImportConfiguration.xlsx
+#' @param dataImportConfigFile Character; path to DataImportMap.xlsx
 # @param summaryFileName Character; name of summary CSV output file (relative to outputFolder)
 # @param dataImportSummaryFileName Character; name of data import summary file
 #

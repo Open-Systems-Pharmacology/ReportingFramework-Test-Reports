@@ -6,6 +6,11 @@ rm(list = ls())
 library(ospsuite.reportingframework)
 source("R/helpers-uc-shared.R")
 
+# Prevent accidental creation of Rplots.pdf by using a null default device.
+originalDeviceOption <- getOption("device")
+options(device = function(...) grDevices::pdf(NULL))
+on.exit(options(device = originalDeviceOption), add = TRUE)
+
 
 reportFolder <- file.path("tests", "Reports", "UC-07B-Plot-PKBoxwhisker")
 projectDir <- tempfile(pattern = "uc07b_pkbox_")
@@ -51,33 +56,28 @@ coverage <- loadAndFilterConfigSheet(
 for (i in seq_len(nrow(coverage))) {
   plotName <- coverage$plotName[[i]]
 
-  pkBoxCall <- tryCatch(
-    {
-      runPlot(
-        projectConfiguration = pc,
-        nameOfplotFunction = "plotPKBoxwhisker",
-        configTableSheet = qmdName,
-        qmdName = qmdName,
-        plotNames = plotName,
-        theme = themeToUse,
-        inputs = list(
-          pkParameterDT = pkParameterDT,
-          colorVector = c('IV' = NA, 'PO' = NA)
-        )
+  pkBoxCall <- runStepWithResult(
+    runPlot(
+      projectConfiguration = pc,
+      nameOfplotFunction = "plotPKBoxwhisker",
+      configTableSheet = qmdName,
+      qmdName = qmdName,
+      plotNames = plotName,
+      theme = themeToUse,
+      inputs = list(
+        pkParameterDT = pkParameterDT,
+        colorVector = c("IV" = NA, "PO" = NA)
       )
-    },
-    error = function(e) {
-      e
-    }
+    )
   )
 
-  if (inherits(pkBoxCall, "error")) {
+  if (!isTRUE(pkBoxCall$success)) {
     coverage$status[[i]] <- "FAIL"
-    coverage$errorMessage[[i]] <- pkBoxCall$message
+    coverage$errorMessage[[i]] <- pkBoxCall$error
     next
   }
 
-  coverage$returnedObjects[[i]] <- length(pkBoxCall)
+  coverage$returnedObjects[[i]] <- length(pkBoxCall$result)
   if (coverage$returnedObjects[[i]] == 0) {
     coverage$status[[i]] <- "FAIL"
     coverage$errorMessage[[i]] <- "runPlot returned no plot objects"
@@ -85,8 +85,11 @@ for (i in seq_len(nrow(coverage))) {
 }
 
 assertOrStop(
-  !inherits(pkBoxCall, "error"),
-  paste0("runPlot(plotPKBoxwhisker) failed: ", pkBoxCall$message)
+  !any(coverage$status == "FAIL"),
+  paste0(
+    "UC-07B plot failures: ",
+    paste(coverage$plotName[coverage$status == "FAIL"], collapse = ", ")
+  )
 )
 returnedPlots <-
   sum(as.double(unlist(coverage$returnedObjects)), na.rm = TRUE)

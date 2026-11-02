@@ -100,11 +100,6 @@
     "Reference": false
   },
   {
-    "Script": "report-uc-11-word-rendering",
-    "Report": "UC-11-Word-Report-Rendering",
-    "Reference": false
-  },
-  {
     "Script": "report-uc-16-calc-methods-scenarios",
     "Report": "UC-16-Calculation-Methods-Scenarios",
     "Reference": false

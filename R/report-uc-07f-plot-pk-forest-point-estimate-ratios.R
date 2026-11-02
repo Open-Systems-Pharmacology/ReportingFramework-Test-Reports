@@ -8,6 +8,11 @@ library(ospsuite.reportingframework)
 source("R/helpers-uc-shared.R")
 source("R/helpers-uc-observedData.R")
 
+# Prevent accidental creation of Rplots.pdf by using a null default device.
+originalDeviceOption <- getOption("device")
+options(device = function(...) grDevices::pdf(NULL))
+on.exit(options(device = originalDeviceOption), add = TRUE)
+
 reportFolder <- file.path(
   "tests",
   "Reports",
@@ -61,32 +66,27 @@ coverage <- loadAndFilterConfigSheet(
 for (i in seq_len(nrow(coverage))) {
   plotName <- coverage$plotName[[i]]
 
-  pkForestCall <- tryCatch(
-    {
-      runPlot(
-        projectConfiguration = pc,
-        nameOfplotFunction = "plotPKForestPointEstimateOfRatios",
-        configTableSheet = qmdName,
-        qmdName = qmdName,
-        plotNames = plotName,
-        inputs = list(
-          pkParameterDT = pkParameterDT,
-          dataObservedPK = pkObservedDT
-        )
+  pkForestCall <- runStepWithResult(
+    runPlot(
+      projectConfiguration = pc,
+      nameOfplotFunction = "plotPKForestPointEstimateOfRatios",
+      configTableSheet = qmdName,
+      qmdName = qmdName,
+      plotNames = plotName,
+      inputs = list(
+        pkParameterDT = pkParameterDT,
+        dataObservedPK = pkObservedDT
       )
-    },
-    error = function(e) {
-      e
-    }
+    )
   )
 
-  if (inherits(pkForestCall, "error")) {
+  if (!isTRUE(pkForestCall$success)) {
     coverage$status[[i]] <- "FAIL"
-    coverage$errorMessage[[i]] <- pkForestCall$message
+    coverage$errorMessage[[i]] <- pkForestCall$error
     next
   }
 
-  coverage$returnedObjects[[i]] <- length(pkForestCall)
+  coverage$returnedObjects[[i]] <- length(pkForestCall$result)
   if (coverage$returnedObjects[[i]] == 0) {
     coverage$status[[i]] <- "FAIL"
     coverage$errorMessage[[i]] <- "runPlot returned no plot objects"
@@ -94,10 +94,10 @@ for (i in seq_len(nrow(coverage))) {
 }
 
 assertOrStop(
-  !inherits(pkForestCall, "error"),
+  !any(coverage$status == "FAIL"),
   paste0(
-    "runPlot(plotPKForestPointEstimateOfRatios) failed: ",
-    pkForestCall$message
+    "UC-07F plot failures: ",
+    paste(coverage$plotName[coverage$status == "FAIL"], collapse = ", ")
   )
 )
 returnedPlots <-

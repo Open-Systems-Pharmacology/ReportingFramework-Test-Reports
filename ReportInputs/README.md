@@ -27,11 +27,11 @@ Additional checked-in workbook fixtures are also stored at the top level of this
 | Scenarios_UC07.xlsx | UC07-specific scenario, output-path, and PK-parameter mapping workbook copied into temporary workflow projects |
 | Reports_UC07.xlsx | UC07-specific report configuration workbook with preserved plot configuration sheets |
 | PKParameter_UC07.xlsx | UC07-specific PK parameter workbook with preserved PK_Plasma sheet |
-| DataImportConfiguration_UC10.xlsx | Dedicated UC-10 dictionary-import workbook used together with dataFiles CSV fixtures |
+| DataImportMap_UC10.xlsx | Dedicated UC-10 dictionary-import workbook used together with dataFiles CSV fixtures |
 
 The UC07 migration currently reads models, PK analysis results, populations, and these stable observed-data fixtures from this repo-local ReportInputs folder. Generation helpers in R/helpers-uc-observedData.R are kept for maintenance and fixture refreshes rather than runtime use in the UC scripts.
 
-UC-10 uses the checked-in `dataFiles` fixture folder plus `DataImportConfiguration_UC10.xlsx` and `refresh-uc10-data-import-fixtures.R` to keep the dictionary-import workbook and source CSVs aligned with the installed package template while preserving repo-local coverage rows.
+UC-10 uses the checked-in `dataFiles` fixture folder plus `DataImportMap_UC10.xlsx` and `refresh-uc10-data-import-fixtures.R` to keep the dictionary-import workbook and source CSVs aligned with the installed package template while preserving repo-local coverage rows.
 
 To refresh the checked-in UC7 observed-data fixtures after intentional maintenance changes, run refresh-uc7-observed-fixtures.R from the repository root.
 

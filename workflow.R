@@ -4,15 +4,7 @@ knitr::opts_chunk$set(cache = TRUE)
 
 
 ## ----libraries-copy-----------------------------------------------------------
-#library(ospsuite.reportingframework)
-pkgload::load_all(
-  path = file.path(
-    'C:/Users/17fec1a5/Documents/GitHub/',
-    'OSPSuite.ReportingFramework'
-  )
-)
 library(data.table)
-
 
 
 ## ----pathsCustomfunctions-eval------------------------------------------------
@@ -20,8 +12,9 @@ pathsCustomfunctions <- c()
 
 
 ## ----customfunctions-replace--------------------------------------------------
-if (length(pathsCustomfunctions) > 0)
-  lapply(pathsCustomfunctions,source)
+if (length(pathsCustomfunctions) > 0) {
+  lapply(pathsCustomfunctions, source)
+}
 
 
 ## ----workflowOptions-replace--------------------------------------------------
@@ -32,7 +25,8 @@ setWorkflowOptions(isValidRun = getQCpassedEnvironmentVariable())
 
 projectConfiguration <-
   ospsuite.reportingframework::createProjectConfiguration(
-    path =  file.path("ProjectConfiguration.xlsx"))
+    path = file.path("ProjectConfiguration.xlsx")
+  )
 
 # initialize the logging
 setLogPath(
@@ -41,25 +35,27 @@ setLogPath(
 )
 
 
-
 ## ----dataObserved-eval--------------------------------------------------------
 dataObserved <- NULL
 
 
 ## ----observedTimeprofiles-QC--------------------------------------------------
 # check the format
-validateObservedData(dataObserved,dataClassType = 'timeprofile')
+validateObservedData(dataObserved, dataClassType = 'timeprofile')
 
 # add quality checks to ensure data contains only the required records.
 print(names(dataObserved))
 
-print(dataObserved[,.(N = .N,
-                      xmin = min(xValues),
-                      xmax = max(xValues),
-                      ymin = min(yValues),
-                      ymax = max(yValues)),
-                   by = c('group','outputPathId')])
-
+print(dataObserved[,
+  .(
+    N = .N,
+    xmin = min(xValues),
+    xmax = max(xValues),
+    ymin = min(yValues),
+    ymax = max(yValues)
+  ),
+  by = c('group', 'outputPathId')
+])
 
 
 ## ----dataObservedPK-eval------------------------------------------------------
@@ -67,10 +63,7 @@ print(dataObserved[,.(N = .N,
 dataObservedPK <- NULL
 
 
-
 ## ----observedPKParameter-QC---------------------------------------------------
-
-
 
 ## ----numericValues-eval-------------------------------------------------------
 numericValues <- data.table::data.table(
@@ -95,9 +88,10 @@ scenarioNames = c("UC09_Scenario1", "UC09_PopulationScenario")
 ## ----loadResults-copy---------------------------------------------------------
 
 # It is assumed that all required scenarios were simulated in previous workflow started in same project directory.
-scenarioResults <- loadScenarioResultsToFramework(projectConfiguration = projectConfiguration,
-                          scenarioNames = scenarioNames)
-
+scenarioResults <- loadScenarioResultsToFramework(
+  projectConfiguration = projectConfiguration,
+  scenarioNames = scenarioNames
+)
 
 
 ## ----runPlot-copy-------------------------------------------------------------
@@ -117,7 +111,6 @@ runPlot(
   configTableSheet = 'TimeProfiles',
   theme = runPlotTheme,
   inputs = list(
-
     scenarioResults = scenarioResults
   )
 )
@@ -127,13 +120,16 @@ timeprofileDirs <- c(
   file.path(projectConfiguration$outputFolder, 'Timeprofile'),
   file.path(projectConfiguration$outputFolder, 'TimeProfiles')
 )
-generatedPngs <- unlist(lapply(timeprofileDirs, function(dirPath) {
-  if (dir.exists(dirPath)) {
-    list.files(dirPath, pattern = '\.png$', full.names = TRUE)
-  } else {
-    character(0)
-  }
-}), use.names = FALSE)
+generatedPngs <- unlist(
+  lapply(timeprofileDirs, function(dirPath) {
+    if (dir.exists(dirPath)) {
+      list.files(dirPath, pattern = '\.png$', full.names = TRUE)
+    } else {
+      character(0)
+    }
+  }),
+  use.names = FALSE
+)
 expectedPngPath <- file.path(
   projectConfiguration$outputFolder,
   'Timeprofile',
@@ -154,28 +150,27 @@ writeLines(
   con = workflowLogPath
 )
 addMessageToLog('customCode was sourced')
-addMessageToLog(paste('Nrow NumericalValues:=',nrow(numericValues)))
-
+addMessageToLog(paste('Nrow NumericalValues:=', nrow(numericValues)))
 
 
 ## ----check-usedData-QC--------------------------------------------------------
 
 plotList <-
-    runPlot(
-      nameOfplotFunction = "plotTimeProfiles",
-      configTableSheet = "plotTimeProfiles",
-      projectConfiguration = projectConfiguration,
-      checkForUnusedData = TRUE,
-      theme = runPlotTheme,
-      inputs = list(
-        scenarioResults = scenarioResults,
-        dataObserved = dataObserved
-      )
+  runPlot(
+    nameOfplotFunction = "plotTimeProfiles",
+    configTableSheet = "plotTimeProfiles",
+    projectConfiguration = projectConfiguration,
+    checkForUnusedData = TRUE,
+    theme = runPlotTheme,
+    inputs = list(
+      scenarioResults = scenarioResults,
+      dataObserved = dataObserved
     )
+  )
 
-  expect_equal(nrow(plotList$unusedDataRows), expected = 0)
+expect_equal(nrow(plotList$unusedDataRows), expected = 0)
 
-addMessageToLog(paste('Nrow NumericalValues',nrow(numericValues)))
+addMessageToLog(paste('Nrow NumericalValues', nrow(numericValues)))
 
 
 ## ----finalize-replace---------------------------------------------------------
@@ -183,4 +178,3 @@ addMessageToLog("finalize workflow")
 
 # save session information including loaded packages and R version to a log file
 saveSessionInfo(fileName = paste0("w", wfIdentifier, "_sessionInfo.log"))
-

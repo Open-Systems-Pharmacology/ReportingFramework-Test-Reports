@@ -8,6 +8,11 @@ rm(list = ls())
 library(ospsuite.reportingframework)
 source("R/helpers-uc-shared.R")
 
+# Prevent accidental creation of Rplots.pdf by using a null default device.
+originalDeviceOption <- getOption("device")
+options(device = function(...) grDevices::pdf(NULL))
+on.exit(options(device = originalDeviceOption), add = TRUE)
+
 reportName <- "UC-12-Plot-TimeProfiles-Tutorial"
 reportFolder <- file.path("tests", "Reports", reportName)
 referenceFolder <- file.path("Reports", reportName)
@@ -34,7 +39,7 @@ copyTutorialAssets <- function(pc) {
   )
 
   requiredFiles <- c(
-    DataImportConfiguration.xlsx = pc$dataImporterConfigurationFile,
+    DataImportMap.xlsx = pc$addOns$dataImportMapFile,
     Individuals.xlsx = pc$individualsFile,
     Populations.xlsx = pc$populationsFile,
     Scenarios.xlsx = pc$scenariosFile,
@@ -96,18 +101,9 @@ copyTutorialAssets <- function(pc) {
     }
   }
 
-  modelDir <- system.file(
-    "extdata",
-    "Models",
-    package = "ospsuite.reportingframework"
-  )
-  assertOrStop(
-    nzchar(modelDir) && dir.exists(modelDir),
-    "Tutorial model directory was not found in ospsuite.reportingframework"
-  )
   modelFiles <- c("iv_1_mg_5_min.pkml", "po_3_mg_solution.pkml")
   for (modelFile in modelFiles) {
-    sourcePath <- file.path(modelDir, modelFile)
+    sourcePath <- file.path(tutorialDir, modelFile)
     destinationPath <- file.path(pc$modelFolder, modelFile)
     assertOrStop(
       file.exists(sourcePath),
@@ -116,34 +112,15 @@ copyTutorialAssets <- function(pc) {
     file.copy(sourcePath, destinationPath, overwrite = TRUE)
   }
 
-  populationDir <- system.file(
-    "extdata",
-    "Populations",
-    package = "ospsuite.reportingframework"
-  )
-  assertOrStop(
-    nzchar(populationDir) && dir.exists(populationDir),
-    "Tutorial population directory was not found in ospsuite.reportingframework"
-  )
-
-  sourcePath <- file.path(populationDir, "adults.csv")
+  sourcePath <- file.path(tutorialDir, "adults.csv")
   destinationPath <- file.path(pc$populationsFolder, "random_population.csv")
   assertOrStop(
     file.exists(sourcePath),
     paste0("Required tutorial model missing: ", sourcePath)
   )
-  file.copy(sourcePath, destinationPath, overwrite = TRUE)
+  invisible(file.copy(sourcePath, destinationPath, overwrite = TRUE))
 
-  populationDir <- system.file(
-    "extdata",
-    "Tutorial",
-    package = "ospsuite.reportingframework"
-  )
-  assertOrStop(
-    nzchar(populationDir) && dir.exists(populationDir),
-    "Tutorial population directory was not found in ospsuite.reportingframework"
-  )
-  sourcePath <- file.path(populationDir, "study_1234_population.csv")
+  sourcePath <- file.path(tutorialDir, "study_1234_population.csv")
   destinationPath <- file.path(
     pc$populationsFolder,
     "study_1234_population.csv"
@@ -152,7 +129,7 @@ copyTutorialAssets <- function(pc) {
     file.exists(sourcePath),
     paste0("Required tutorial model missing: ", sourcePath)
   )
-  file.copy(sourcePath, destinationPath, overwrite = TRUE)
+  invisible(file.copy(sourcePath, destinationPath, overwrite = TRUE))
 
   invisible(tutorialDir)
 }
@@ -226,33 +203,28 @@ for (i in seq_len(nrow(coverage))) {
 
   plotDataObserved <- data.table::copy(dataObserved)
 
-  tpCall <- tryCatch(
-    {
-      runPlot(
-        nameOfplotFunction = "plotTimeProfiles",
-        projectConfiguration = pc,
-        configTableSheet = configSheetName,
-        qmdName = qmdName,
-        plotNames = plotName,
-        theme = themeToUse,
-        inputs = list(
-          dataObserved = plotDataObserved,
-          scenarioResults = scenarioResults
-        )
+  tpCall <- runStepWithResult(
+    runPlot(
+      nameOfplotFunction = "plotTimeProfiles",
+      projectConfiguration = pc,
+      configTableSheet = configSheetName,
+      qmdName = qmdName,
+      plotNames = plotName,
+      theme = themeToUse,
+      inputs = list(
+        dataObserved = plotDataObserved,
+        scenarioResults = scenarioResults
       )
-    },
-    error = function(e) {
-      e
-    }
+    )
   )
 
-  if (inherits(tpCall, "error")) {
+  if (!isTRUE(tpCall$success)) {
     coverage$status[[i]] <- "FAIL"
-    coverage$errorMessage[[i]] <- tpCall$message
+    coverage$errorMessage[[i]] <- tpCall$error
     next
   }
 
-  coverage$returnedObjects[[i]] <- length(tpCall)
+  coverage$returnedObjects[[i]] <- length(tpCall$result)
   if (coverage$returnedObjects[[i]] == 0) {
     coverage$status[[i]] <- "FAIL"
     coverage$errorMessage[[i]] <- "runPlot returned no plot objects"
@@ -300,6 +272,41 @@ qmdRenderResult <- renderQmdToMarkdown(
   pattern = "Timeprofile\\.qmd$"
 )
 
+assertOrStop(
+  !is.na(qmdRenderResult$qmdFile) && file.exists(qmdRenderResult$qmdFile),
+  "UC-12 expected generated qmd file was not found"
+)
+
+wordDocxPath <- sub("\\.qmd$", ".docx", qmdRenderResult$qmdFile)
+quartoAvailable <- nzchar(quarto::quarto_path())
+wordRenderStatus <- "SKIPPED"
+wordRenderMessage <- "Word rendering skipped: Quarto is not available in this environment"
+
+if (quartoAvailable) {
+  wordRenderCall <- runStepWithResult(
+    renderWord(fileName = qmdRenderResult$qmdFile, quiet = TRUE)
+  )
+
+  assertOrStop(
+    isTRUE(wordRenderCall$success),
+    paste0("UC-12 Word rendering failed: ", wordRenderCall$error)
+  )
+
+  assertOrStop(
+    file.exists(wordDocxPath),
+    paste0(
+      "UC-12 Word rendering did not create docx output: ",
+      wordDocxPath
+    )
+  )
+
+  wordRenderStatus <- "SUCCESS"
+  wordRenderMessage <- paste0(
+    "Word report created: ",
+    basename(wordDocxPath)
+  )
+}
+
 reportLines <- c(
   "# UC-12 Tutorial Time Profiles",
   "",
@@ -315,6 +322,7 @@ reportLines <- c(
   "- TimeProfiles configuration sheet contains runnable plot definitions.",
   "- All runPlot(nameOfplotFunction = 'plotTimeProfiles') calls completed without error.",
   paste0("- Returned plot/table objects across coverage runs: ", returnedPlots),
+  paste0("- Word rendering: ", wordRenderStatus, " (", wordRenderMessage, ")"),
   qmdRenderAssertionLine(qmdRenderResult, assertionPrefix = "Timeprofile.qmd"),
   coverageReportSection(coverage, configSheetName),
   qmdRenderContentSection(

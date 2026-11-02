@@ -26,10 +26,10 @@ defaultIndividualId <- as.character(scenariosConfig$individualId[[1]])
 defaultOutputPathId <- as.character(scenarioOutputs$outputPathId[[1]])
 
 scenarioSetup <- makeDefaultScenarioTable(
-  c("UC04_ScenarioA", "UC04_ScenarioB"),
-  defaultIndividualId,
-  defaultOutputPathId,
-  modelFile
+  scenarioNames = c("UC04_ScenarioA", "UC04_ScenarioB"),
+  individualId = defaultIndividualId,
+  outputPathId = defaultOutputPathId,
+  modelFile = modelFile
 )
 
 pkScenarioSetup <- data.table::data.table(

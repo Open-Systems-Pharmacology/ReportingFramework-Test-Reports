@@ -64,7 +64,7 @@
       },
       {
         "Property": "dataImporterConfigurationFile",
-        "Value": "DataImportConfiguration.xlsx",
+        "Value": "DataImportMap.xlsx",
         "Description": "Name of data importer configuration file in xml format used to load the data. Must be located in the \"dataFolder\""
       },
       {

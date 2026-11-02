@@ -4,8 +4,13 @@
 
 rm(list = ls())
 library(ospsuite.reportingframework)
-pkgload::load_all(path = file.path('..', 'OSPSuite.ReportingFramework'))
+library(data.table)
 source("R/helpers-uc-shared.R")
+
+# Prevent accidental creation of Rplots.pdf by using a null default device.
+originalDeviceOption <- getOption("device")
+options(device = function(...) grDevices::pdf(NULL))
+on.exit(options(device = originalDeviceOption), add = TRUE)
 
 reportFolder <- file.path("tests", "Reports", "UC-08A-Sensitivity-Analysis")
 projectDir <- tempfile(pattern = "uc08a_sensitivity_")
@@ -211,32 +216,27 @@ coverage$returnedObjects <- rep(NA_real_, nrow(coverage))
 for (i in seq_len(nrow(coverage))) {
   plotName <- coverage$plotName[[i]]
 
-  rangeCall <- tryCatch(
-    {
-      runPlot(
-        projectConfiguration = pc,
-        nameOfplotFunction = "plotSensitivity",
-        configTableSheet = plotConfigSheet,
-        qmdName = qmdName,
-        plotNames = plotName,
-        theme = themeToUse,
-        inputs = list(
-          scenarioList = scenarioList
-        )
+  rangeCall <- runStepWithResult(
+    runPlot(
+      projectConfiguration = pc,
+      nameOfplotFunction = "plotSensitivity",
+      configTableSheet = plotConfigSheet,
+      qmdName = qmdName,
+      plotNames = plotName,
+      theme = themeToUse,
+      inputs = list(
+        scenarioList = scenarioList
       )
-    },
-    error = function(e) {
-      e
-    }
+    )
   )
 
-  if (inherits(rangeCall, "error")) {
+  if (!isTRUE(rangeCall$success)) {
     coverage$status[[i]] <- "FAIL"
-    coverage$errorMessage[[i]] <- rangeCall$message
+    coverage$errorMessage[[i]] <- rangeCall$error
     next
   }
 
-  coverage$returnedObjects[[i]] <- length(rangeCall)
+  coverage$returnedObjects[[i]] <- length(rangeCall$result)
   if (coverage$returnedObjects[[i]] == 0) {
     coverage$status[[i]] <- "FAIL"
     coverage$errorMessage[[i]] <- "runPlot returned no plot objects"
@@ -325,7 +325,11 @@ reportLines <- c(
   "## Assertions",
   "",
   paste0("- Scenario created: ", paste(scenarioNames, collapse = ", ")),
-  paste0("- Relative sensitivity denominator scenario: ", referenceScenarioName, "."),
+  paste0(
+    "- Relative sensitivity denominator scenario: ",
+    referenceScenarioName,
+    "."
+  ),
   "- Project setup workbooks copied: Scenarios_UC07.xlsx, PKParameter_UC07.xlsx, Reports_UC07.xlsx.",
   paste0(
     "- Sensitivity parameter workbook created: ",

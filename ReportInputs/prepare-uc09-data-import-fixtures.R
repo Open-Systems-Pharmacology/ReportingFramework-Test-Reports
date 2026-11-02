@@ -1,6 +1,6 @@
 #!/usr/bin/env Rscript
 # Prepare UC09 data import fixtures from UC10
-# Copy time-profile CSVs and trim DataImportConfiguration.xlsx to TP only
+# Copy time-profile CSVs and trim DataImportMap.xlsx to TP only
 
 rm(list = ls())
 library(data.table)
@@ -9,7 +9,7 @@ library(ospsuite.reportingframework)
 
 # Paths
 uc10DataDir <- "ReportInputs/dataFiles"
-uc10Workbook <- "ReportInputs/DataImportConfiguration_UC10.xlsx"
+uc10Workbook <- "ReportInputs/DataImportMap_UC10.xlsx"
 uc09Dir <- "ReportInputs/UC09_DataImport"
 
 # Create UC09 directory
@@ -33,21 +33,21 @@ file.copy(
 )
 cat("   ✓ tp_aggregated.csv copied\n")
 
-# 2. Copy and trim DataImportConfiguration.xlsx
-cat("\n2. Trimming DataImportConfiguration.xlsx...\n")
+# 2. Copy and trim DataImportMap.xlsx
+cat("\n2. Trimming DataImportMap.xlsx...\n")
 
 # Copy template
 file.copy(
     from = uc10Workbook,
-    to = file.path(uc09Dir, "DataImportConfiguration.xlsx"),
+    to = file.path(uc09Dir, "DataImportMap.xlsx"),
     overwrite = TRUE
 )
 
 # Load the workbook
-wb <- loadWorkbook(file.path(uc09Dir, "DataImportConfiguration.xlsx"))
+wb <- loadWorkbook(file.path(uc09Dir, "DataImportMap.xlsx"))
 
 # Read and trim DataFiles sheet (keep only rows for tp_individual and tp_aggregated)
-dataFilesPath <- file.path(uc09Dir, "DataImportConfiguration.xlsx")
+dataFilesPath <- file.path(uc09Dir, "DataImportMap.xlsx")
 dataFiles <- xlsxReadData(
     wb = dataFilesPath,
     sheetName = "DataFiles",
@@ -95,7 +95,7 @@ cat("   ✓ DataFiles sheet updated\n")
 # Save the trimmed workbook
 saveWorkbook(
     wb,
-    file.path(uc09Dir, "DataImportConfiguration.xlsx"),
+    file.path(uc09Dir, "DataImportMap.xlsx"),
     overwrite = TRUE
 )
 

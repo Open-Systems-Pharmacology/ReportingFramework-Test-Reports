@@ -18,7 +18,7 @@ This scenario validates dictionary-driven observed-data import for time profiles
 - `spreadData = TRUE` populates `Individuals.xlsx` / `IndividualBiometrics` in the installed package version used by this repo.
 
 ## Result files
-- `ReportInputs/DataImportConfiguration_UC10.xlsx` - dedicated UC-10 import configuration workbook
+- `ReportInputs/DataImportMap_UC10.xlsx` - dedicated UC-10 import configuration workbook
 - `ReportInputs/dataFiles/tp_individual.csv` - individual time-profile source data
 - `ReportInputs/dataFiles/tp_aggregated.csv` - aggregated time-profile source data
 - `ReportInputs/dataFiles/pk_individual.csv` - individual PK source data

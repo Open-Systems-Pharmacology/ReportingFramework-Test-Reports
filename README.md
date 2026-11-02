@@ -98,7 +98,6 @@ currently available in this repository:
 | [UC-08B-Sensitivity-Analysis](./Reports/UC-08B-Sensitivity-Analysis) | [UC-08B-Sensitivity-Analysis](./tests/Reports/UC-08B-Sensitivity-Analysis/Report.md) | [report-uc-08b-sensitivity-analysis.R](./R/report-uc-08b-sensitivity-analysis.R) | NA |
 | [UC-09-EPackage-Export](./Reports/UC-09-EPackage-Export) | [UC-09-EPackage-Export](./tests/Reports/UC-09-EPackage-Export/Report.md) | [report-uc-09-epackage-export.R](./R/report-uc-09-epackage-export.R) | NA |
 | [UC-10-Data-Dictionary-Operations](./Reports/UC-10-Data-Dictionary-Operations) | [UC-10-Data-Dictionary-Operations](./tests/Reports/UC-10-Data-Dictionary-Operations/Report.md) | [report-uc-10-data-dictionary.R](./R/report-uc-10-data-dictionary.R) | NA |
-| [UC-11-Word-Report-Rendering](./Reports/UC-11-Word-Report-Rendering) | [UC-11-Word-Report-Rendering](./tests/Reports/UC-11-Word-Report-Rendering/Report.md) | [report-uc-11-word-rendering.R](./R/report-uc-11-word-rendering.R) | NA |
 | [UC-12-Plot-TimeProfiles-Tutorial](./Reports/UC-12-Plot-TimeProfiles-Tutorial) | [UC-12-Plot-TimeProfiles-Tutorial](./tests/Reports/UC-12-Plot-TimeProfiles-Tutorial/Report.md) | [report-uc-12-plot-timeprofiles-tutorial.R](./R/report-uc-12-plot-timeprofiles-tutorial.R) | NA |
 
 ## Detailed Test Results

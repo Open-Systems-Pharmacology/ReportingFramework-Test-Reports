@@ -3,10 +3,21 @@
 #' Integration scenario for UC-07E aggregated PK forest ratio plot generation.
 
 rm(list = ls())
-library(ospsuite.reportingframework)
+#library(ospsuite.reportingframework)
+pkgload::load_all(
+  path = file.path(
+    'C:/Users/17fec1a5/Documents/GitHub/',
+    'OSPSuite.ReportingFramework'
+  )
+)
 
 source("R/helpers-uc-shared.R")
 source("R/helpers-uc-observedData.R")
+
+# Prevent accidental creation of Rplots.pdf by using a null default device.
+originalDeviceOption <- getOption("device")
+options(device = function(...) grDevices::pdf(NULL))
+on.exit(options(device = originalDeviceOption), add = TRUE)
 
 reportFolder <- file.path(
   "tests",
@@ -61,32 +72,27 @@ coverage <- loadAndFilterConfigSheet(
 for (i in seq_len(nrow(coverage))) {
   plotName <- coverage$plotName[[i]]
 
-  pkForestCall <- tryCatch(
-    {
-      runPlot(
-        projectConfiguration = pc,
-        nameOfplotFunction = "plotPKForestAggregatedRatios",
-        configTableSheet = qmdName,
-        qmdName = qmdName,
-        plotNames = plotName,
-        inputs = list(
-          pkParameterDT = pkParameterDT,
-          dataObservedPK = pkObservedDT
-        )
+  pkForestCall <- runStepWithResult(
+    runPlot(
+      projectConfiguration = pc,
+      nameOfplotFunction = "plotPKForestAggregatedRatios",
+      configTableSheet = qmdName,
+      qmdName = qmdName,
+      plotNames = plotName,
+      inputs = list(
+        pkParameterDT = pkParameterDT,
+        dataObservedPK = pkObservedDT
       )
-    },
-    error = function(e) {
-      e
-    }
+    )
   )
 
-  if (inherits(pkForestCall, "error")) {
+  if (!isTRUE(pkForestCall$success)) {
     coverage$status[[i]] <- "FAIL"
-    coverage$errorMessage[[i]] <- pkForestCall$message
+    coverage$errorMessage[[i]] <- pkForestCall$error
     next
   }
 
-  coverage$returnedObjects[[i]] <- length(pkForestCall)
+  coverage$returnedObjects[[i]] <- length(pkForestCall$result)
   if (coverage$returnedObjects[[i]] == 0) {
     coverage$status[[i]] <- "FAIL"
     coverage$errorMessage[[i]] <- "runPlot returned no plot objects"
@@ -94,10 +100,10 @@ for (i in seq_len(nrow(coverage))) {
 }
 
 assertOrStop(
-  !inherits(pkForestCall, "error"),
+  !any(coverage$status == "FAIL"),
   paste0(
-    "runPlot(plotPKForestAggregatedRatios) failed: ",
-    pkForestCall$message
+    "UC-07E plot failures: ",
+    paste(coverage$plotName[coverage$status == "FAIL"], collapse = ", ")
   )
 )
 returnedPlots <-

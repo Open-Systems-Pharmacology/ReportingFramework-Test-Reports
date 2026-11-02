@@ -95,7 +95,7 @@ expectedSheets <- c(
   "pkDictionary",
   "NumericValues"
 )
-sheetNames <- openxlsx::getSheetNames(pc$dataImporterConfigurationFile)
+sheetNames <- openxlsx::getSheetNames(pc$addOns$dataImportMapFile)
 assertOrStop(
   all(expectedSheets %in% sheetNames),
   paste0(
@@ -105,19 +105,19 @@ assertOrStop(
 )
 
 dataFilesConfig <- readConfigSheet(
-  pc$dataImporterConfigurationFile,
+  pc$addOns$dataImportMapFile,
   "DataFiles"
 )
 tpDictionary <- readConfigSheet(
-  pc$dataImporterConfigurationFile,
+  pc$addOns$dataImportMapFile,
   "tpDictionary"
 )
 pkDictionary <- readConfigSheet(
-  pc$dataImporterConfigurationFile,
+  pc$addOns$dataImportMapFile,
   "pkDictionary"
 )
 numericValuesConfig <- readConfigSheet(
-  pc$dataImporterConfigurationFile,
+  pc$addOns$dataImportMapFile,
   "NumericValues"
 )
 
@@ -616,7 +616,7 @@ reportLines <- c(
   ),
   "",
   "## Result files",
-  "- ReportInputs/DataImportConfiguration_UC10.xlsx - dedicated UC-10 import configuration workbook",
+  "- ReportInputs/DataImportMap_UC10.xlsx - dedicated UC-10 import configuration workbook",
   "- ReportInputs/dataFiles/tp_individual.csv - individual time-profile source data",
   "- ReportInputs/dataFiles/tp_aggregated.csv - aggregated time-profile source data",
   "- ReportInputs/dataFiles/pk_individual.csv - individual PK source data",

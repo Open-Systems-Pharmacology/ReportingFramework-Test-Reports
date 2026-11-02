@@ -6,6 +6,11 @@ rm(list = ls())
 library(ospsuite.reportingframework)
 source("R/helpers-uc-shared.R")
 
+# Prevent accidental creation of Rplots.pdf by using a null default device.
+originalDeviceOption <- getOption("device")
+options(device = function(...) grDevices::pdf(NULL))
+on.exit(options(device = originalDeviceOption), add = TRUE)
+
 reportFolder <- file.path(
   "tests",
   "Reports",
@@ -62,35 +67,30 @@ coverage <- loadAndFilterConfigSheet(
 for (i in seq_len(nrow(coverage))) {
   plotName <- coverage$plotName[[i]]
 
-  rangeCall <- tryCatch(
-    {
-      runPlot(
-        projectConfiguration = pc,
-        nameOfplotFunction = "plotDistributionVsDemographics",
-        configTableSheet = configSheetName,
-        qmdName = qmdNames[[1]],
-        plotNames = plotName,
-        theme = themeToUse,
-        inputs = list(
-          scenarioList = scenarioList,
-          pkParameterDT = pkParameterDT,
-          aggregationFlag = "GeometricStdDev",
-          asStepPlot = TRUE
-        )
+  rangeCall <- runStepWithResult(
+    runPlot(
+      projectConfiguration = pc,
+      nameOfplotFunction = "plotDistributionVsDemographics",
+      configTableSheet = configSheetName,
+      qmdName = qmdNames[[1]],
+      plotNames = plotName,
+      theme = themeToUse,
+      inputs = list(
+        scenarioList = scenarioList,
+        pkParameterDT = pkParameterDT,
+        aggregationFlag = "GeometricStdDev",
+        asStepPlot = TRUE
       )
-    },
-    error = function(e) {
-      e
-    }
+    )
   )
 
-  if (inherits(rangeCall, "error")) {
+  if (!isTRUE(rangeCall$success)) {
     coverage$status[[i]] <- "FAIL"
-    coverage$errorMessage[[i]] <- rangeCall$message
+    coverage$errorMessage[[i]] <- rangeCall$error
     next
   }
 
-  coverage$returnedObjects[[i]] <- length(rangeCall)
+  coverage$returnedObjects[[i]] <- length(rangeCall$result)
   if (coverage$returnedObjects[[i]] == 0) {
     coverage$status[[i]] <- "FAIL"
     coverage$errorMessage[[i]] <- "runPlot returned no plot objects"
@@ -98,10 +98,10 @@ for (i in seq_len(nrow(coverage))) {
 }
 
 assertOrStop(
-  !inherits(rangeCall, "error"),
+  !any(coverage$status == "FAIL"),
   paste0(
-    "runPlot(plotDistributionVsDemographics) failed: ",
-    rangeCall$message
+    "UC-07H plot failures: ",
+    paste(coverage$plotName[coverage$status == "FAIL"], collapse = ", ")
   )
 )
 returnedPlots <-

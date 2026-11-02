@@ -6,6 +6,12 @@ rm(list = ls())
 library(ospsuite.reportingframework)
 source("R/helpers-uc-shared.R")
 source("R/helpers-uc-observedData.R")
+
+# Prevent accidental creation of Rplots.pdf by using a null default device.
+originalDeviceOption <- getOption("device")
+options(device = function(...) grDevices::pdf(NULL))
+on.exit(options(device = originalDeviceOption), add = TRUE)
+
 set.seed(1)
 
 reportFolder <- file.path("tests", "Reports", "UC-07A-Plot-TimeProfiles")
@@ -61,33 +67,28 @@ coverage <- loadAndFilterConfigSheet(
 
 for (i in seq_len(nrow(coverage))) {
   plotName <- coverage$plotName[[i]]
-  tpCall <- tryCatch(
-    {
-      plotList <- runPlot(
-        projectConfiguration = pc,
-        nameOfplotFunction = "plotTimeProfiles",
-        configTableSheet = qmdName,
-        qmdName = qmdName,
-        plotNames = plotName,
-        theme = themeToUse,
-        inputs = list(
-          scenarioResults = scenarioResultsForPlots,
-          dataObserved = dataObserved
-        )
+  tpCall <- runStepWithResult(
+    runPlot(
+      projectConfiguration = pc,
+      nameOfplotFunction = "plotTimeProfiles",
+      configTableSheet = qmdName,
+      qmdName = qmdName,
+      plotNames = plotName,
+      theme = themeToUse,
+      inputs = list(
+        scenarioResults = scenarioResultsForPlots,
+        dataObserved = dataObserved
       )
-    },
-    error = function(e) {
-      e
-    }
+    )
   )
 
-  if (inherits(tpCall, "error")) {
+  if (!isTRUE(tpCall$success)) {
     coverage$status[[i]] <- "FAIL"
-    coverage$errorMessage[[i]] <- tpCall$message
+    coverage$errorMessage[[i]] <- tpCall$error
     next
   }
 
-  coverage$returnedObjects[[i]] <- length(tpCall)
+  coverage$returnedObjects[[i]] <- length(tpCall$result)
   if (coverage$returnedObjects[[i]] == 0) {
     coverage$status[[i]] <- "FAIL"
     coverage$errorMessage[[i]] <- "runPlot returned no plot objects"

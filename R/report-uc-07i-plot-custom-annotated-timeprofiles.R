@@ -10,6 +10,12 @@ library(ospsuite.reportingframework)
 source("R/helpers-uc-shared.R")
 source("R/helpers-uc-observedData.R")
 source("R/helpers-uc-07i-custom-plot.R")
+
+# Prevent accidental creation of Rplots.pdf by using a null default device.
+originalDeviceOption <- getOption("device")
+options(device = function(...) grDevices::pdf(NULL))
+on.exit(options(device = originalDeviceOption), add = TRUE)
+
 set.seed(1)
 
 reportFolder <- file.path(
@@ -68,33 +74,28 @@ coverage <- loadAndFilterConfigSheet(
 for (i in seq_len(nrow(coverage))) {
   plotName <- coverage$plotName[[i]]
 
-  customCall <- tryCatch(
-    {
-      runPlot(
-        projectConfiguration = pc,
-        nameOfplotFunction = "plotCustomAnnotatedTimeProfiles",
-        configTableSheet = configSheetName,
-        qmdName = qmdName,
-        plotNames = plotName,
-        theme = themeToUse,
-        inputs = list(
-          scenarioResults = scenarioResultsForPlots,
-          dataObserved = dataObserved
-        )
+  customCall <- runStepWithResult(
+    runPlot(
+      projectConfiguration = pc,
+      nameOfplotFunction = "plotCustomAnnotatedTimeProfiles",
+      configTableSheet = configSheetName,
+      qmdName = qmdName,
+      plotNames = plotName,
+      theme = themeToUse,
+      inputs = list(
+        scenarioResults = scenarioResultsForPlots,
+        dataObserved = dataObserved
       )
-    },
-    error = function(e) {
-      e
-    }
+    )
   )
 
-  if (inherits(customCall, "error")) {
+  if (!isTRUE(customCall$success)) {
     coverage$status[[i]] <- "FAIL"
-    coverage$errorMessage[[i]] <- customCall$message
+    coverage$errorMessage[[i]] <- customCall$error
     next
   }
 
-  coverage$returnedObjects[[i]] <- length(customCall)
+  coverage$returnedObjects[[i]] <- length(customCall$result)
   if (coverage$returnedObjects[[i]] == 0) {
     coverage$status[[i]] <- "FAIL"
     coverage$errorMessage[[i]] <- "runPlot returned no plot objects"

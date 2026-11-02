@@ -182,11 +182,11 @@ fwrite(tpAggregated, file.path(fixtureDir, "tp_aggregated.csv"))
 fwrite(pkIndividual, file.path(fixtureDir, "pk_individual.csv"))
 fwrite(pkAggregated, file.path(fixtureDir, "pk_aggregated.csv"))
 
-workbookPath <- reportInputsPath("DataImportConfiguration_UC10.xlsx")
+workbookPath <- reportInputsPath("DataImportMap_UC10.xlsx")
 file.copy(
   from = system.file(
     "templates",
-    "DataImportConfiguration.xlsx",
+    "DataImportMap.xlsx",
     package = "ospsuite.reportingframework",
     mustWork = TRUE
   ),
@@ -383,7 +383,7 @@ cat(
     paste("- tp_aggregated rows:", nrow(tpAggregated)),
     paste("- pk_individual rows:", nrow(pkIndividual)),
     paste("- pk_aggregated rows:", nrow(pkAggregated)),
-    "DataImportConfiguration_UC10.xlsx",
+    "DataImportMap_UC10.xlsx",
     sep = "\n"
   ),
   "\n"
