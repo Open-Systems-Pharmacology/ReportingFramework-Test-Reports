@@ -1,4 +1,4 @@
-#' @title report-uc-07f-plot-pk-forest-point-estimate-ratios
+﻿#' @title report-uc-07f-plot-pk-forest-point-estimate-ratios
 #' @description
 #' Integration scenario for UC-07F point-estimate PK forest ratio plot generation.
 
@@ -66,7 +66,7 @@ coverage <- loadAndFilterConfigSheet(
 for (i in seq_len(nrow(coverage))) {
   plotName <- coverage$plotName[[i]]
 
-  pkForestCall <- runStepWithResult(
+  pkForestCall <- .runStepWithResult(
     runPlot(
       projectConfiguration = pc,
       nameOfplotFunction = "plotPKForestPointEstimateOfRatios",
@@ -155,3 +155,4 @@ reportLines <- c(
 )
 
 writeLines(reportLines, con = file.path(reportFolder, "Report.md"))
+

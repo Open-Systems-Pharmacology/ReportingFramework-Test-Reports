@@ -1,13 +1,12 @@
-#' @title report-uc-07e-plot-pk-forest-aggregated-ratios
+﻿#' @title report-uc-07e-plot-pk-forest-aggregated-ratios
 #' @description
 #' Integration scenario for UC-07E aggregated PK forest ratio plot generation.
 
 rm(list = ls())
-#library(ospsuite.reportingframework)
 pkgload::load_all(
   path = file.path(
-    'C:/Users/17fec1a5/Documents/GitHub/',
-    'OSPSuite.ReportingFramework'
+    "C:/Users/17fec1a5/Documents/GitHub/",
+    "OSPSuite.ReportingFramework"
   )
 )
 
@@ -72,7 +71,7 @@ coverage <- loadAndFilterConfigSheet(
 for (i in seq_len(nrow(coverage))) {
   plotName <- coverage$plotName[[i]]
 
-  pkForestCall <- runStepWithResult(
+  pkForestCall <- .runStepWithResult(
     runPlot(
       projectConfiguration = pc,
       nameOfplotFunction = "plotPKForestAggregatedRatios",
@@ -161,3 +160,4 @@ reportLines <- c(
 )
 
 writeLines(reportLines, con = file.path(reportFolder, "Report.md"))
+

@@ -1,4 +1,4 @@
-#' @title report-uc-07d-plot-pk-forest-point-estimate-absolute
+﻿#' @title report-uc-07d-plot-pk-forest-point-estimate-absolute
 #' @description
 #' Integration scenario for UC-07D PK forest point-estimate plot generation.
 
@@ -64,7 +64,7 @@ coverage <- loadAndFilterConfigSheet(
 for (i in seq_len(nrow(coverage))) {
   plotName <- coverage$plotName[[i]]
 
-  pkForestCall <- runStepWithResult(
+  pkForestCall <- .runStepWithResult(
     runPlot(
       projectConfiguration = pc,
       nameOfplotFunction = "plotPKForestPointEstimateOfAbsoluteValues",
@@ -153,3 +153,4 @@ reportLines <- c(
 )
 
 writeLines(reportLines, con = file.path(reportFolder, "Report.md"))
+

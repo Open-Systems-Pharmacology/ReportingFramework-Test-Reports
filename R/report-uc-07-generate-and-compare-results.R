@@ -73,7 +73,7 @@ compareResultTableData <- function(actualDT, expectedDT, tolerance = 1e-6) {
           paste0(
             colName,
             " maxAbsDiff=",
-            signif(
+            janitor::signif_half_up(
               max(abs(actualNum - expectedNum), na.rm = TRUE),
               digits = 6
             )
@@ -369,9 +369,9 @@ comparePKFixtureFiles <- function(
             paste0(
               result$file,
               " (maxRelDiff=",
-              signif(result$maxRelDiff, digits = 4),
+              janitor::signif_half_up(result$maxRelDiff, digits = 4),
               ", meanRelDiff=",
-              signif(result$meanRelDiff, digits = 4),
+              janitor::signif_half_up(result$meanRelDiff, digits = 4),
               ")"
             )
           },
@@ -500,11 +500,11 @@ reportLines <- c(
   ),
   paste0(
     "- Maximum PK relative difference on comparable shared rows: ",
-    signif(pkMaxRelativeDiff, digits = 4)
+    janitor::signif_half_up(pkMaxRelativeDiff, digits = 4)
   ),
   paste0(
     "- Mean PK relative difference across scenarios on comparable shared rows: ",
-    signif(pkMeanRelativeDiff, digits = 4)
+    janitor::signif_half_up(pkMeanRelativeDiff, digits = 4)
   ),
   "",
   "## Compared files",

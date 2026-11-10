@@ -1,4 +1,4 @@
-#' @title report-uc-08a-sensitivity-analysis
+﻿#' @title report-uc-08a-sensitivity-analysis
 #' @description
 #' Integration scenario for UC-08A sensitivity analysis plot generation.
 
@@ -99,7 +99,7 @@ addSensitivityTable(
   sheetName = sensitivitySheet
 )
 
-sensitivitySheetData <- adjustSensitivitySheetWorkbookForUC(
+sensitivitySheetData <- .adjustSensitivitySheetWorkbookForUC(
   sensitivityFile = pc$addOns$sensitivityFile,
   sheetName = sensitivitySheet,
   parameterPattern = "CYP3A4",
@@ -135,7 +135,7 @@ runSensitivityAnalysisForScenarios(
 absoluteSensitivityResults <- fread(file.path(
   pc$outputFolder,
   EXPORTDIR$sensitivityResults,
-  paste0(scenarioName, '_', sensitivitySheet, '.csv')
+  paste0(scenarioName, "_", sensitivitySheet, ".csv")
 ))
 
 runSensitivityAnalysisForScenarios(
@@ -149,7 +149,7 @@ runSensitivityAnalysisForScenarios(
 relativeSensitivityResults <- fread(file.path(
   pc$outputFolder,
   EXPORTDIR$sensitivityResults,
-  paste0(scenarioName, '_', sensitivitySheet, '.csv')
+  paste0(scenarioName, "_", sensitivitySheet, ".csv")
 ))
 
 sensitivityDataFiles <- list.files(
@@ -216,7 +216,7 @@ coverage$returnedObjects <- rep(NA_real_, nrow(coverage))
 for (i in seq_len(nrow(coverage))) {
   plotName <- coverage$plotName[[i]]
 
-  rangeCall <- runStepWithResult(
+  rangeCall <- .runStepWithResult(
     runPlot(
       projectConfiguration = pc,
       nameOfplotFunction = "plotSensitivity",
@@ -458,3 +458,4 @@ assertOrStop(
 cat(
   "UC-08A absolute and relative sensitivity analysis functionality validation completed successfully!\n"
 )
+

@@ -1,4 +1,4 @@
-#' @title report-uc-07i-plot-custom-annotated-timeprofiles
+﻿#' @title report-uc-07i-plot-custom-annotated-timeprofiles
 #' @description
 #' Integration scenario for UC-07I custom annotated time profile plot generation.
 #' Demonstrates how to create and use a custom plot function that extends
@@ -74,7 +74,7 @@ coverage <- loadAndFilterConfigSheet(
 for (i in seq_len(nrow(coverage))) {
   plotName <- coverage$plotName[[i]]
 
-  customCall <- runStepWithResult(
+  customCall <- .runStepWithResult(
     runPlot(
       projectConfiguration = pc,
       nameOfplotFunction = "plotCustomAnnotatedTimeProfiles",
@@ -190,3 +190,4 @@ reportLines <- c(
 )
 
 writeLines(reportLines, con = file.path(reportFolder, "Report.md"))
+

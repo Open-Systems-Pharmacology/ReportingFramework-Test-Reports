@@ -52,9 +52,9 @@ createObservedData <- function(
 
   dtPopulation <- data.table::data.table(
     IndividualId = as.integer(dtPopulation[["IndividualId"]]),
-    weight = round(dtPopulation[["Organism|Weight"]], digits = 0),
-    age = round(dtPopulation[["Organism|Age"]], digits = 0),
-    height = round(dtPopulation[["Organism|Height"]], digits = 0)
+    weight = janitor::round_half_up(dtPopulation[["Organism|Weight"]], digits = 0),
+    age = janitor::round_half_up(dtPopulation[["Organism|Age"]], digits = 0),
+    height = janitor::round_half_up(dtPopulation[["Organism|Height"]], digits = 0)
   )
 
   firstScenarioSim <- data.table::fread(file.path(
@@ -141,7 +141,7 @@ createObservedData <- function(
             height = dtSimulation$height,
             xValues = dtSimulation[["Time [min]"]] / 60,
             xUnit = "h",
-            yValues = signif(yValues, digits = 3),
+            yValues = janitor::signif_half_up(yValues, digits = 3),
             yUnit = outputUnit,
             lloq = 0.1,
             dataType = "observed",
@@ -260,7 +260,7 @@ createObservedPKData <- function(
         scenario = scenarioName,
         pkParameter = as.character(dtPk$Parameter),
         individualId = as.character(dtPk$IndividualId),
-        value = signif(values, digits = valueDigits),
+        value = janitor::signif_half_up(values, digits = valueDigits),
         outputPathId = outputIds,
         displayNamePKParameter = as.character(dtPk$Parameter),
         displayUnitPKParameter = displayUnits,
@@ -311,7 +311,7 @@ aggregateObservedPKData <- function(
     ),
     by = .(pkParameter, outputPathId, scenario)
   ] |>
-    data.table::setnames(old = 'scenario', new = 'group')
+    data.table::setnames(old = "scenario", new = "group")
 }
 
 aggregateObservedPKPointEstimateData <- function(

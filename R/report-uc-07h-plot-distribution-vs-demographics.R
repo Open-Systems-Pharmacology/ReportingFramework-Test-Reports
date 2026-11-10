@@ -1,4 +1,4 @@
-#' @title report-uc-07h-plot-distribution-vs-demographics
+﻿#' @title report-uc-07h-plot-distribution-vs-demographics
 #' @description
 #' Integration scenario for UC-07H distribution vs demographics plot generation.
 
@@ -67,7 +67,7 @@ coverage <- loadAndFilterConfigSheet(
 for (i in seq_len(nrow(coverage))) {
   plotName <- coverage$plotName[[i]]
 
-  rangeCall <- runStepWithResult(
+  rangeCall <- .runStepWithResult(
     runPlot(
       projectConfiguration = pc,
       nameOfplotFunction = "plotDistributionVsDemographics",
@@ -196,3 +196,4 @@ reportLines <- c(
 )
 
 writeLines(reportLines, con = file.path(reportFolder, "Report.md"))
+

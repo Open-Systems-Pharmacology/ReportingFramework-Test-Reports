@@ -1,4 +1,4 @@
-#' @title report-uc-07g-plot-histograms
+﻿#' @title report-uc-07g-plot-histograms
 #' @description
 #' Integration scenario for UC-07G histogram plot generation.
 
@@ -64,7 +64,7 @@ coverage <- loadAndFilterConfigSheet(
 for (i in seq_len(nrow(coverage))) {
   plotName <- coverage$plotName[[i]]
 
-  histCall <- runStepWithResult(
+  histCall <- .runStepWithResult(
     runPlot(
       projectConfiguration = pc,
       nameOfplotFunction = "plotHistograms",
@@ -157,3 +157,4 @@ reportLines <- c(
 )
 
 writeLines(reportLines, con = file.path(reportFolder, "Report.md"))
+

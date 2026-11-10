@@ -1,4 +1,4 @@
-#' @title report-uc-07a-plot-timeprofiles
+﻿#' @title report-uc-07a-plot-timeprofiles
 #' @description
 #' Integration scenario for UC-07A time profile plot generation.
 
@@ -67,7 +67,7 @@ coverage <- loadAndFilterConfigSheet(
 
 for (i in seq_len(nrow(coverage))) {
   plotName <- coverage$plotName[[i]]
-  tpCall <- runStepWithResult(
+  tpCall <- .runStepWithResult(
     runPlot(
       projectConfiguration = pc,
       nameOfplotFunction = "plotTimeProfiles",
@@ -175,3 +175,4 @@ reportLines <- c(
 )
 
 writeLines(reportLines, con = file.path(reportFolder, "Report.md"))
+

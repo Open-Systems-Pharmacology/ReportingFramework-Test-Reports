@@ -1,4 +1,4 @@
-#' @title report-uc-09-epackage-export
+﻿#' @title report-uc-09-epackage-export
 #' @description
 #' Integration scenario for UC-09 electronic package (ePackage) export.
 
@@ -17,7 +17,7 @@ on.exit(options(device = originalDeviceOption), add = TRUE)
 #' Builds UC09 scenarios, writes them to workbook, and creates scenario objects.
 #' @keywords internal
 #' @noRd
-setupUC09Scenarios <- function(
+.setupUC09Scenarios <- function(
   pc,
   baseScenarioName,
   populationScenarioName,
@@ -82,14 +82,14 @@ setupUC09Scenarios <- function(
 #' Exports and runs simulation workflow and evaluates critical artifacts.
 #' @keywords internal
 #' @noRd
-runSimulationWorkflowUC09 <- function(
+.runSimulationWorkflowUC09 <- function(
   pc,
   ePackageFolderPath,
   scenarioNames,
   fileNameReplacements,
   simulationResultFiles
 ) {
-  exportResult <- runStep(
+  exportResult <- .runStep(
     exportSimulationWorkflowToEPackage(
       projectConfiguration = pc,
       wfIdentifier = 1,
@@ -166,8 +166,8 @@ runSimulationWorkflowUC09 <- function(
 #' Copies and normalizes TLF workflow prerequisites in the generated project.
 #' @keywords internal
 #' @noRd
-prepareTLFWorkflowInputs <- function(pc, templatePath, customCodePath) {
-  copyUC10DataImportFixtures(pc)
+.prepareTLFWorkflowInputs <- function(pc, templatePath, customCodePath) {
+  .copyUC10DataImportFixtures(pc)
 
   workflowRmdInProject <- file.path(pc$configurationsFolder, "workflow.Rmd")
   customCodeInProject <- file.path(
@@ -216,14 +216,14 @@ prepareTLFWorkflowInputs <- function(pc, templatePath, customCodePath) {
 #' Exports and runs TLF workflow and collects post-run diagnostics.
 #' @keywords internal
 #' @noRd
-runTLFWorkflowUC09 <- function(
+.runTLFWorkflowUC09 <- function(
   pc,
   ePackageFolderPath,
   workflowRmdInProject,
   fileNameReplacements,
   projectDir
 ) {
-  exportResult <- runStep(
+  exportResult <- .runStep(
     exportTLFWorkflowToEPackage(
       projectConfiguration = pc,
       wfIdentifier = 2,
@@ -329,7 +329,7 @@ runTLFWorkflowUC09 <- function(
 #' Lists ePackage contents and computes extension-level checks.
 #' @keywords internal
 #' @noRd
-inspectEPackage <- function(ePackageFolderPath) {
+.inspectEPackage <- function(ePackageFolderPath) {
   ePackageContents <- list.files(
     ePackageFolderPath,
     recursive = TRUE,
@@ -401,7 +401,7 @@ assertOrStop(
 )
 
 # Phase 2: prepare scenarios and run simulation workflow export.
-scenarioInfo <- setupUC09Scenarios(
+scenarioInfo <- .setupUC09Scenarios(
   pc = pc,
   baseScenarioName = baseScenarioName,
   populationScenarioName = populationScenarioName,
@@ -409,7 +409,7 @@ scenarioInfo <- setupUC09Scenarios(
   modelFile = modelFile
 )
 
-simulationInfo <- runSimulationWorkflowUC09(
+simulationInfo <- .runSimulationWorkflowUC09(
   pc = pc,
   ePackageFolderPath = ePackageFolderPath,
   scenarioNames = scenarioInfo$scenarioNames,
@@ -421,13 +421,13 @@ simulationInfo <- runSimulationWorkflowUC09(
 tlfWorkflowTemplatePath <- reportInputsPath("UC09_ePackageWorkflow.Rmd")
 tlfCustomCodePath <- reportInputsPath("UC09_customCode.R")
 
-tlfInputs <- prepareTLFWorkflowInputs(
+tlfInputs <- .prepareTLFWorkflowInputs(
   pc = pc,
   templatePath = tlfWorkflowTemplatePath,
   customCodePath = tlfCustomCodePath
 )
 
-tlfInfo <- runTLFWorkflowUC09(
+tlfInfo <- .runTLFWorkflowUC09(
   pc = pc,
   ePackageFolderPath = ePackageFolderPath,
   workflowRmdInProject = tlfInputs$workflowRmdInProject,
@@ -436,7 +436,7 @@ tlfInfo <- runTLFWorkflowUC09(
 )
 
 # Phase 4: inspect final ePackage folder for output consistency.
-ePackageInfo <- inspectEPackage(ePackageFolderPath)
+ePackageInfo <- .inspectEPackage(ePackageFolderPath)
 
 cat("\n=== TLF Output Files Check ===\n")
 cat(
@@ -700,3 +700,4 @@ assertOrStop(
 )
 
 cat("UC-09 ePackage export functionality validation completed successfully!\n")
+

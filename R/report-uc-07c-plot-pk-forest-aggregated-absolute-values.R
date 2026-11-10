@@ -1,4 +1,4 @@
-#' @title report-uc-07c-plot-pk-forest-aggregated-absolute-values
+﻿#' @title report-uc-07c-plot-pk-forest-aggregated-absolute-values
 #' @description
 #' Integration scenario for UC-07C aggregated absolute-value PK forest plot generation.
 
@@ -72,7 +72,7 @@ coverage <- loadAndFilterConfigSheet(
 for (i in seq_len(nrow(coverage))) {
   plotName <- coverage$plotName[[i]]
 
-  pkForestCall <- runStepWithResult(
+  pkForestCall <- .runStepWithResult(
     runPlot(
       projectConfiguration = pc,
       nameOfplotFunction = "plotPKForestAggregatedAbsoluteValues",
@@ -162,3 +162,4 @@ reportLines <- c(
 )
 
 writeLines(reportLines, con = file.path(reportFolder, "Report.md"))
+

@@ -1,4 +1,4 @@
-#' @title report-uc-07b-plot-pk-boxwhisker
+﻿#' @title report-uc-07b-plot-pk-boxwhisker
 #' @description
 #' Integration scenario for UC-07B PK box-whisker plot generation using population scenarios.
 
@@ -56,7 +56,7 @@ coverage <- loadAndFilterConfigSheet(
 for (i in seq_len(nrow(coverage))) {
   plotName <- coverage$plotName[[i]]
 
-  pkBoxCall <- runStepWithResult(
+  pkBoxCall <- .runStepWithResult(
     runPlot(
       projectConfiguration = pc,
       nameOfplotFunction = "plotPKBoxwhisker",
@@ -156,3 +156,4 @@ reportLines <- c(
 )
 
 writeLines(reportLines, con = file.path(reportFolder, "Report.md"))
+

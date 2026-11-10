@@ -1,4 +1,4 @@
-#' @title report-uc-12-plot-timeprofiles-tutorial
+﻿#' @title report-uc-12-plot-timeprofiles-tutorial
 #' @description
 #' Integration scenario for UC-12 tutorial-based time profile plotting.
 
@@ -189,8 +189,8 @@ scenarioResults <- runAndSaveScenarios(
 
 # run Plots  --------
 themeToUse <-
-  theme(legend.position = 'top', legend.title = element_blank())
-options(knitr.kable.NA = '')
+  theme(legend.position = "top", legend.title = element_blank())
+options(knitr.kable.NA = "")
 
 coverage <- loadAndFilterConfigSheet(
   pc,
@@ -203,7 +203,7 @@ for (i in seq_len(nrow(coverage))) {
 
   plotDataObserved <- data.table::copy(dataObserved)
 
-  tpCall <- runStepWithResult(
+  tpCall <- .runStepWithResult(
     runPlot(
       nameOfplotFunction = "plotTimeProfiles",
       projectConfiguration = pc,
@@ -283,7 +283,7 @@ wordRenderStatus <- "SKIPPED"
 wordRenderMessage <- "Word rendering skipped: Quarto is not available in this environment"
 
 if (quartoAvailable) {
-  wordRenderCall <- runStepWithResult(
+  wordRenderCall <- .runStepWithResult(
     renderWord(fileName = qmdRenderResult$qmdFile, quiet = TRUE)
   )
 
@@ -334,3 +334,4 @@ reportLines <- c(
 
 reportPath <- file.path(reportFolder, "Report.md")
 writeLines(reportLines, con = reportPath)
+

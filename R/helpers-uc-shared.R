@@ -12,7 +12,7 @@ assertOrStop <- function(condition, message) {
 #' @return List with fields `success` (logical) and `error` (character).
 #' @keywords internal
 #' @noRd
-runStep <- function(stepExpr) {
+.runStep <- function(stepExpr) {
   tryCatch(
     {
       force(stepExpr)
@@ -30,7 +30,7 @@ runStep <- function(stepExpr) {
 #'   `result` (expression output or NULL when failed).
 #' @keywords internal
 #' @noRd
-runStepWithResult <- function(stepExpr) {
+.runStepWithResult <- function(stepExpr) {
   tryCatch(
     {
       list(
@@ -148,17 +148,17 @@ updateUC7Project <- function(pc, scenarioNames, copyPK, copySimResult) {
 
   # copy configuration files
   file.copy(
-    from = file.path(resolveReportInputsRoot(), 'Scenarios_UC07.xlsx'),
+    from = file.path(resolveReportInputsRoot(), "Scenarios_UC07.xlsx"),
     to = pc$scenariosFile,
     overwrite = TRUE
   )
   file.copy(
-    from = file.path(resolveReportInputsRoot(), 'PKParameter_UC07.xlsx'),
+    from = file.path(resolveReportInputsRoot(), "PKParameter_UC07.xlsx"),
     to = pc$addOns$pKParameterFile,
     overwrite = TRUE
   )
   file.copy(
-    from = file.path(resolveReportInputsRoot(), 'Reports_UC07.xlsx'),
+    from = file.path(resolveReportInputsRoot(), "Reports_UC07.xlsx"),
     to = pc$addOns$reportsFile,
     overwrite = TRUE
   )
@@ -173,11 +173,11 @@ updateUC7Project <- function(pc, scenarioNames, copyPK, copySimResult) {
   }
 
   popFilesToCopy <- paste0(
-    unique(gsub('_po', '', gsub('_iv$', '', scenarioNames))),
-    '.csv'
+    unique(gsub("_po", "", gsub("_iv$", "", scenarioNames))),
+    ".csv"
   )
 
-  popFilesToCopy <- setdiff(popFilesToCopy, 'meanModel.csv')
+  popFilesToCopy <- setdiff(popFilesToCopy, "meanModel.csv")
 
   copyPopulations(pc, files = popFilesToCopy)
 
@@ -227,7 +227,7 @@ copyFilesToDir <- function(
 #' @return Character vector of copied CSV file names.
 #' @keywords internal
 #' @noRd
-copyUC10DataImportFixtures <- function(
+.copyUC10DataImportFixtures <- function(
   pc,
   fixtureDir = reportInputsPath("dataFiles"),
   fixtureWorkbook = reportInputsPath("DataImportMap_UC10.xlsx")
@@ -319,9 +319,9 @@ copySimulationResults <- function(
   )
 
   simResultsFiles <- c(
-    paste0(scenariosToCopy, '.csv'),
-    paste0(scenariosToCopy, '_population.csv'),
-    paste0(scenariosToCopy, '.pkml')
+    paste0(scenariosToCopy, ".csv"),
+    paste0(scenariosToCopy, "_population.csv"),
+    paste0(scenariosToCopy, ".pkml")
   )
 
   copyFilesToDir(
@@ -362,9 +362,9 @@ copyPopulations <- function(pc, files, populationDir = NULL) {
       list(
         popConfig,
         data.table::data.table(
-          populationName = gsub('.csv$', '', popName),
-          species = 'Human',
-          population = 'European_ICRP_2002',
+          populationName = gsub(".csv$", "", popName),
+          species = "Human",
+          population = "European_ICRP_2002",
           numberOfIndividuals = nrow(dtPop),
           proportionOfFemales = sum(dtPop$Gender == "FEMALE") /
             nrow(dtPop) *
@@ -395,7 +395,7 @@ copyPopulations <- function(pc, files, populationDir = NULL) {
 #' @return A list containing `rawDataRows`, `adjustedDataRows`, and `sheetForWrite`.
 #' @keywords internal
 #' @noRd
-adjustSensitivitySheetWorkbookForUC <- function(
+.adjustSensitivitySheetWorkbookForUC <- function(
   sensitivityFile,
   sheetName,
   parameterPattern = NULL,

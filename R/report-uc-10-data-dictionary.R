@@ -1,4 +1,4 @@
-#' @title report-uc-10-data-dictionary
+﻿#' @title report-uc-10-data-dictionary
 #' @description
 #' Integration scenario for UC-10 dictionary-driven import coverage across
 #' time profiles, PK parameters, and numeric values.
@@ -52,7 +52,7 @@ countNonMissing <- function(values) {
 stripOuterQuotes <- function(values) {
   output <- as.character(values)
   output[is.na(values)] <- NA_character_
-  sub('^"(.*)"$', '\\1', output)
+  sub('^"(.*)"$', "\\1", output)
 }
 
 assertColumnsPresent <- function(dataTable, expectedColumns, label) {
@@ -87,7 +87,7 @@ assertPopulatedColumns <- function(dataTable, columns, label) {
 }
 
 pc <- setupProject(projectDir)
-copyUC10DataImportFixtures(pc)
+.copyUC10DataImportFixtures(pc)
 
 expectedSheets <- c(
   "DataFiles",
@@ -626,3 +626,4 @@ reportLines <- c(
 )
 
 writeLines(reportLines, con = file.path(reportFolder, "Report.md"))
+
