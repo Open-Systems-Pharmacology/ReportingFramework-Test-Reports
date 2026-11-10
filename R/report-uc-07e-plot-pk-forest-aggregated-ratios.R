@@ -3,12 +3,7 @@
 #' Integration scenario for UC-07E aggregated PK forest ratio plot generation.
 
 rm(list = ls())
-pkgload::load_all(
-  path = file.path(
-    "C:/Users/17fec1a5/Documents/GitHub/",
-    "OSPSuite.ReportingFramework"
-  )
-)
+library(ospsuite.reportingFramework)
 
 source("R/helpers-uc-shared.R")
 source("R/helpers-uc-observedData.R")
@@ -160,4 +155,3 @@ reportLines <- c(
 )
 
 writeLines(reportLines, con = file.path(reportFolder, "Report.md"))
-
