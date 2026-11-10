@@ -98,10 +98,5 @@
     "Script": "report-uc-10-data-dictionary",
     "Report": "UC-10-Data-Dictionary-Operations",
     "Reference": false
-  },
-  {
-    "Script": "report-uc-16-calc-methods-scenarios",
-    "Report": "UC-16-Calculation-Methods-Scenarios",
-    "Reference": false
   }
 ]

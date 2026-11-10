@@ -4,23 +4,9 @@ on:
   workflow_dispatch:
     inputs:
       report:
-        description: 'Report to update'
+        description: 'Report to update (must match Report in tests/testthat/report-mapping.json)'
         required: true
-        type: choice
-        # UC Use Case reports based on ReportingFramework
-        options:
-        - UC-01-Project-Initialization
-        - UC-02-Scenario-Creation
-        - UC-03-Scenario-Results-RoundTrip
-        - UC-04-PK-Parameter-Loading
-        - UC-05-Population-Export
-        - UC-07A-Plot-TimeProfiles
-        - UC-07B-Plot-PKBoxwhisker
-        - UC-07C-Plot-PKForest
-        - UC-07D-Plot-Demographics
-        - UC-08A-Sensitivity-Analysis
-        - UC-08B-Sensitivity-Analysis
-        - UC-09-EPackage-Export
+        type: string
 
 permissions: write-all
 
@@ -34,6 +20,21 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v7
+      - name: Validate selected report against mapping
+        shell: python
+        run: |
+          import subprocess
+          import sys
+
+          cmd = [
+              sys.executable,
+              ".github/workflows/validate-report-mapping.py",
+              "--report",
+              "${{ inputs.report }}",
+          ]
+          result = subprocess.run(cmd, check=False)
+          if result.returncode != 0:
+              raise SystemExit(result.returncode)
       - name: Update reference report with test report
         run: |
           rm -r Reports/${{ inputs.report }}
