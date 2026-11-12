@@ -1,4 +1,4 @@
-﻿#' @title report-uc-07a-plot-timeprofiles
+#' @title report-uc-07a-plot-timeprofiles
 #' @description
 #' Integration scenario for UC-07A time profile plot generation.
 
@@ -57,7 +57,7 @@ updateDataGroupId(projectConfiguration = pc, dataDT = dataObserved)
 setWorkflowOptions(isValidRun = FALSE)
 
 themeToUse <-
-  theme(legend.position = "top", legend.title = element_blank())
+  ggplot2::theme(legend.position = "top", legend.title = ggplot2::element_blank())
 options(knitr.kable.NA = "")
 
 coverage <- loadAndFilterConfigSheet(
