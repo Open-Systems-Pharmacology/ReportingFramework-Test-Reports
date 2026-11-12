@@ -201,8 +201,6 @@ coverage <- loadAndFilterConfigSheet(
 for (i in seq_len(nrow(coverage))) {
   plotName <- coverage$plotName[[i]]
 
-  plotDataObserved <- data.table::copy(dataObserved)
-
   tpCall <- .runStepWithResult(
     runPlot(
       nameOfplotFunction = "plotTimeProfiles",
@@ -212,7 +210,7 @@ for (i in seq_len(nrow(coverage))) {
       plotNames = plotName,
       theme = themeToUse,
       inputs = list(
-        dataObserved = plotDataObserved,
+        dataObserved = dataObserved,
         scenarioResults = scenarioResults
       )
     )
@@ -255,7 +253,7 @@ runPlot(
   qmdName = qmdName,
   theme = themeToUse,
   inputs = list(
-    dataObserved = plotDataObserved,
+    dataObserved = dataObserved,
     scenarioResults = scenarioResults
   )
 )
