@@ -112,8 +112,18 @@ sensitivitySheetData <- .adjustSensitivitySheetWorkbookForUC(
 dtDataAll <- sensitivitySheetData$rawDataRows
 dtData <- sensitivitySheetData$adjustedDataRows
 
-uniqueParameterPathCount <- dtDataAll[, uniqueN(parameterPath)]
-uniqueParameterCountInitial <- dtDataAll[, uniqueN(parameter)]
+requiredSensitivityColumns <- c("parameter", "parameterPath")
+missingSensitivityColumns <- setdiff(requiredSensitivityColumns, names(dtDataAll))
+assertOrStop(
+  length(missingSensitivityColumns) == 0,
+  paste0(
+    "Sensitivity sheet is missing required column(s): ",
+    paste(missingSensitivityColumns, collapse = ", ")
+  )
+)
+
+uniqueParameterPathCount <- data.table::uniqueN(dtDataAll[["parameterPath"]])
+uniqueParameterCountInitial <- data.table::uniqueN(dtDataAll[["parameter"]])
 
 assertOrStop(
   identical(uniqueParameterCountInitial, uniqueParameterPathCount) &

@@ -8,7 +8,9 @@ on:
         required: true
         type: string
 
-permissions: write-all
+permissions:
+  contents: write
+  pull-requests: write
 
 jobs:
   update-reference-reports:
@@ -35,10 +37,29 @@ jobs:
           result = subprocess.run(cmd, check=False)
           if result.returncode != 0:
               raise SystemExit(result.returncode)
+      - name: Ensure selected report is reference-enabled
+        shell: python
+        run: |
+          import json
+          from pathlib import Path
+
+          report = "${{ inputs.report }}"
+          mapping = json.loads(
+              Path("tests/testthat/report-mapping.json").read_text(encoding="utf-8")
+          )
+          selected = [item for item in mapping if item.get("Report") == report]
+
+          if not selected:
+              raise SystemExit(f"Report not found in mapping: {report}")
+          if not selected[0].get("Reference", False):
+              raise SystemExit(
+                  f"Report '{report}' has Reference=false and cannot be updated via this workflow."
+              )
       - name: Update reference report with test report
         run: |
-          rm -r Reports/${{ inputs.report }}
-          cp -R tests/Reports/${{ inputs.report }} Reports/${{ inputs.report }}
+          rm -rf Reports/${{ inputs.report }}
+          mkdir -p Reports/${{ inputs.report }}
+          rsync -a --exclude "Report.md" tests/Reports/${{ inputs.report }}/ Reports/${{ inputs.report }}/
       - name: Commit updates
         run: |
           git config --local user.email "actions@github.com"
@@ -48,10 +69,10 @@ jobs:
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8.1.1
         with:
-          branch: 30_update_${{ inputs.report }}
+          branch: update-reference-${{ inputs.report }}
           title: 'Update ${{ inputs.report }}'
           body: |
-            Update Reference Report ${{ inputs.report }} #30
+            Update reference report assets for ${{ inputs.report }} (excluding Report.md).
           labels: |
             update
 

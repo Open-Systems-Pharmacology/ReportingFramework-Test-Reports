@@ -2,27 +2,27 @@
   {
     "Script": "report-uc-01-project-init",
     "Report": "UC-01-Project-Initialization",
-    "Reference": true
+    "Reference": false
   },
   {
     "Script": "report-uc-02-scenario-creation",
     "Report": "UC-02-Scenario-Creation",
-    "Reference": true
+    "Reference": false
   },
   {
     "Script": "report-uc-03-scenario-results-roundtrip",
     "Report": "UC-03-Scenario-Results-RoundTrip",
-    "Reference": true
+    "Reference": false
   },
   {
     "Script": "report-uc-04-pk-parameter-loading",
     "Report": "UC-04-PK-Parameter-Loading",
-    "Reference": true
+    "Reference": false
   },
   {
     "Script": "report-uc-05-population-export",
     "Report": "UC-05-Population-Export",
-    "Reference": true
+    "Reference": false
   },
   {
     "Script": "report-uc-07a-plot-timeprofiles",

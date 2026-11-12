@@ -1,4 +1,4 @@
-﻿#' @title report-uc-08a-sensitivity-analysis
+#' @title report-uc-08a-sensitivity-analysis
 #' @description
 #' Integration scenario for UC-08A sensitivity analysis plot generation.
 
@@ -109,8 +109,18 @@ sensitivitySheetData <- .adjustSensitivitySheetWorkbookForUC(
 dtDataAll <- sensitivitySheetData$rawDataRows
 dtData <- sensitivitySheetData$adjustedDataRows
 
-uniqueParameterPathCount <- dtDataAll[, uniqueN(parameterPath)]
-uniqueParameterCountInitial <- dtDataAll[, uniqueN(parameter)]
+requiredSensitivityColumns <- c("parameter", "parameterPath")
+missingSensitivityColumns <- setdiff(requiredSensitivityColumns, names(dtDataAll))
+assertOrStop(
+  length(missingSensitivityColumns) == 0,
+  paste0(
+    "Sensitivity sheet is missing required column(s): ",
+    paste(missingSensitivityColumns, collapse = ", ")
+  )
+)
+
+uniqueParameterPathCount <- data.table::uniqueN(dtDataAll[["parameterPath"]])
+uniqueParameterCountInitial <- data.table::uniqueN(dtDataAll[["parameter"]])
 
 assertOrStop(
   identical(uniqueParameterCountInitial, uniqueParameterPathCount) &
@@ -458,4 +468,3 @@ assertOrStop(
 cat(
   "UC-08A absolute and relative sensitivity analysis functionality validation completed successfully!\n"
 )
-

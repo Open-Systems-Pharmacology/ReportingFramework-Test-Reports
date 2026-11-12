@@ -50,17 +50,18 @@ on.exit(options(device = originalDeviceOption), add = TRUE)
     use.names = TRUE
   )
 
-  scenarioSetup[
-    scenario_name == populationScenarioName,
-    populationId := populationSourceName
-  ]
-  scenarioSetup[,
-    readPopulationFromCSV := ifelse(
-      scenario_name == populationScenarioName,
-      "TRUE",
-      "FALSE"
-    )
-  ]
+  if (!"populationId" %in% names(scenarioSetup)) {
+    scenarioSetup[["populationId"]] <- NA_character_
+  }
+  scenarioSetup[["populationId"]][
+    scenarioSetup[["scenario_name"]] == populationScenarioName
+  ] <- populationSourceName
+
+  scenarioSetup[["readPopulationFromCSV"]] <- ifelse(
+    scenarioSetup[["scenario_name"]] == populationScenarioName,
+    "TRUE",
+    "FALSE"
+  )
 
   xlsxWriteData(wbScenarios, sheetName = "Scenarios", scenarioSetup)
   openxlsx::saveWorkbook(wbScenarios, pc$scenariosFile, overwrite = TRUE)
@@ -197,12 +198,13 @@ on.exit(options(device = originalDeviceOption), add = TRUE)
   emptyDisplayName <-
     is.na(outputsConfig[["displayName"]]) |
     trimws(outputsConfig[["displayName"]]) == ""
-  outputsConfig[emptyDisplayName, displayName := outputPathId]
+  outputsConfig[["displayName"]][emptyDisplayName] <-
+    outputsConfig[["outputPathId"]][emptyDisplayName]
 
   emptyDisplayUnit <-
     is.na(outputsConfig$displayUnit) |
     trimws(outputsConfig$displayUnit) == ""
-  outputsConfig[emptyDisplayUnit, displayUnit := "\u00B5g/L"]
+  outputsConfig[["displayUnit"]][emptyDisplayUnit] <- "\u00B5g/L"
 
   xlsxWriteData(wbReport, sheetName = "Outputs", outputsConfig)
   openxlsx::saveWorkbook(wbReport, reportsWorkbookPath, overwrite = TRUE)

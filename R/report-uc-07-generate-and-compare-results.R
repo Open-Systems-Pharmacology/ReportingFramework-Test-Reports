@@ -227,6 +227,34 @@ comparePKFixtureFiles <- function(
     actualDT <- data.table::as.data.table(data.table::fread(actualPath))
     expectedDT <- data.table::as.data.table(data.table::fread(expectedPath))
 
+    requiredPkColumns <- c(
+      "IndividualId",
+      "QuantityPath",
+      "Parameter",
+      "Value",
+      "Unit"
+    )
+    missingActualColumns <- setdiff(requiredPkColumns, names(actualDT))
+    missingExpectedColumns <- setdiff(requiredPkColumns, names(expectedDT))
+    assertOrStop(
+      length(missingActualColumns) == 0,
+      paste0(
+        "Missing required PK columns in generated file ",
+        basename(actualPath),
+        ": ",
+        paste(missingActualColumns, collapse = ", ")
+      )
+    )
+    assertOrStop(
+      length(missingExpectedColumns) == 0,
+      paste0(
+        "Missing required PK columns in fixture file ",
+        basename(expectedPath),
+        ": ",
+        paste(missingExpectedColumns, collapse = ", ")
+      )
+    )
+
     actualParameters <- sort(unique(as.character(actualDT$Parameter)))
     expectedParameters <- sort(unique(as.character(expectedDT$Parameter)))
     commonParameters <- intersect(actualParameters, expectedParameters)
@@ -239,8 +267,18 @@ comparePKFixtureFiles <- function(
       paste0("No common PK parameters found for ", basename(actualPath))
     )
 
-    commonActual <- actualDT[actualDT$Parameter %in% commonParameters]
-    commonExpected <- expectedDT[expectedDT$Parameter %in% commonParameters]
+    commonActual <- actualDT[
+      actualDT[["Parameter"]] %in% commonParameters,
+      ,
+      drop = FALSE
+    ]
+    commonExpected <- expectedDT[
+      expectedDT[["Parameter"]] %in% commonParameters,
+      ,
+      drop = FALSE
+    ]
+    commonActual <- data.table::as.data.table(commonActual)
+    commonExpected <- data.table::as.data.table(commonExpected)
 
     sortCols <- intersect(
       c("IndividualId", "QuantityPath", "Parameter"),
@@ -396,8 +434,8 @@ updateUC7Project(
 
 scenarioList <- createScenariosWrapped(pc, scenarioNames = scenarioNames)
 assertOrStop(
-  length(scenarioList) == 11,
-  "UC-07 requires 11 scenarios"
+  length(scenarioList) == length(scenarioNames),
+  paste("UC-07 requires", length(scenarioNames), "scenarios")
 )
 
 scenarioResults <- runAndSaveScenarios(pc, scenarioList)

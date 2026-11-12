@@ -72,3 +72,46 @@ expectKnownCaption <- function(testCaption, refCaption) {
     label = testCaption
   ))
 }
+
+#' @title expectKnownCsv
+#' @description
+#' Compare content of a csv file while respecting column types
+#' @param testCsv Csv file to compare
+#' @param refCsv Reference csv file to be compared with
+#' @param tolerance Numeric comparison tolerance
+expectKnownCsv <- function(
+  testCsv,
+  refCsv,
+  tolerance = sqrt(.Machine$double.eps)
+) {
+  testData <- utils::read.csv(
+    testCsv,
+    stringsAsFactors = FALSE,
+    check.names = FALSE
+  )
+  refData <- utils::read.csv(
+    refCsv,
+    stringsAsFactors = FALSE,
+    check.names = FALSE
+  )
+
+  expect_equal(colnames(testData), colnames(refData), label = testCsv)
+  expect_equal(nrow(testData), nrow(refData), label = testCsv)
+
+  for (columnName in colnames(refData)) {
+    testColumn <- testData[[columnName]]
+    refColumn <- refData[[columnName]]
+    label <- paste0(testCsv, " [", columnName, "]")
+
+    if (is.numeric(testColumn) && is.numeric(refColumn)) {
+      expect_equal(testColumn, refColumn, tolerance = tolerance, label = label)
+      next
+    }
+
+    expect_identical(
+      as.character(testColumn),
+      as.character(refColumn),
+      label = label
+    )
+  }
+}

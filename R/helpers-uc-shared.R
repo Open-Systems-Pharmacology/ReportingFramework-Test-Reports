@@ -413,23 +413,42 @@ copyPopulations <- function(pc, files, populationDir = NULL) {
   )
 
   descriptionRow <- dt[1]
-  rawDataRows <- dt[-1]
+  rawDataRows <- dt[-1, , drop = FALSE]
   adjustedDataRows <- data.table::copy(rawDataRows)
 
+  if (!"parameter" %in% names(adjustedDataRows)) {
+    stop(
+      "Sensitivity sheet is missing required column: parameter",
+      call. = FALSE
+    )
+  }
+
   if (!is.null(parameterPattern)) {
-    adjustedDataRows <- adjustedDataRows[grep(parameterPattern, parameter)]
+    keepRows <- grepl(parameterPattern, adjustedDataRows[["parameter"]])
+    adjustedDataRows <- adjustedDataRows[keepRows, , drop = FALSE]
   }
 
   if (!is.null(parameterPathPattern)) {
-    adjustedDataRows <- adjustedDataRows[
-      grepl(parameterPathPattern, parameterPath)
-    ]
+    if (!"parameterPath" %in% names(adjustedDataRows)) {
+      stop(
+        "Sensitivity sheet is missing required column: parameterPath",
+        call. = FALSE
+      )
+    }
+
+    keepRows <- grepl(
+      parameterPathPattern,
+      adjustedDataRows[["parameterPath"]]
+    )
+    adjustedDataRows <- adjustedDataRows[keepRows, , drop = FALSE]
   }
 
   if (!is.null(keepTopN)) {
     keepTopN <- max(0, as.integer(keepTopN))
     adjustedDataRows <- adjustedDataRows[
-      seq_len(min(keepTopN, nrow(adjustedDataRows)))
+      seq_len(min(keepTopN, nrow(adjustedDataRows))),
+      ,
+      drop = FALSE
     ]
   }
 
@@ -437,10 +456,11 @@ copyPopulations <- function(pc, files, populationDir = NULL) {
     !is.null(normalizeParameterPattern) &&
       !is.null(normalizeParameterValue)
   ) {
-    adjustedDataRows[
-      grep(normalizeParameterPattern, parameter),
-      parameter := normalizeParameterValue
-    ]
+    normalizeRows <- grepl(
+      normalizeParameterPattern,
+      adjustedDataRows[["parameter"]]
+    )
+    adjustedDataRows[["parameter"]][normalizeRows] <- normalizeParameterValue
   }
 
   sheetForWrite <- rbind(descriptionRow, adjustedDataRows, fill = TRUE)

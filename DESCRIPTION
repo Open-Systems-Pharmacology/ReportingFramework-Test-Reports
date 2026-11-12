@@ -2,8 +2,6 @@ Package: ReportingFrameworkTestReports
 Title: Test Reports for OSP Reporting Framework Use Cases
 Version: 0.0.0.9000
 Authors@R: 
-    person("Pierre", "Chelle", , "chelle.pierre@gmail.com", role = c("aut", "cre"))
-Authors@R: 
     c(person(given = "Open-Systems-Pharmacology Community",
              role = "cph"),
       person(given = "Katrin",

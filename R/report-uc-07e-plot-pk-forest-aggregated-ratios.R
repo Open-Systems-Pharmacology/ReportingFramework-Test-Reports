@@ -1,9 +1,9 @@
-﻿#' @title report-uc-07e-plot-pk-forest-aggregated-ratios
+#' @title report-uc-07e-plot-pk-forest-aggregated-ratios
 #' @description
 #' Integration scenario for UC-07E aggregated PK forest ratio plot generation.
 
 rm(list = ls())
-library(ospsuite.reportingFramework)
+library(ospsuite.reportingframework)
 
 source("R/helpers-uc-shared.R")
 source("R/helpers-uc-observedData.R")

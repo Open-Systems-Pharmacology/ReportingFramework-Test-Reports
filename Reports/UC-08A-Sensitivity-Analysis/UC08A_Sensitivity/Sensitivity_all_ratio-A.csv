@@ -1,0 +1,22 @@
+"Parameter","Sensitivity"
+"CYP3A4 Disease factor",-0.962
+"CYP3A4 Ontogeny factor",-0.962
+"CYP3A4 Reference concentration",-0.962
+"DrugX-CYP3A4-Optimized kcat",-0.962
+"DrugX-CYP3A4-Optimized Km",0.763
+"CYP3A4 Fraction expressed intracellular",-0.594
+"Organism SmallIntestine Mucosa UpperJejunum Intracellular CYP3A4 Relative expression",-0.418
+"Organism Liver Periportal Intracellular CYP3A4 Relative expression",-0.367
+"Organism SmallIntestine Mucosa Duodenum Intracellular CYP3A4 Relative expression",-0.142
+"Organism SmallIntestine Mucosa LowerJejunum Intracellular CYP3A4 Relative expression",-0.0322
+"Organism SmallIntestine Mucosa UpperIleum Intracellular CYP3A4 Relative expression",-0.00243
+"Organism SmallIntestine Mucosa LowerIleum Intracellular CYP3A4 Relative expression",-0.000147
+"Organism SmallIntestine Intracellular CYP3A4 Relative expression",2.8e-05
+"Organism Brain Intracellular CYP3A4 Relative expression",7.69e-06
+"Organism Kidney Intracellular CYP3A4 Relative expression",4.96e-06
+"Organism Lung Intracellular CYP3A4 Relative expression",1.47e-06
+"Organism Gonads Intracellular CYP3A4 Relative expression",9.86e-07
+"CYP3A4 Fraction expressed in blood cells",0
+"CYP3A4 Fraction expressed in endosomes",0
+"CYP3A4 Ontogeny factor GI",0
+"Organism Liver Pericentral Intracellular CYP3A4 Relative expression",0
