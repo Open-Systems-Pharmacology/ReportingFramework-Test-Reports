@@ -1,0 +1,25 @@
+"Representative","Parameter","Sensitivity"
+"5th percentile","DrugX-CYP3A4-Optimized kcat",-1.78
+"5th percentile","DrugX-CYP3A4-Optimized kcat",-1.67
+"5th percentile","DrugX-CYP3A4-Optimized Km",1.48
+"median","DrugX-CYP3A4-Optimized kcat",-1.35
+"median","DrugX-CYP3A4-Optimized kcat",-1.35
+"5th percentile","DrugX-CYP3A4-Optimized kcat",-1.34
+"median","DrugX-CYP3A4-Optimized kcat",-1.32
+"5th percentile","DrugX-CYP3A4-Optimized Km",1.32
+"5th percentile","DrugX-CYP3A4-Optimized kcat",-1.28
+"95th percentile","DrugX-CYP3A4-Optimized kcat",-1.24
+"95th percentile","DrugX-CYP3A4-Optimized kcat",-1.21
+"95th percentile","DrugX-CYP3A4-Optimized kcat",-1.18
+"median","DrugX-CYP3A4-Optimized kcat",-1.18
+"median","DrugX-CYP3A4-Optimized Km",1.15
+"5th percentile","DrugX-CYP3A4-Optimized Km",1.13
+"median","DrugX-CYP3A4-Optimized Km",1.12
+"95th percentile","DrugX-CYP3A4-Optimized Km",1.07
+"95th percentile","DrugX-CYP3A4-Optimized Km",1.06
+"median","DrugX-CYP3A4-Optimized Km",1.05
+"5th percentile","DrugX-CYP3A4-Optimized Km",1.04
+"95th percentile","DrugX-CYP3A4-Optimized Km",1.03
+"median","DrugX-CYP3A4-Optimized Km",1.02
+"95th percentile","DrugX-CYP3A4-Optimized kcat",-0.984
+"95th percentile","DrugX-CYP3A4-Optimized Km",0.912

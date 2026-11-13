@@ -1,30 +1,12 @@
 {
   "summary": {
-    "total_reports": 11,
+    "total_reports": 20,
     "passed_reports": 0,
-    "failed_reports": 11
+    "failed_reports": 20
   },
   "reports": [
     {
-      "report": "Aciclovir-Mean",
-      "has_report_artifact": true,
-      "has_result_artifact": false,
-      "status": "failed",
-      "failed_tests": "NA",
-      "warning_tests": "NA",
-      "message": "Missing test result artifact."
-    },
-    {
-      "report": "Aciclovir-Mean-SVG",
-      "has_report_artifact": true,
-      "has_result_artifact": false,
-      "status": "failed",
-      "failed_tests": "NA",
-      "warning_tests": "NA",
-      "message": "Missing test result artifact."
-    },
-    {
-      "report": "Aciclovir-Population",
+      "report": "UC-01-Project-Initialization",
       "has_report_artifact": false,
       "has_result_artifact": false,
       "status": "failed",
@@ -33,7 +15,7 @@
       "message": "Missing test result artifact. Missing report artifact."
     },
     {
-      "report": "Raltegravir-Absorption",
+      "report": "UC-02-Scenario-Creation",
       "has_report_artifact": false,
       "has_result_artifact": false,
       "status": "failed",
@@ -42,67 +24,166 @@
       "message": "Missing test result artifact. Missing report artifact."
     },
     {
-      "report": "Raltegravir-Mass-Balance",
-      "has_report_artifact": true,
+      "report": "UC-03-Scenario-Results-RoundTrip",
+      "has_report_artifact": false,
       "has_result_artifact": false,
       "status": "failed",
       "failed_tests": "NA",
       "warning_tests": "NA",
-      "message": "Missing test result artifact."
+      "message": "Missing test result artifact. Missing report artifact."
     },
     {
-      "report": "Test-NO7",
-      "has_report_artifact": true,
+      "report": "UC-04-PK-Parameter-Loading",
+      "has_report_artifact": false,
       "has_result_artifact": false,
       "status": "failed",
       "failed_tests": "NA",
       "warning_tests": "NA",
-      "message": "Missing test result artifact."
+      "message": "Missing test result artifact. Missing report artifact."
     },
     {
-      "report": "Test-NO8",
-      "has_report_artifact": true,
+      "report": "UC-05-Population-Export",
+      "has_report_artifact": false,
       "has_result_artifact": false,
       "status": "failed",
       "failed_tests": "NA",
       "warning_tests": "NA",
-      "message": "Missing test result artifact."
+      "message": "Missing test result artifact. Missing report artifact."
     },
     {
-      "report": "Test-NO9",
-      "has_report_artifact": true,
+      "report": "UC-07A-Plot-TimeProfiles",
+      "has_report_artifact": false,
       "has_result_artifact": false,
       "status": "failed",
       "failed_tests": "NA",
       "warning_tests": "NA",
-      "message": "Missing test result artifact."
+      "message": "Missing test result artifact. Missing report artifact."
     },
     {
-      "report": "Test-NO10",
-      "has_report_artifact": true,
+      "report": "UC-07B-Plot-PKBoxwhisker",
+      "has_report_artifact": false,
       "has_result_artifact": false,
       "status": "failed",
       "failed_tests": "NA",
       "warning_tests": "NA",
-      "message": "Missing test result artifact."
+      "message": "Missing test result artifact. Missing report artifact."
     },
     {
-      "report": "Test-NO11",
-      "has_report_artifact": true,
+      "report": "UC-07C-Plot-PKForest-AggregatedAbsoluteValues",
+      "has_report_artifact": false,
       "has_result_artifact": false,
       "status": "failed",
       "failed_tests": "NA",
       "warning_tests": "NA",
-      "message": "Missing test result artifact."
+      "message": "Missing test result artifact. Missing report artifact."
     },
     {
-      "report": "Test-NO12",
-      "has_report_artifact": true,
+      "report": "UC-07D-Plot-PKForest-PointEstimateAbsolute",
+      "has_report_artifact": false,
       "has_result_artifact": false,
       "status": "failed",
       "failed_tests": "NA",
       "warning_tests": "NA",
-      "message": "Missing test result artifact."
+      "message": "Missing test result artifact. Missing report artifact."
+    },
+    {
+      "report": "UC-07E-Plot-PKForest-AggregatedRatios",
+      "has_report_artifact": false,
+      "has_result_artifact": false,
+      "status": "failed",
+      "failed_tests": "NA",
+      "warning_tests": "NA",
+      "message": "Missing test result artifact. Missing report artifact."
+    },
+    {
+      "report": "UC-07F-Plot-PKForest-PointEstimateRatios",
+      "has_report_artifact": false,
+      "has_result_artifact": false,
+      "status": "failed",
+      "failed_tests": "NA",
+      "warning_tests": "NA",
+      "message": "Missing test result artifact. Missing report artifact."
+    },
+    {
+      "report": "UC-07G-Plot-Histograms",
+      "has_report_artifact": false,
+      "has_result_artifact": false,
+      "status": "failed",
+      "failed_tests": "NA",
+      "warning_tests": "NA",
+      "message": "Missing test result artifact. Missing report artifact."
+    },
+    {
+      "report": "UC-07H-Plot-DistributionVsDemographics",
+      "has_report_artifact": false,
+      "has_result_artifact": false,
+      "status": "failed",
+      "failed_tests": "NA",
+      "warning_tests": "NA",
+      "message": "Missing test result artifact. Missing report artifact."
+    },
+    {
+      "report": "UC-07I-Plot-CustomAnnotatedTimeProfiles",
+      "has_report_artifact": false,
+      "has_result_artifact": false,
+      "status": "failed",
+      "failed_tests": "NA",
+      "warning_tests": "NA",
+      "message": "Missing test result artifact. Missing report artifact."
+    },
+    {
+      "report": "UC-07-Generate-Compare-Results",
+      "has_report_artifact": false,
+      "has_result_artifact": false,
+      "status": "failed",
+      "failed_tests": "NA",
+      "warning_tests": "NA",
+      "message": "Missing test result artifact. Missing report artifact."
+    },
+    {
+      "report": "UC-08A-Sensitivity-Analysis",
+      "has_report_artifact": false,
+      "has_result_artifact": false,
+      "status": "failed",
+      "failed_tests": "NA",
+      "warning_tests": "NA",
+      "message": "Missing test result artifact. Missing report artifact."
+    },
+    {
+      "report": "UC-08B-Sensitivity-Analysis",
+      "has_report_artifact": false,
+      "has_result_artifact": false,
+      "status": "failed",
+      "failed_tests": "NA",
+      "warning_tests": "NA",
+      "message": "Missing test result artifact. Missing report artifact."
+    },
+    {
+      "report": "UC-09-EPackage-Export",
+      "has_report_artifact": false,
+      "has_result_artifact": false,
+      "status": "failed",
+      "failed_tests": "NA",
+      "warning_tests": "NA",
+      "message": "Missing test result artifact. Missing report artifact."
+    },
+    {
+      "report": "UC-12-Plot-TimeProfiles-Tutorial",
+      "has_report_artifact": false,
+      "has_result_artifact": false,
+      "status": "failed",
+      "failed_tests": "NA",
+      "warning_tests": "NA",
+      "message": "Missing test result artifact. Missing report artifact."
+    },
+    {
+      "report": "UC-10-Data-Dictionary-Operations",
+      "has_report_artifact": false,
+      "has_result_artifact": false,
+      "status": "failed",
+      "failed_tests": "NA",
+      "warning_tests": "NA",
+      "message": "Missing test result artifact. Missing report artifact."
     }
   ],
   "tests": []

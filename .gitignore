@@ -47,3 +47,14 @@ po/*~
 
 # RStudio Connect folder
 rsconnect/
+
+
+# do not add lockfiles for libre office files
+.~lock.*
+
+# Temporary test report output (regenerated on each test run)
+tests/Reports/
+
+# Base R plot output artifact
+Rplots.pdf
+

@@ -16,7 +16,25 @@ permissions:
   issues: write
   
 jobs:
+  preflight-validation:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Validate report mapping and file consistency
+        shell: python
+        run: |
+          import subprocess
+          import sys
+
+          cmd = [sys.executable, ".github/workflows/validate-report-mapping.py"]
+          result = subprocess.run(cmd, check=False)
+          if result.returncode != 0:
+              raise SystemExit(result.returncode)
+
   prepare-matrix:
+    needs: preflight-validation
     runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.report-matrix.outputs.matrix }}
@@ -136,7 +154,12 @@ jobs:
           TARGET_BRANCH="${{ github.head_ref || github.ref_name }}"
           git config --local user.email "actions@github.com"
           git config --local user.name "GitHub Actions"
-          git add README.md ./tests/Reports log.json
+          git add README.md log.json
+          # tests/Reports is ignored locally to reduce developer noise, but CI must still
+          # commit regenerated report outputs for reference updates and website publishing.
+          if [ -d ./tests/Reports ]; then
+            git add -f ./tests/Reports
+          fi
           if git diff --cached --quiet; then
             echo "No changes to commit"
             exit 0

@@ -1,0 +1,67 @@
+---
+title: "Report"
+format: docx
+params:
+  customStyles:
+    value:
+      FigureCaption: null
+      FigureFootnote: null
+      TableCaption: null
+      TableFootnote: null
+---
+ 
+```{r}
+#| include: false
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, results = "asis", error = FALSE, message = FALSE)
+```
+ 
+  
+  
+  
+# PK Forest  
+  
+  
+```{r}
+#| label: fig-without_data-AUC_tEnd-linear
+#| fig-cap: "Simulated AUC of DrugX on a linear x-scale. Number of simulated values is 100 for all scenarios. IV 1mg, PO 5mg."
+knitr::include_graphics("UC07D_PK_Forest/without_data-AUC_tEnd-linear.png")
+```
+```{r}
+#| output: asis
+ospsuite.reportingframework::mdFootNote(subfolder = "UC07D_PK_Forest", footNoteFile = "without_data-AUC_tEnd-linear.footnote", footNoteCustomStyle = params$customStyles$FigureFootnote)
+```
+\newpage
+  
+```{r}
+#| label: fig-without_data-AUC_tEnd-log
+#| fig-cap: "Simulated AUC of DrugX on a logarithmic x-scale. Number of simulated values is 100 for all scenarios. IV 1mg, PO 5mg."
+knitr::include_graphics("UC07D_PK_Forest/without_data-AUC_tEnd-log.png")
+```
+```{r}
+#| output: asis
+ospsuite.reportingframework::mdFootNote(subfolder = "UC07D_PK_Forest", footNoteFile = "without_data-AUC_tEnd-log.footnote", footNoteCustomStyle = params$customStyles$FigureFootnote)
+```
+\newpage
+  
+```{r}
+#| label: fig-with_data-AUC_tEnd-linear
+#| fig-cap: "Simulated and observed AUC of DrugX on a linear x-scale. Number of simulated values is 12 and 100 for adolescents, children, school children and toddler. IV 1mg, PO 5mg."
+knitr::include_graphics("UC07D_PK_Forest/with_data-AUC_tEnd-linear.png")
+```
+```{r}
+#| output: asis
+ospsuite.reportingframework::mdFootNote(subfolder = "UC07D_PK_Forest", footNoteFile = "with_data-AUC_tEnd-linear.footnote", footNoteCustomStyle = params$customStyles$FigureFootnote)
+```
+\newpage
+  
+```{r}
+#| label: fig-with_data-AUC_tEnd-log
+#| fig-cap: "Simulated and observed AUC of DrugX on a logarithmic x-scale. Number of simulated values is 12 and 100 for adolescents, children, school children and toddler. IV 1mg, PO 5mg."
+knitr::include_graphics("UC07D_PK_Forest/with_data-AUC_tEnd-log.png")
+```
+```{r}
+#| output: asis
+ospsuite.reportingframework::mdFootNote(subfolder = "UC07D_PK_Forest", footNoteFile = "with_data-AUC_tEnd-log.footnote", footNoteCustomStyle = params$customStyles$FigureFootnote)
+```
+\newpage
+  

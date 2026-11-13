@@ -1,0 +1,48 @@
+---
+title: "Report"
+format: docx
+params:
+  customStyles:
+    value:
+      FigureCaption: null
+      FigureFootnote: null
+      TableCaption: null
+      TableFootnote: null
+---
+ 
+```{r}
+#| include: false
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, results = "asis", error = FALSE, message = FALSE)
+```
+ 
+  
+  
+  
+# Sensitivity  
+  
+  
+```{r}
+#| label: fig-Sensitivity_all
+#| fig-cap: "Simulated Sensitivity of AUC for DrugX for adolescents 5mg po, children 5mg po, school-children 5mg po and toddler 5mg po sorted by absolute sensitivity."
+knitr::include_graphics("UC08B_Sensitivity_Representatives/Sensitivity_all.png")
+```
+```{r}
+#| output: asis
+ospsuite.reportingframework::mdFootNote(subfolder = "UC08B_Sensitivity_Representatives", footNoteFile = "Sensitivity_all.footnote", footNoteCustomStyle = params$customStyles$FigureFootnote)
+```
+\newpage
+  
+```{r}
+#| label: tbl-Sensitivity_all-A
+#| tbl-cap: "Simulated Sensitivity of AUC for DrugX for adolescents 5mg po, children 5mg po, school-children 5mg po and toddler 5mg po sorted by absolute sensitivity."
+dt <- data.table::fread("UC08B_Sensitivity_Representatives/Sensitivity_all-A.csv")
+numeric_cols <- names(dt)[sapply(dt, function(x) is.numeric(x) & !is.integer(x))]
+if (length(numeric_cols) > 0) dt[, (numeric_cols) := signif(.SD, 3), .SDcols = numeric_cols]
+knitr::kable(dt)
+```
+```{r}
+#| output: asis
+ospsuite.reportingframework::mdFootNote(subfolder = "UC08B_Sensitivity_Representatives", footNoteFile = "Sensitivity_all-A.footnote", footNoteCustomStyle = params$customStyles$TableFootnote)
+```
+\newpage
+  

@@ -1,0 +1,4 @@
+STUD,GRPNAME,ARM,SID,MOLECULE,TIME,DV,DVUNIT,LLOQ,DV_GSD,DV_MIN,DV_MAX,NIND,NBLQ,AGE,WGHT0,HGHT0,SEX,RACENAME,COUNTRY,DOSE,ROUTE,ORGAN,COMP,CLASS,INCLUDE,ERRTYPE
+1234,Arm A Summary,ArmA,AGG01,Plasma,1,11.2,mg/L,0.1,1.25,9.8,13.6,8,0,35,72,178,Male,White,DE,100,iv,PeripheralVenousBlood,Plasma,tpAggregated,1,GeometricStdDev
+1234,Arm B Summary,ArmB,AGG02,Plasma,2,8.4,mg/L,0.1,,7,9.4,6,2,42,65,168,Female,Asian,JP,150,po,PeripheralVenousBlood,Plasma,tpAggregated,1,median|5th to 95th percentile
+8888,Dropped Summary,ArmDrop,AGG03,Plasma,4,55,mg/L,0.1,1.1,50,60,5,0,50,80,182,Female,White,US,999,po,PeripheralVenousBlood,Plasma,tpAggregated,0,ArithmeticStdDev

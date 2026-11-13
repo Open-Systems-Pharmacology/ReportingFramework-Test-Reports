@@ -169,7 +169,7 @@ sessionInfo()
 
 Users can find the reports and their description in the [/Reports](./Reports) folder as well as the corresponding R code in the [/R](./R) folder.
 
-Models, Observed and Simulated Data are respectively available in the [Models](./Models) and [Data](./Data) folders.
+Repo-local inputs used by the report workflows are available in [ReportInputs](./ReportInputs), including the [Models](./ReportInputs/Models), [PKAnalysisResults](./ReportInputs/PKAnalysisResults), and [Populations](./ReportInputs/Populations) subfolders.
 
 Here is the summary of the reports, their scripts and their run time currently available in this repository:
 

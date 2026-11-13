@@ -4,25 +4,14 @@ on:
   workflow_dispatch:
     inputs:
       report:
-        description: 'Report to update'
+        description: 'Report to update (must match Report in tests/testthat/report-mapping.json)'
         required: true
-        type: choice
-        # TODO options to be called from a script or code
-        options:
-        - Aciclovir-Mean
-        - Aciclovir-Mean-SVG
-        - Aciclovir-Population
-        - Raltegravir-Absorption
-        - Raltegravir-Mass-Balance
-        - Test-NO7
-        - Test-NO8
-        - Test-NO9
-        - Test-NO10
-        - Test-NO11
-        - Test-NO12
+        type: string
 
-permissions: write-all
-  
+permissions:
+  contents: write
+  pull-requests: write
+
 jobs:
   update-reference-reports:
     runs-on: ubuntu-latest
@@ -33,10 +22,43 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v7
+      - name: Validate selected report against mapping
+        shell: python
+        run: |
+          import subprocess
+          import sys
+
+          cmd = [
+              sys.executable,
+              ".github/workflows/validate-report-mapping.py",
+              "--report",
+              "${{ inputs.report }}",
+          ]
+          result = subprocess.run(cmd, check=False)
+          if result.returncode != 0:
+              raise SystemExit(result.returncode)
+      - name: Ensure selected report is reference-enabled
+        shell: python
+        run: |
+          import json
+          from pathlib import Path
+
+          report = "${{ inputs.report }}"
+          mapping = json.loads(
+              Path("tests/testthat/report-mapping.json").read_text(encoding="utf-8")
+          )
+          selected = [item for item in mapping if item.get("Report") == report]
+
+          if not selected:
+              raise SystemExit(f"Report not found in mapping: {report}")
+          if not selected[0].get("Reference", False):
+              raise SystemExit(
+                  f"Report '{report}' has Reference=false and cannot be updated via this workflow."
+              )
       - name: Update reference report with test report
         run: |
-          rm -r Reports/${{ inputs.report }}
-          cp -R tests/Reports/${{ inputs.report }} Reports/${{ inputs.report }}
+          mkdir -p Reports/${{ inputs.report }}
+          rsync -a --delete --exclude "Report.md" tests/Reports/${{ inputs.report }}/ Reports/${{ inputs.report }}/
       - name: Commit updates
         run: |
           git config --local user.email "actions@github.com"
@@ -46,10 +68,10 @@ jobs:
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8.1.1
         with:
-          branch: 30_update_${{ inputs.report }}
+          branch: update-reference-${{ inputs.report }}
           title: 'Update ${{ inputs.report }}'
           body: |
-            Update Reference Report ${{ inputs.report }} #30
+            Update reference report assets for ${{ inputs.report }} (excluding Report.md).
           labels: |
             update
 

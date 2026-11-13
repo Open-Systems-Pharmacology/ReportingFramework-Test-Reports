@@ -4,23 +4,10 @@ on:
   workflow_dispatch:
     inputs:
       report:
-        description: 'Report to convert'
+        description: 'Report to convert (must match Report in tests/testthat/report-mapping.json)'
         required: true
-        type: choice
-        # TODO options to be called from a script or code
-        options:
-        - Aciclovir-Mean
-        - Aciclovir-Mean-SVG
-        - Aciclovir-Population
-        - Raltegravir-Absorption
-        - Raltegravir-Mass-Balance
-        - Test-NO7
-        - Test-NO8
-        - Test-NO9
-        - Test-NO10
-        - Test-NO11
-        - Test-NO12
-  
+        type: string
+
 jobs:
   report-to-pdf:
     runs-on: ubuntu-latest
@@ -31,6 +18,21 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v7
+      - name: Validate selected report against mapping
+        shell: python
+        run: |
+          import subprocess
+          import sys
+
+          cmd = [
+              sys.executable,
+              ".github/workflows/validate-report-mapping.py",
+              "--report",
+              "${{ inputs.report }}",
+          ]
+          result = subprocess.run(cmd, check=False)
+          if result.returncode != 0:
+              raise SystemExit(result.returncode)
       - name: Install Pandoc
         uses: r-lib/actions/setup-pandoc@v2
       - name: Perform html conversion with pandoc
@@ -45,7 +47,7 @@ jobs:
           htmlFile: ./Reports/${{ inputs.report }}/Report.html
           outputFile: ./Reports/${{ inputs.report }}/Report.pdf
           pdfOptions: '{"format": "A4", "margin": {"top": "10mm", "left": "10mm", "right": "10mm", "bottom": "10mm"}, "displayHeaderFooter": true, "headerTemplate": "<span></span>", "footerTemplate": "<span style=\"font-size: 12px;\">&emsp;&emsp;Page <span class=\"pageNumber\"></span> / <span class=\"totalPages\"></span></span>"}'
-          
+
       - name: Save PDF file as artifacts
         uses: actions/upload-artifact@v7
         with:
