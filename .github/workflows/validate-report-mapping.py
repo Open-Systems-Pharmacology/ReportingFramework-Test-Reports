@@ -7,7 +7,7 @@ Checks:
 - Each item has Script, Report, and Reference fields.
 - Script and Report names are unique.
 - Script files exist under R/<Script>.R.
-- Report directories exist under Reports/<Report>.
+- Report directories exist under Reports/<Report> for reference-enabled entries.
 - Optional selected report exists in the mapping.
 """
 
@@ -95,7 +95,7 @@ def main() -> None:
             errors.append(f"Missing script file for mapping entry: {script_path}.")
 
         report_path = Path("Reports") / report
-        if not report_path.exists():
+        if reference and not report_path.exists():
             errors.append(f"Missing report directory for mapping entry: {report_path}.")
 
     selected_report = args.report.strip()
