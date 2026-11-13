@@ -21,7 +21,21 @@
   )
 }
 
-.expectKnownFiles <- function(testFiles, referenceFiles, expectationFunction) {
+.relativeReportPaths <- function(files) {
+  if (length(files) == 0) {
+    return(character(0))
+  }
+
+  normalized <- normalizePath(files, winslash = "/", mustWork = FALSE)
+  sub("^.*?/Reports/[^/]+/?", "", normalized)
+}
+
+.expectKnownFiles <- function(
+  testFiles,
+  referenceFiles,
+  expectationFunction,
+  excludedRelativePaths = character(0)
+) {
   expect_equal(
     length(testFiles),
     length(referenceFiles),
@@ -31,8 +45,42 @@
     return(invisible(NULL))
   }
 
-  for (fileIndex in seq_along(referenceFiles)) {
-    expectationFunction(testFiles[fileIndex], referenceFiles[fileIndex])
+  testRelativePaths <- .relativeReportPaths(testFiles)
+  referenceRelativePaths <- .relativeReportPaths(referenceFiles)
+
+  expect_equal(
+    anyDuplicated(testRelativePaths),
+    0,
+    label = "Generated files contain duplicate relative paths"
+  )
+  expect_equal(
+    anyDuplicated(referenceRelativePaths),
+    0,
+    label = "Reference files contain duplicate relative paths"
+  )
+
+  if (length(excludedRelativePaths) > 0) {
+    testKeep <- !(testRelativePaths %in% excludedRelativePaths)
+    referenceKeep <- !(referenceRelativePaths %in% excludedRelativePaths)
+    testFiles <- testFiles[testKeep]
+    referenceFiles <- referenceFiles[referenceKeep]
+    testRelativePaths <- testRelativePaths[testKeep]
+    referenceRelativePaths <- referenceRelativePaths[referenceKeep]
+  }
+
+  expect_equal(
+    sort(testRelativePaths),
+    sort(referenceRelativePaths),
+    label = "Generated and reference file identities differ"
+  )
+  if (!identical(sort(testRelativePaths), sort(referenceRelativePaths))) {
+    return(invisible(NULL))
+  }
+
+  for (relativePath in sort(referenceRelativePaths)) {
+    testPath <- testFiles[match(relativePath, testRelativePaths)]
+    referencePath <- referenceFiles[match(relativePath, referenceRelativePaths)]
+    expectationFunction(testPath, referencePath)
   }
 }
 
