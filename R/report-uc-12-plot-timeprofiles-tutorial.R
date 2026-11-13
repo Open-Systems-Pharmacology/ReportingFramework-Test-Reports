@@ -286,7 +286,10 @@ wordRenderMessage <- "Word rendering skipped: Quarto is not available in this en
 
 if (quartoAvailable) {
   wordRenderCall <- .runStepWithResult(
-    renderWord(fileName = qmdRenderResult$qmdFile, quiet = TRUE)
+    ospsuite.reportingframework::renderWord(
+      fileName = qmdRenderResult$qmdFile,
+      quiet = TRUE
+    )
   )
 
   assertOrStop(

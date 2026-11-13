@@ -52,7 +52,7 @@ pkParameterDT <- ospsuite.reportingframework::loadPKParameter(
 setWorkflowOptions(isValidRun = FALSE)
 
 themeToUse <-
-  theme(legend.position = "top", legend.title = element_blank())
+  ggplot2::theme(legend.position = "top", legend.title = ggplot2::element_blank())
 options(knitr.kable.NA = "")
 
 
