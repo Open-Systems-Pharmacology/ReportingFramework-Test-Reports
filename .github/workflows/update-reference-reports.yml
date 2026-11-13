@@ -57,9 +57,8 @@ jobs:
               )
       - name: Update reference report with test report
         run: |
-          rm -rf Reports/${{ inputs.report }}
           mkdir -p Reports/${{ inputs.report }}
-          rsync -a --exclude "Report.md" tests/Reports/${{ inputs.report }}/ Reports/${{ inputs.report }}/
+          rsync -a --delete --exclude "Report.md" tests/Reports/${{ inputs.report }}/ Reports/${{ inputs.report }}/
       - name: Commit updates
         run: |
           git config --local user.email "actions@github.com"
