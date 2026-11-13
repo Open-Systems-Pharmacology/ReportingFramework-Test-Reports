@@ -193,15 +193,57 @@
 .runReportTests <- function(mapping) {
   cat(mapping$Report)
 
+  test_that("Report has run", {
+    expect_true(file.exists(file.path(
+      "..",
+      "Reports",
+      mapping$Report,
+      "Report.md"
+    )))
+  })
+
   if (!mapping$Reference) {
-    test_that("Report has run", {
-      expect_true(file.exists(file.path(
-        "..",
-        "Reports",
-        mapping$Report,
-        "Report.md"
-      )))
-    })
+    return(invisible(NULL))
+  }
+
+  hasReferenceArtifacts <-
+    length(.listReportFiles(
+      basePath = "../..",
+      reportName = mapping$Report,
+      pattern = "png"
+    )) >
+      0 ||
+    length(.listReportFiles(
+      basePath = "../..",
+      reportName = mapping$Report,
+      pattern = "\\.caption$"
+    )) >
+      0 ||
+    length(.listReportFiles(
+      basePath = "../..",
+      reportName = mapping$Report,
+      pattern = "\\.csv$"
+    )) >
+      0 ||
+    length(.listReportFiles(
+      basePath = "../..",
+      reportName = mapping$Report,
+      pattern = "\\.qmd$",
+      recursive = FALSE
+    )) >
+      0
+
+  test_that("Reference artifacts exist", {
+    expect_true(
+      hasReferenceArtifacts,
+      label = paste0(
+        "Reference=true requires at least one comparable reference artifact (png/caption/csv/qmd) for ",
+        mapping$Report
+      )
+    )
+  })
+
+  if (!isTRUE(hasReferenceArtifacts)) {
     return(invisible(NULL))
   }
 

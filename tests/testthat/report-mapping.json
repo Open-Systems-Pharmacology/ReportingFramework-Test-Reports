@@ -87,7 +87,7 @@
   {
     "Script": "report-uc-09-epackage-export",
     "Report": "UC-09-EPackage-Export",
-    "Reference": true
+    "Reference": false
   },
   {
     "Script": "report-uc-12-plot-timeprofiles-tutorial",
