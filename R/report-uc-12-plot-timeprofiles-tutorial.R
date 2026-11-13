@@ -276,7 +276,11 @@ assertOrStop(
 )
 
 wordDocxPath <- sub("\\.qmd$", ".docx", qmdRenderResult$qmdFile)
-quartoAvailable <- nzchar(quarto::quarto_path())
+quartoAvailable <- requireNamespace("quarto", quietly = TRUE) &&
+  isTRUE(tryCatch(
+    nzchar(quarto::quarto_path()),
+    error = function(e) FALSE
+  ))
 wordRenderStatus <- "SKIPPED"
 wordRenderMessage <- "Word rendering skipped: Quarto is not available in this environment"
 
