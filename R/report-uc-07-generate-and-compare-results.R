@@ -257,10 +257,29 @@ comparePKFixtureFiles <- function(
 
     actualParameters <- sort(unique(as.character(actualDT$Parameter)))
     expectedParameters <- sort(unique(as.character(expectedDT$Parameter)))
-    commonParameters <- intersect(actualParameters, expectedParameters)
-
     fixtureOnlyParameters <- setdiff(expectedParameters, actualParameters)
     generatedOnlyParameters <- setdiff(actualParameters, expectedParameters)
+
+    assertOrStop(
+      length(fixtureOnlyParameters) == 0,
+      paste0(
+        "Unexpected fixture-only PK parameters in ",
+        basename(actualPath),
+        ": ",
+        paste(fixtureOnlyParameters, collapse = ", ")
+      )
+    )
+    assertOrStop(
+      length(generatedOnlyParameters) == 0,
+      paste0(
+        "Unexpected generated-only PK parameters in ",
+        basename(actualPath),
+        ": ",
+        paste(generatedOnlyParameters, collapse = ", ")
+      )
+    )
+
+    commonParameters <- intersect(actualParameters, expectedParameters)
 
     assertOrStop(
       length(commonParameters) > 0,
@@ -280,17 +299,53 @@ comparePKFixtureFiles <- function(
     commonActual <- data.table::as.data.table(commonActual)
     commonExpected <- data.table::as.data.table(commonExpected)
 
-    sortCols <- intersect(
-      c("IndividualId", "QuantityPath", "Parameter"),
-      names(commonActual)
+    keyCols <- c("IndividualId", "QuantityPath", "Parameter")
+
+    duplicateActualKeys <- commonActual[, .N, by = keyCols][N > 1]
+    duplicateExpectedKeys <- commonExpected[, .N, by = keyCols][N > 1]
+    assertOrStop(
+      nrow(duplicateActualKeys) == 0,
+      paste0("Generated PK file has duplicate key rows: ", basename(actualPath))
     )
+    assertOrStop(
+      nrow(duplicateExpectedKeys) == 0,
+      paste0("Fixture PK file has duplicate key rows: ", basename(expectedPath))
+    )
+
+    actualKeys <- unique(commonActual[, ..keyCols])
+    expectedKeys <- unique(commonExpected[, ..keyCols])
+    missingInActual <- data.table::fsetdiff(expectedKeys, actualKeys)
+    missingInExpected <- data.table::fsetdiff(actualKeys, expectedKeys)
+
+    assertOrStop(
+      nrow(missingInActual) == 0,
+      paste0(
+        "Generated PK file is missing expected key rows: ",
+        basename(actualPath),
+        " (",
+        nrow(missingInActual),
+        " missing)"
+      )
+    )
+    assertOrStop(
+      nrow(missingInExpected) == 0,
+      paste0(
+        "Generated PK file contains unexpected key rows: ",
+        basename(actualPath),
+        " (",
+        nrow(missingInExpected),
+        " extra)"
+      )
+    )
+
+    sortCols <- intersect(keyCols, names(commonActual))
     data.table::setorderv(commonActual, cols = sortCols)
     data.table::setorderv(commonExpected, cols = sortCols)
 
     mergedCommon <- merge(
       commonActual,
       commonExpected,
-      by = c("IndividualId", "QuantityPath", "Parameter"),
+      by = keyCols,
       suffixes = c(".actual", ".expected")
     )
 
@@ -304,15 +359,44 @@ comparePKFixtureFiles <- function(
       mergedCommon$Value.expected[plasmaAucMask] * 325.78 / 60
     mergedCommon$Unit.expected[plasmaAucMask] <- "µg*h/l"
 
-    excludedNaNRows <- sum(
-      is.nan(mergedCommon$Value.actual) &
-        !is.nan(mergedCommon$Value.expected)
-    )
-    comparableRows <- mergedCommon[
-      !(is.nan(mergedCommon$Value.actual) &
-        !is.nan(mergedCommon$Value.expected)) &
-        mergedCommon$Unit.actual == mergedCommon$Unit.expected,
+    unitMismatchRows <- mergedCommon[
+      mergedCommon$Unit.actual != mergedCommon$Unit.expected,
+      ..keyCols
     ]
+    assertOrStop(
+      nrow(unitMismatchRows) == 0,
+      paste0(
+        "Unexpected PK unit mismatch rows in ",
+        basename(actualPath),
+        ": ",
+        nrow(unitMismatchRows)
+      )
+    )
+
+    nonFiniteMismatchRows <- mergedCommon[
+      xor(is.finite(mergedCommon$Value.actual), is.finite(mergedCommon$Value.expected)) |
+        xor(is.nan(mergedCommon$Value.actual), is.nan(mergedCommon$Value.expected)) |
+        xor(is.infinite(mergedCommon$Value.actual), is.infinite(mergedCommon$Value.expected)),
+      ..keyCols
+    ]
+    assertOrStop(
+      nrow(nonFiniteMismatchRows) == 0,
+      paste0(
+        "Unexpected PK non-finite value mismatches in ",
+        basename(actualPath),
+        ": ",
+        nrow(nonFiniteMismatchRows)
+      )
+    )
+
+    comparableRows <- mergedCommon[
+      is.finite(mergedCommon$Value.actual) &
+        is.finite(mergedCommon$Value.expected)
+    ]
+    assertOrStop(
+      nrow(comparableRows) > 0,
+      paste0("No finite PK rows available for comparison in ", basename(actualPath))
+    )
 
     actualComparable <- data.table::as.data.table(setNames(
       list(
@@ -361,40 +445,17 @@ comparePKFixtureFiles <- function(
       commonParameters = commonParameters,
       fixtureOnlyParameters = fixtureOnlyParameters,
       generatedOnlyParameters = generatedOnlyParameters,
-      excludedNaNRows = excludedNaNRows,
+      comparedRowCount = nrow(comparableRows),
       maxRelDiff = maxRelDiff,
       meanRelDiff = meanRelDiff
     )
   })
 
-  unexpectedFixtureOnly <- unique(unlist(lapply(
-    comparisonResults,
-    function(result) setdiff(result$fixtureOnlyParameters, "F_tEnd")
-  )))
-  unexpectedGeneratedOnly <- unique(unlist(lapply(
-    comparisonResults,
-    function(result) result$generatedOnlyParameters
-  )))
   excessiveDrift <- Filter(
     function(result) {
       result$maxRelDiff > (2 / 3 + 1e-6) || result$meanRelDiff > 0.04
     },
     comparisonResults
-  )
-
-  assertOrStop(
-    length(unexpectedFixtureOnly) == 0,
-    paste0(
-      "Unexpected fixture-only PK parameters: ",
-      paste(unexpectedFixtureOnly, collapse = ", ")
-    )
-  )
-  assertOrStop(
-    length(unexpectedGeneratedOnly) == 0,
-    paste0(
-      "Unexpected generated-only PK parameters: ",
-      paste(unexpectedGeneratedOnly, collapse = ", ")
-    )
   )
   assertOrStop(
     length(excessiveDrift) == 0,
@@ -494,9 +555,9 @@ pkMeanRelativeDiff <- mean(vapply(
   function(result) result$meanRelDiff,
   numeric(1)
 ))
-pkExcludedNaNRows <- sum(vapply(
+pkComparedRowCount <- sum(vapply(
   pkComparisons,
-  function(result) result$excludedNaNRows,
+  function(result) result$comparedRowCount,
   numeric(1)
 ))
 
@@ -513,7 +574,8 @@ reportLines <- c(
   "- updateUC7Project copied the UC7 configuration without copying simulation or PK result fixtures into the project.",
   "- runAndSaveScenarios returned scenario results for all configured UC07 scenarios.",
   "- Simulation CSV comparisons align generated results to the fixture time grid before checking equality.",
-  "- PK analysis CSV comparisons validate shared PK parameters, normalize the known plasma AUC_tEnd unit difference, and record the remaining drift caused by current-build output resolution.",
+  "- PK analysis CSV comparisons require key-level coverage parity on shared parameters, normalize the known plasma AUC_tEnd unit difference, reject unit/non-finite mismatches, and enforce non-empty finite comparisons.",
+  "- All PK parameters listed in fixtures must be recalculated by generated outputs (no fixture-only or generated-only parameters).",
   paste0("- Generated simulation CSV files: ", length(simulationCsvFiles)),
   paste0("- Generated PK analysis CSV files: ", length(pkResultFiles)),
   paste0(
@@ -527,14 +589,14 @@ reportLines <- c(
     length(simulationComparisons)
   ),
   paste0(
-    "- PK analysis CSV files matched repo fixtures on shared parameters: ",
+    "- PK analysis CSV files matched repo fixtures on shared finite rows: ",
     sum(vapply(pkComparisons, function(result) result$equal, logical(1))),
     "/",
     length(pkComparisons)
   ),
   paste0(
-    "- Total PK rows excluded because the current build returned NaN where the fixture has numeric values: ",
-    pkExcludedNaNRows
+    "- Total PK rows included in finite-row drift comparisons: ",
+    pkComparedRowCount
   ),
   paste0(
     "- Maximum PK relative difference on comparable shared rows: ",
