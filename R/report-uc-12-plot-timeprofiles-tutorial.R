@@ -1,4 +1,4 @@
-﻿#' @title report-uc-12-plot-timeprofiles-tutorial
+#' @title report-uc-12-plot-timeprofiles-tutorial
 #' @description
 #' Integration scenario for UC-12 tutorial-based time profile plotting.
 
