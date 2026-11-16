@@ -84,8 +84,11 @@ jobs:
       
       - name: Run report and validations
         run: |
-          options(repos = c(CRAN = "https://cloud.r-project.org"))
-          install.packages(c('testthat','jsonlite'))
+          options(repos = c(
+            OSP = "https://open-systems-pharmacology.r-universe.dev",
+            CRAN = "https://cloud.r-project.org"
+          ))
+          install.packages(c('ospsuite.reportingframework', 'testthat', 'jsonlite'))
           source(".github/workflows/run-report-tests.R")
         shell: Rscript {0}
       
