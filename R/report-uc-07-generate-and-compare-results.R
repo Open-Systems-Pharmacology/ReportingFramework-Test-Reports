@@ -382,6 +382,24 @@ comparePKFixtureFiles <- function(
       mergedCommon$Value.expected[plasmaAucMask] * 325.78 / 60
     mergedCommon$Unit.expected[plasmaAucMask] <- "µg*h/l"
 
+    missingUnitRows <- as.data.frame(mergedCommon)[
+      is.na(mergedCommon$Unit.actual) |
+        is.na(mergedCommon$Unit.expected) |
+        trimws(mergedCommon$Unit.actual) == "" |
+        trimws(mergedCommon$Unit.expected) == "",
+      keyCols,
+      drop = FALSE
+    ]
+    assertOrStop(
+      nrow(missingUnitRows) == 0,
+      paste0(
+        "Missing PK unit rows in ",
+        basename(actualPath),
+        ": ",
+        nrow(missingUnitRows)
+      )
+    )
+
     unitMismatchRows <- as.data.frame(mergedCommon)[
       mergedCommon$Unit.actual != mergedCommon$Unit.expected,
       keyCols,
@@ -498,6 +516,33 @@ comparePKFixtureFiles <- function(
       result$maxRelDiff > (2 / 3 + 1e-6) || result$meanRelDiff > 0.04
     },
     comparisonResults
+  )
+  unequalComparisons <- Filter(
+    function(result) {
+      !isTRUE(result$equal)
+    },
+    comparisonResults
+  )
+  assertOrStop(
+    length(unequalComparisons) == 0,
+    paste0(
+      "PK analysis table comparison failed for: ",
+      paste(
+        vapply(
+          unequalComparisons,
+          function(result) {
+            paste0(
+              result$file,
+              " (",
+              result$message,
+              ")"
+            )
+          },
+          character(1)
+        ),
+        collapse = "; "
+      )
+    )
   )
   assertOrStop(
     length(excessiveDrift) == 0,
