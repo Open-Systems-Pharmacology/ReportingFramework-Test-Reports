@@ -120,7 +120,11 @@ compareResultTable <- function(actualPath, expectedPath, tolerance = 1e-6) {
     actualTimes <- sort(unique(actualDT[[timeColumn]]))
 
     if (all(expectedTimes %in% actualTimes)) {
-      actualDT <- actualDT[actualDT[[timeColumn]] %in% expectedTimes]
+      actualDT <- actualDT[
+        actualDT[[timeColumn]] %in% expectedTimes,
+        ,
+        drop = FALSE
+      ]
     }
   }
 
@@ -301,8 +305,24 @@ comparePKFixtureFiles <- function(
 
     keyCols <- c("IndividualId", "QuantityPath", "Parameter")
 
-    duplicateActualKeys <- commonActual[, .N, by = keyCols][N > 1]
-    duplicateExpectedKeys <- commonExpected[, .N, by = keyCols][N > 1]
+    actualKeyTable <- as.data.frame(commonActual)[, keyCols, drop = FALSE]
+    expectedKeyTable <- as.data.frame(commonExpected)[, keyCols, drop = FALSE]
+
+    duplicateActualRows <- duplicated(actualKeyTable) |
+      duplicated(actualKeyTable, fromLast = TRUE)
+    duplicateExpectedRows <- duplicated(expectedKeyTable) |
+      duplicated(expectedKeyTable, fromLast = TRUE)
+
+    duplicateActualKeys <- unique(actualKeyTable[
+      duplicateActualRows,
+      ,
+      drop = FALSE
+    ])
+    duplicateExpectedKeys <- unique(expectedKeyTable[
+      duplicateExpectedRows,
+      ,
+      drop = FALSE
+    ])
     assertOrStop(
       nrow(duplicateActualKeys) == 0,
       paste0("Generated PK file has duplicate key rows: ", basename(actualPath))
@@ -312,28 +332,31 @@ comparePKFixtureFiles <- function(
       paste0("Fixture PK file has duplicate key rows: ", basename(expectedPath))
     )
 
-    actualKeys <- unique(commonActual[, ..keyCols])
-    expectedKeys <- unique(commonExpected[, ..keyCols])
-    missingInActual <- data.table::fsetdiff(expectedKeys, actualKeys)
-    missingInExpected <- data.table::fsetdiff(actualKeys, expectedKeys)
+    actualKeys <- unique(actualKeyTable)
+    expectedKeys <- unique(expectedKeyTable)
+    actualKeyIds <- do.call(paste, c(actualKeys, sep = "\r"))
+    expectedKeyIds <- do.call(paste, c(expectedKeys, sep = "\r"))
+
+    missingInActualCount <- sum(!(expectedKeyIds %in% actualKeyIds))
+    missingInExpectedCount <- sum(!(actualKeyIds %in% expectedKeyIds))
 
     assertOrStop(
-      nrow(missingInActual) == 0,
+      missingInActualCount == 0,
       paste0(
         "Generated PK file is missing expected key rows: ",
         basename(actualPath),
         " (",
-        nrow(missingInActual),
+        missingInActualCount,
         " missing)"
       )
     )
     assertOrStop(
-      nrow(missingInExpected) == 0,
+      missingInExpectedCount == 0,
       paste0(
         "Generated PK file contains unexpected key rows: ",
         basename(actualPath),
         " (",
-        nrow(missingInExpected),
+        missingInExpectedCount,
         " extra)"
       )
     )
@@ -359,9 +382,10 @@ comparePKFixtureFiles <- function(
       mergedCommon$Value.expected[plasmaAucMask] * 325.78 / 60
     mergedCommon$Unit.expected[plasmaAucMask] <- "µg*h/l"
 
-    unitMismatchRows <- mergedCommon[
+    unitMismatchRows <- as.data.frame(mergedCommon)[
       mergedCommon$Unit.actual != mergedCommon$Unit.expected,
-      ..keyCols
+      keyCols,
+      drop = FALSE
     ]
     assertOrStop(
       nrow(unitMismatchRows) == 0,
@@ -373,7 +397,7 @@ comparePKFixtureFiles <- function(
       )
     )
 
-    nonFiniteMismatchRows <- mergedCommon[
+    nonFiniteMismatchRows <- as.data.frame(mergedCommon)[
       xor(
         is.finite(mergedCommon$Value.actual),
         is.finite(mergedCommon$Value.expected)
@@ -389,7 +413,8 @@ comparePKFixtureFiles <- function(
         (is.infinite(mergedCommon$Value.actual) &
           is.infinite(mergedCommon$Value.expected) &
           mergedCommon$Value.actual != mergedCommon$Value.expected),
-      ..keyCols
+      keyCols,
+      drop = FALSE
     ]
     assertOrStop(
       nrow(nonFiniteMismatchRows) == 0,
@@ -403,7 +428,9 @@ comparePKFixtureFiles <- function(
 
     comparableRows <- mergedCommon[
       is.finite(mergedCommon$Value.actual) &
-        is.finite(mergedCommon$Value.expected)
+        is.finite(mergedCommon$Value.expected),
+      ,
+      drop = FALSE
     ]
     assertOrStop(
       nrow(comparableRows) > 0,
