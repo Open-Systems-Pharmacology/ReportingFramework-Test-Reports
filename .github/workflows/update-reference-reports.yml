@@ -58,7 +58,7 @@ jobs:
       - name: Update reference report with test report
         run: |
           mkdir -p Reports/${{ inputs.report }}
-          rsync -a --delete --exclude "Report.md" tests/Reports/${{ inputs.report }}/ Reports/${{ inputs.report }}/
+          rsync -a --delete tests/Reports/${{ inputs.report }}/ Reports/${{ inputs.report }}/
       - name: Commit updates
         run: |
           git config --local user.email "actions@github.com"
@@ -71,7 +71,7 @@ jobs:
           branch: update-reference-${{ inputs.report }}
           title: 'Update ${{ inputs.report }}'
           body: |
-            Update reference report assets for ${{ inputs.report }} (excluding Report.md).
+            Update reference report assets for ${{ inputs.report }}.
           labels: |
             update
 
