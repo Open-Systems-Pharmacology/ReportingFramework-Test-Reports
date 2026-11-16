@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       report:
-        description: 'Report to convert (must match Report in tests/testthat/report-mapping.json)'
+        description: 'Reference report to convert (must match Report in tests/testthat/report-mapping.json and exist under Reports/<report>/Report.md)'
         required: true
         type: string
 
@@ -29,6 +29,8 @@ jobs:
               ".github/workflows/validate-report-mapping.py",
               "--report",
               "${{ inputs.report }}",
+              "--report-markdown-root",
+              "Reports",
           ]
           result = subprocess.run(cmd, check=False)
           if result.returncode != 0:
@@ -37,6 +39,7 @@ jobs:
         uses: r-lib/actions/setup-pandoc@v2
       - name: Perform html conversion with pandoc
         run: |
+          mkdir -p Reports/${{ inputs.report }}
           pandoc -f markdown -t html5 --embed-resources --standalone \
           -o Reports/${{ inputs.report }}/Report.html \
           Reports/${{ inputs.report }}/Report.md -c osp.css

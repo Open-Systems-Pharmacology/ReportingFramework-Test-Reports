@@ -8,7 +8,7 @@ Checks:
 - Script and Report names are unique.
 - Script files exist under R/<Script>.R.
 - Report directories exist under Reports/<Report> for reference-enabled entries.
-- Optional selected report exists in the mapping.
+- Optional selected report exists in the mapping and has a markdown input file.
 """
 
 from __future__ import annotations
@@ -36,6 +36,11 @@ def main() -> None:
         "--report",
         default="",
         help="Optional report name to validate against mapping.",
+    )
+    parser.add_argument(
+        "--report-markdown-root",
+        default="Reports",
+        help="Root directory containing <report>/Report.md for selected-report checks.",
     )
     args = parser.parse_args()
 
@@ -104,6 +109,15 @@ def main() -> None:
             "Selected report is not listed in mapping: "
             f"{selected_report}. Update tests/testthat/report-mapping.json or input value."
         )
+    if selected_report:
+        selected_markdown_path = (
+            Path(args.report_markdown_root) / selected_report / "Report.md"
+        )
+        if not selected_markdown_path.exists():
+            errors.append(
+                "Selected report markdown input does not exist: "
+                f"{selected_markdown_path}."
+            )
 
     if errors:
         _fail(errors)
