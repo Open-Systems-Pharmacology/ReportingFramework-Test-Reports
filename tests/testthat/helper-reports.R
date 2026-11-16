@@ -11,6 +11,11 @@
 #' @param y Reference content to be compared with
 #' @param label Displayed label
 expectEqual <- function(x, y, label) {
+  expect_equal(length(x), length(y), label = label)
+  if (length(x) != length(y)) {
+    return(invisible(NULL))
+  }
+
   expect_true(all(x == y), label = label)
 }
 
