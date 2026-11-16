@@ -138,6 +138,35 @@
   })
 }
 
+.runExpectedFootnotesTest <- function(mapping) {
+  test_that("Expected Footnotes", {
+    footnoteFolder <- if (!is.null(mapping$PlotFolder)) {
+      mapping$PlotFolder
+    } else {
+      NULL
+    }
+
+    referenceFootnotes <- .listReportFiles(
+      basePath = "../..",
+      reportName = mapping$Report,
+      pattern = "\\.footnote$",
+      folder = footnoteFolder
+    )
+    testFootnotes <- .listReportFiles(
+      basePath = "..",
+      reportName = mapping$Report,
+      pattern = "\\.footnote$",
+      folder = footnoteFolder
+    )
+
+    .expectKnownFiles(
+      testFiles = testFootnotes,
+      referenceFiles = referenceFootnotes,
+      expectationFunction = expectKnownCaption
+    )
+  })
+}
+
 .runExpectedResultsTests <- function(mapping) {
   test_that("Expected Results Tables", {
     resultFolder <- if (!is.null(mapping$ResultsFolder)) {
@@ -222,6 +251,12 @@
     length(.listReportFiles(
       basePath = "../..",
       reportName = mapping$Report,
+      pattern = "\\.footnote$"
+    )) >
+      0 ||
+    length(.listReportFiles(
+      basePath = "../..",
+      reportName = mapping$Report,
       pattern = "\\.csv$"
     )) >
       0 ||
@@ -237,7 +272,7 @@
     expect_true(
       hasReferenceArtifacts,
       label = paste0(
-        "Reference=true requires at least one comparable reference artifact (png/caption/csv/qmd) for ",
+        "Reference=true requires at least one comparable reference artifact (png/caption/footnote/csv/qmd) for ",
         mapping$Report
       )
     )
@@ -249,6 +284,7 @@
 
   .runExpectedPlotsTest(mapping)
   .runExpectedCaptionsTest(mapping)
+  .runExpectedFootnotesTest(mapping)
   .runExpectedResultsTests(mapping)
   .runExpectedQmdTest(mapping)
 
