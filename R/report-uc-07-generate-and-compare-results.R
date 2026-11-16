@@ -374,9 +374,21 @@ comparePKFixtureFiles <- function(
     )
 
     nonFiniteMismatchRows <- mergedCommon[
-      xor(is.finite(mergedCommon$Value.actual), is.finite(mergedCommon$Value.expected)) |
-        xor(is.nan(mergedCommon$Value.actual), is.nan(mergedCommon$Value.expected)) |
-        xor(is.infinite(mergedCommon$Value.actual), is.infinite(mergedCommon$Value.expected)),
+      xor(
+        is.finite(mergedCommon$Value.actual),
+        is.finite(mergedCommon$Value.expected)
+      ) |
+        xor(
+          is.nan(mergedCommon$Value.actual),
+          is.nan(mergedCommon$Value.expected)
+        ) |
+        xor(
+          is.infinite(mergedCommon$Value.actual),
+          is.infinite(mergedCommon$Value.expected)
+        ) |
+        (is.infinite(mergedCommon$Value.actual) &
+          is.infinite(mergedCommon$Value.expected) &
+          mergedCommon$Value.actual != mergedCommon$Value.expected),
       ..keyCols
     ]
     assertOrStop(
@@ -395,7 +407,10 @@ comparePKFixtureFiles <- function(
     ]
     assertOrStop(
       nrow(comparableRows) > 0,
-      paste0("No finite PK rows available for comparison in ", basename(actualPath))
+      paste0(
+        "No finite PK rows available for comparison in ",
+        basename(actualPath)
+      )
     )
 
     actualComparable <- data.table::as.data.table(setNames(
